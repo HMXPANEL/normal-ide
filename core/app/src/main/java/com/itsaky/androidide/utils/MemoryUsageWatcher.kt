@@ -70,7 +70,7 @@ class MemoryUsageWatcher(
 
     private val android_os_Debug_getMemoryInfo by lazy {
       checkNotNull(IdeReflectionUtils.getDeclaredMethod(Debug::class.java, "getMemoryInfo",
-        Int::class.javaPrimitiveType, MemoryInfo::class.java)) {
+        Int::class.javaPrimitiveType!!, MemoryInfo::class.java)) {
         "Unable to find getMemoryInfo method in android.os.Debug class"
       }
     }

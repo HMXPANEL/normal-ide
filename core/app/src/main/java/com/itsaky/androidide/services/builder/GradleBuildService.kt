@@ -159,6 +159,10 @@ class GradleBuildService : Service(), BuildService, IToolingApiClient,
     return srv.initialize(params)
   }
 
+  override fun metadata(): CompletableFuture<ToolingServerMetadata> {
+    return server?.metadata() ?: CompletableFuture.completedFuture(ToolingServerMetadata(-1))
+  }
+
   override fun getBuildArguments(): CompletableFuture<List<String>> {
     val extraArgs = ArrayList<String>()
     extraArgs.add("--init-script")
