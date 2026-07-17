@@ -34,6 +34,9 @@ import com.itsaky.androidide.tooling.api.models.JavaModuleProjectDependency
 import com.itsaky.androidide.tooling.api.models.JavaProjectMetadata
 import com.itsaky.androidide.tooling.api.models.Launchable
 import com.itsaky.androidide.tooling.api.models.ProjectMetadata
+import com.itsaky.androidide.tooling.events.OperationDescriptor
+import com.itsaky.androidide.tooling.events.OperationResult
+import com.itsaky.androidide.tooling.events.ProgressEvent
 import com.itsaky.androidide.tooling.events.StatusEvent
 import com.itsaky.androidide.tooling.events.configuration.ProjectConfigurationFinishEvent
 import com.itsaky.androidide.tooling.events.configuration.ProjectConfigurationOperationDescriptor
