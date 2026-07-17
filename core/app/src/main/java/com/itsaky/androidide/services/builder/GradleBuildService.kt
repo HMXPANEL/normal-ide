@@ -32,6 +32,7 @@ import com.itsaky.androidide.tooling.api.IToolingApiClient
 import com.itsaky.androidide.tooling.api.IToolingApiServer
 import com.itsaky.androidide.tooling.api.LogSenderConfig.PROPERTY_LOGSENDER_ENABLED
 import com.itsaky.androidide.tooling.api.messages.InitializeProjectParams
+import com.itsaky.androidide.tooling.api.messages.result.GradleWrapperCheckResult
 import com.itsaky.androidide.tooling.api.messages.result.InitializeResult
 import com.itsaky.androidide.tooling.api.models.ToolingServerMetadata
 import com.itsaky.androidide.utils.Environment
@@ -161,6 +162,11 @@ class GradleBuildService : Service(), BuildService, IToolingApiClient,
 
   override fun metadata(): CompletableFuture<ToolingServerMetadata> {
     return server?.metadata() ?: CompletableFuture.completedFuture(ToolingServerMetadata(-1))
+  }
+
+  override fun checkGradleWrapperAvailability(): CompletableFuture<GradleWrapperCheckResult> {
+    return CompletableFuture.completedFuture(
+      GradleWrapperCheckResult(isGradleWrapperAvailable))
   }
 
   override fun getBuildArguments(): CompletableFuture<List<String>> {
