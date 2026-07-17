@@ -153,6 +153,12 @@ class GradleBuildService : Service(), BuildService, IToolingApiClient,
     }
   }
 
+  override fun initializeProject(params: InitializeProjectParams): CompletableFuture<InitializeResult> {
+    val srv = server ?: return CompletableFuture.completedFuture(
+      InitializeResult(false, InitializeResult.Failure.CONNECTION_ERROR))
+    return srv.initialize(params)
+  }
+
   override fun getBuildArguments(): CompletableFuture<List<String>> {
     val extraArgs = ArrayList<String>()
     extraArgs.add("--init-script")
