@@ -39,15 +39,17 @@ object IdeBuildVerification {
    * Get the SHA-256 digest of the signing certificate for the IDE package, or `null` on failure.
    */
   @JvmStatic
-  fun getSigningCertificateSHA256DigestForPackage(context: Context): String? = try {
-    val packageInfo =
-      context.packageManager.getPackageInfo(context.packageName, PackageManager.GET_SIGNATURES)
-    val signature = packageInfo.signatures?.firstOrNull() ?: return null
-    MessageDigest.getInstance("SHA-256").digest(signature.toByteArray()).let { digest ->
-      digest.joinToString("") { "%02x".format(it) }
+  fun getSigningCertificateSHA256DigestForPackage(context: Context): String? {
+    return try {
+      val packageInfo =
+        context.packageManager.getPackageInfo(context.packageName, PackageManager.GET_SIGNATURES)
+      val signature = packageInfo.signatures?.firstOrNull() ?: return null
+      MessageDigest.getInstance("SHA-256").digest(signature.toByteArray()).let { digest ->
+        digest.joinToString("") { "%02x".format(it) }
+      }
+    } catch (_: Throwable) {
+      null
     }
-  } catch (_: Throwable) {
-    null
   }
 
   /** Map a signing certificate digest to a release identifier ("AndroidIDE", "F-Droid", ...). */

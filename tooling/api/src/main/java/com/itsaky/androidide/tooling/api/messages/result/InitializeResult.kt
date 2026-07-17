@@ -31,6 +31,9 @@ class InitializeResult(
     object PROJECT_NOT_FOUND : Failure()
     object PROJECT_NOT_DIRECTORY : Failure()
     object PROJECT_DIRECTORY_INACCESSIBLE : Failure()
+    object CONNECTION_ERROR : Failure()
+    object UNSUPPORTED_GRADLE_VERSION : Failure()
+    object CONNECTION_CLOSED : Failure()
     object UNKNOWN : Failure()
   }
 }
