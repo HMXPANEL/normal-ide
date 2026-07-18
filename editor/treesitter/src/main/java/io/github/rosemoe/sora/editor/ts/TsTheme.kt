@@ -25,7 +25,7 @@
 package io.github.rosemoe.sora.editor.ts
 
 import androidx.collection.MutableIntLongMap
-import com.itsaky.androidide.treesitter.TSQuery
+import com.hmx.ide.treesitter.TSQuery
 import io.github.rosemoe.sora.lang.styling.TextStyle
 import io.github.rosemoe.sora.widget.schemes.EditorColorScheme
 

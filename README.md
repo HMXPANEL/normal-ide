@@ -1,47 +1,30 @@
 <p align="center">
-  <img src="./images/icon.png" alt="AndroidIDE" width="80" height="80"/>
+  <img src="./images/icon.png" alt="HMX IDE" width="80" height="80"/>
 </p>
 
-<h2 align="center"><b>AndroidIDE</b></h2>
+<h2 align="center"><b>HMX IDE</b></h2>
 <p align="center">
-  An IDE to develop real, Gradle-based Android applications on Android devices.
-<p><br>
+  A modern, lightweight coding workspace to develop real, Gradle-based Android applications on Android devices.
+</p>
 
 <p align="center">
-<!-- Latest release -->
-<img src="https://img.shields.io/github/v/release/AndroidIDEOfficial/AndroidIDE?include_prereleases&amp;label=latest%20release" alt="Latest release">
 <!-- Build and test -->
-<img src="https://github.com/AndroidIDEOfficial/AndroidIDE/actions/workflows/build.yml/badge.svg" alt="Builds and tests">
-<!-- CodeFactor -->
-<img src="https://www.codefactor.io/repository/github/androidideofficial/androidide/badge/main" alt="CodeFactor">
-<!-- Crowdin -->
-<a href="https://crowdin.com/project/androidide"><img src="https://badges.crowdin.net/androidide/localized.svg" alt="Crowdin"></a>
+<img src="https://github.com/USERNAME/HMX-IDE/actions/workflows/build.yml/badge.svg" alt="Builds and tests">
 <!-- License -->
-<img src="https://img.shields.io/badge/License-GPLv3-blue.svg" alt="License"></p>
-
-<p align="center">
-  <a href="https://docs.androidide.com/">Explore the docs »</a> &nbsp; &nbsp;
+<img src="https://img.shields.io/badge/License-GPLv3-blue.svg" alt="License">
 </p>
 
-<p align="center">
-  <a href="https://github.com/AndroidIDEOfficial/AndroidIDE/issues/new?labels=bug&template=BUG.yml&title=%5BBug%5D%3A+">Report a bug</a> &nbsp; &#8226; &nbsp;
-  <a href="https://github.com/AndroidIDEOfficial/AndroidIDE/issues/new?labels=feature&template=FEATURE.yml&title=%5BFeature%5D%3A+">Request a feature</a> &nbsp; &#8226; &nbsp;
-  <a href="https://t.me/androidide_discussions">Join us on Telegram</a>
-</p>
+## Project Overview
 
-> [!WARNING]
-> 
-> THIS PROJECT IS NOT MAINTAINED ANYMORE.
+**HMX IDE** is a modern, lightweight Android coding workspace that runs directly on your Android device. It lets you create, edit, build, and debug real Gradle-based Android applications without needing a desktop computer. HMX IDE brings a focused, fast editing experience with language intelligence, a visual UI designer, and first-class Gradle integration.
 
 ## Features
 
-- [x] Gradle support.
-- [x] `JDK 11` and `JDK 17` available for use.
-- [x] Terminal with necessary packages.
-- [x] Custom environment variables (for Build & Terminal).
-- [x] SDK Manager (Available via terminal).
+- [x] Gradle support (AGP 7.2.0+).
+- [x] Bundled `JDK 17` for building and running.
+- [x] Custom environment variables (for Build).
 - [x] API information for classes and their members (since, removed, deprecated).
-- [x] Log reader (shows your app's logs in real-time)
+- [x] Log reader (shows your app's logs in real-time).
 - [ ] Language servers
     - [x] Java
     - [x] XML
@@ -49,92 +32,72 @@
 - [ ] UI Designer
     - [x] Layout inflater
     - [x] Resolve resource references
-    - [x] Auto-complete resource values when user edits attributes using the attribute editor
+    - [x] Auto-complete resource values when editing attributes
     - [x] Drag & Drop
     - [x] Visual attribute editor
     - [x] Android Widgets
-- [ ] String Translator
-- [ ] Asset Studio (Drawable & Icon Maker)
-- [x] Git
+- [x] Git integration.
+
+## Screenshots
+
+> Screenshots will be added here.
+
+| Editor | UI Designer | Project View |
+|--------|-------------|--------------|
+| _Coming soon_ | _Coming soon_ | _Coming soon_ |
 
 ## Installation
 
-[<img src="https://fdroid.gitlab.io/artwork/badge/get-it-on.svg"
-    alt="Get it on F-Droid"
-    height="80">](https://f-droid.org/packages/com.itsaky.androidide)
-[<img src="https://github.com/Kunzisoft/Github-badge/raw/main/get-it-on-github.svg"
-    alt="Get it on F-Droid"
-    height="80">](https://github.com/AndroidIDEOfficial/AndroidIDE/releases)
+- Download the latest HMX IDE APK from GitHub Releases or GitHub Actions builds.
+- Install the APK on your Android device (allow installation from unknown sources if prompted).
+- Launch HMX IDE and open or create a project.
 
-> _Please install AndroidIDE from trusted sources only i.e._
-> - [_The AndroidIDE website_](https://androidide.com)
-> - [_GitHub Releases_](https://github.com/AndroidIDEOfficial/AndroidIDE/releases)
-> - [_GitHub Actions_](https://github.com/AndroidIDEOfficial/AndroidIDE/actions?query=branch%3Adev+event%3Apush)
-> - [_F-Droid_](https://f-droid.org/packages/com.itsaky.androidide/)
+## Requirements
 
-- Download the AndroidIDE APK from the mentioned trusted sources.
-- Follow the
-  instructions [here](https://docs.androidide.com/tutorials/get-started.html) to
-  install the build tools.
+- An Android device running Android 8.0 (API 26) or newer.
+- Approximately 500 MB of free storage for the IDE and build tools.
+- Internet connection for the first build (to download Gradle, dependencies, and plugins).
 
-## Limitations
+## Project Structure
 
-- For working with projects in AndroidIDE, your project must use Android Gradle Plugin v7.2.0 or
-  newer. Projects with older AGP must be migrated to newer versions.
-- SDK Manager is already included in Android SDK and is accessible in AndroidIDE via its Terminal.
-  But, you cannot use it to install some tools (like NDK) because those tools are not built for
-  Android.
-- No official NDK support because we haven't built the NDK for Android.
+HMX IDE is organized as a multi-module Gradle project:
 
-The app is still being developed actively. It's in beta stage and may not be stable. if you have any
-issues using the app, please let us know.
+- `core/` — Core application, common utilities, resources, and indexing.
+- `editor/` — Code editor (based on Rosemoe's sora-editor) and tree-sitter support.
+- `java/`, `xml/` — Java and XML language servers and tooling.
+- `tooling/` — Gradle tooling API, model, and plugin used to build projects.
+- `utilities/` — Shared utilities (preferences, templates, XML inflater, UI designer, etc.).
+- `logging/` — Logging and log-sending components.
+- `event/` — Event bus components.
+- `annotation/` — Annotation processors for the IDE.
+- `testing/` — Unit, instrumentation, and tooling tests.
+- `composite-builds/` — Build logic and bundled build dependencies.
 
-## Contributing
+## GitHub Actions
 
-See the [contributing guide](./CONTRIBUTING.md).
+HMX IDE uses GitHub Actions for continuous integration. The workflow `.github/workflows/build.yml` builds debug and release APKs, runs unit tests, tooling API tests, and connected checks, and publishes releases and snapshots.
 
-For translations, visit the [Crowdin project page](https://crowdin.com/project/androidide).
+## Project Goals
 
-## Thanks to
+- Provide a fast, modern, and lightweight Android coding workspace.
+- Keep the build pipeline simple, transparent, and reproducible.
+- Deliver reliable Gradle-based Android app development on-device.
+- Maintain a clean, extensible architecture for contributors.
 
-- [Rosemoe](https://github.com/Rosemoe) for the
-  awesome [CodeEditor](https://github.com/Rosemoe/sora-editor)
-- [Termux](https://github.com/termux) for [Terminal Emulator](https://github.com/termux/termux-app)
-- [Bogdan Melnychuk](https://github.com/bmelnychuk)
-  for [AndroidTreeView](https://github.com/bmelnychuk/AndroidTreeView)
-- [George Fraser](https://github.com/georgewfraser) for
-  the [Java Language Server](https://github.com/georgewfraser/java-language-server)
+## Roadmap
 
-Thanks to all the developers who have contributed to this project.
-
-<p>This project is supported by:</p>
-<p>
-  <a href="https://m.do.co/c/54add371d1d7">
-    <img src="https://opensource.nyc3.cdn.digitaloceanspaces.com/attribution/assets/SVG/DO_Logo_horizontal_blue.svg" width="201px">
-  </a>
-</p>
-
-## Contact Us
-
-- [Website](https://m.androidide.com)
-- [Telegram](https://t.me/androidide_discussions)
+- [ ] Stable Kotlin language server.
+- [ ] Asset Studio (Drawable & Icon Maker).
+- [ ] String Translator.
+- [ ] Enhanced UI Designer capabilities.
+- [ ] Improved build performance and caching.
 
 ## License
 
-```
-AndroidIDE is free software: you can redistribute it and/or modify
-it under the terms of the GNU General Public License as published by
-the Free Software Foundation, either version 3 of the License, or
-(at your option) any later version.
+HMX IDE is free software: you can redistribute it and/or modify it under the terms of the GNU General Public License as published by the Free Software Foundation, either version 3 of the License, or (at your option) any later version.
 
-AndroidIDE is distributed in the hope that it will be useful,
-but WITHOUT ANY WARRANTY; without even the implied warranty of
-MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-GNU General Public License for more details.
+HMX IDE is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License for more details.
 
-You should have received a copy of the GNU General Public License
-along with AndroidIDE.  If not, see <https://www.gnu.org/licenses/>.
-```
+## Contribution
 
-Any violations to the license can be reported either by opening an issue or writing a mail to us
-directly.
+This repository is **private**. Contributions are limited to authorized maintainers. If you are a maintainer, please coordinate changes through the project's internal review process before pushing.

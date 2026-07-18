@@ -58,7 +58,7 @@ dependencyResolutionManagement {
       this.name = build
       dependencySubstitution {
         for (module in modules) {
-          substitute(module("com.itsaky.androidide.build:${module}"))
+          substitute(module("com.hmx.ide.build:${module}"))
             .using(project(":${module}"))
         }
       }
@@ -116,7 +116,7 @@ if (FDroidConfig.hasRead && FDroidConfig.isFDroidBuild) {
   }
 }
 
-rootProject.name = "AndroidIDE"
+rootProject.name = "HMX IDE"
 
 // keep this sorted alphabetically
 include(

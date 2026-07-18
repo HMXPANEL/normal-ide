@@ -24,7 +24,7 @@
  */
 package openjdk.tools.javac.file;
 
-import com.itsaky.androidide.zipfs2.JarPackageProvider;
+import com.hmx.ide.zipfs2.JarPackageProvider;
 import java.io.File;
 import java.io.IOException;
 import java.io.UncheckedIOException;

@@ -24,7 +24,7 @@
 
 package io.github.rosemoe.sora.editor.ts.spans
 
-import com.itsaky.androidide.treesitter.TSQueryCapture
+import com.hmx.ide.treesitter.TSQueryCapture
 import io.github.rosemoe.sora.lang.styling.Span
 
 /**

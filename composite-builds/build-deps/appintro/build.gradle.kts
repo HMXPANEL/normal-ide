@@ -1,7 +1,7 @@
 plugins {
     id("com.android.library")
     id("kotlin-android")
-    id("com.itsaky.androidide.build")
+    id("com.hmx.ide.build")
 }
 
 android {

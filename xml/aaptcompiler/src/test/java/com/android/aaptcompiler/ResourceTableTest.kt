@@ -7,7 +7,7 @@ import com.android.aaptcompiler.AaptResourceType.STYLEABLE
 import com.android.aaptcompiler.android.ResTableConfig
 import com.android.aaptcompiler.android.ResValue
 import com.android.aaptcompiler.android.ResValue.DataType.INT_BOOLEAN
-import com.itsaky.androidide.layoutlib.resources.ResourceVisibility
+import com.hmx.ide.layoutlib.resources.ResourceVisibility
 import com.google.common.truth.Truth
 import org.junit.Test
 

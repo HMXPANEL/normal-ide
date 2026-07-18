@@ -1,18 +1,18 @@
 <?xml version="1.0" encoding="utf-8"?><!--
-  ~  This file is part of AndroidIDE.
+  ~  This file is part of HMX IDE.
   ~
-  ~  AndroidIDE is free software: you can redistribute it and/or modify
+  ~  HMX IDE is free software: you can redistribute it and/or modify
   ~  it under the terms of the GNU General Public License as published by
   ~  the Free Software Foundation, either version 3 of the License, or
   ~  (at your option) any later version.
   ~
-  ~  AndroidIDE is distributed in the hope that it will be useful,
+  ~  HMX IDE is distributed in the hope that it will be useful,
   ~  but WITHOUT ANY WARRANTY; without even the implied warranty of
   ~  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
   ~  GNU General Public License for more details.
   ~
   ~  You should have received a copy of the GNU General Public License
-  ~   along with AndroidIDE.  If not, see <https://www.gnu.org/licenses/>.
+  ~   along with HMX IDE.  If not, see <https://www.gnu.org/licenses/>.
   -->
 
 <navigation xmlns:android="http://schemas.android.com/apk/res/android"
@@ -23,7 +23,7 @@
 
   <fragment
     android:id="@+id/viewInfoFragment"
-    android:name="com.itsaky.androidide.uidesigner.fragments.ViewInfoFragment"
+    android:name="com.hmx.ide.uidesigner.fragments.ViewInfoFragment"
     android:label="ViewInfoFragment"
     tools:layout="@layout/layout_view_info">
     <action
@@ -36,7 +36,7 @@
   </fragment>
   <fragment
     android:id="@+id/addAttrFragment"
-    android:name="com.itsaky.androidide.uidesigner.fragments.AddAttrFragment"
+    android:name="com.hmx.ide.uidesigner.fragments.AddAttrFragment"
     android:label="AddAttrFragment"
     tools:layout="@layout/layout_add_attr">
     <action
@@ -45,11 +45,11 @@
   </fragment>
   <fragment
     android:id="@+id/attrValueEditorFragment"
-    android:name="com.itsaky.androidide.uidesigner.fragments.AttrValueEditorFragment"
+    android:name="com.hmx.ide.uidesigner.fragments.AttrValueEditorFragment"
     android:label="AttrValueEditorFragment"
     tools:layout="@layout/layout_attr_value_editor">
     <argument
       android:name="attribute"
-      app:argType="com.itsaky.androidide.uidesigner.models.UiAttribute" />
+      app:argType="com.hmx.ide.uidesigner.models.UiAttribute" />
   </fragment>
 </navigation>

@@ -25,7 +25,7 @@
 
 package jdkx.lang.model;
 
-import com.itsaky.androidide.javac.config.JavacConfigProvider;
+import com.hmx.ide.javac.config.JavacConfigProvider;
 
 /**
  * Source versions of the Java programming language.

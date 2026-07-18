@@ -17,7 +17,7 @@
 
 plugins {
   id("java-library")
-  id("com.itsaky.androidide.build.propsparser")
+  id("com.hmx.ide.build.propsparser")
 }
 
 dependencies {

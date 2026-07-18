@@ -28,7 +28,7 @@ package openjdk.tools.jdeps;
 import static openjdk.tools.jdeps.Module.trace;
 import static java.util.stream.Collectors.*;
 
-import com.itsaky.androidide.javac.config.JavacConfigProvider;
+import com.hmx.ide.javac.config.JavacConfigProvider;
 
 import openjdk.tools.classfile.Dependency;
 

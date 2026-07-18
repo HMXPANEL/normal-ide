@@ -25,26 +25,26 @@ benchmark-junit4 = "1.2.4"
 [libraries]
 
 # Dependencies in composite build
-composite-appintro = { module = "com.itsaky.androidide.build:appintro" }
-composite-desugaringCore = { module = "com.itsaky.androidide.build:desugaring-core" }
-composite-fuzzysearch = { module = "com.itsaky.androidide.build:fuzzysearch" }
-composite-googleJavaFormat = { module = "com.itsaky.androidide.build:google-java-format" }
-composite-javaCompiler = { module = "com.itsaky.androidide.build:java-compiler" }
-composite-javac = { module = "com.itsaky.androidide.build:javac" }
-composite-jdkCompiler = { module = "com.itsaky.androidide.build:jdk-compiler" }
-composite-jdkJdeps = { module = "com.itsaky.androidide.build:jdk-jdeps" }
-composite-javapoet = { module = "com.itsaky.androidide.build:javapoet" }
-composite-jaxp = { module = "com.itsaky.androidide.build:jaxp" }
-composite-jdt = { module = "com.itsaky.androidide.build:jdt" }
-composite-layoutlibApi = { module = "com.itsaky.androidide.build:layoutlib-api" }
+composite-appintro = { module = "com.hmx.ide.build:appintro" }
+composite-desugaringCore = { module = "com.hmx.ide.build:desugaring-core" }
+composite-fuzzysearch = { module = "com.hmx.ide.build:fuzzysearch" }
+composite-googleJavaFormat = { module = "com.hmx.ide.build:google-java-format" }
+composite-javaCompiler = { module = "com.hmx.ide.build:java-compiler" }
+composite-javac = { module = "com.hmx.ide.build:javac" }
+composite-jdkCompiler = { module = "com.hmx.ide.build:jdk-compiler" }
+composite-jdkJdeps = { module = "com.hmx.ide.build:jdk-jdeps" }
+composite-javapoet = { module = "com.hmx.ide.build:javapoet" }
+composite-jaxp = { module = "com.hmx.ide.build:jaxp" }
+composite-jdt = { module = "com.hmx.ide.build:jdt" }
+composite-layoutlibApi = { module = "com.hmx.ide.build:layoutlib-api" }
 
 # AndroidIDE
-androidide-ts = { module = "com.itsaky.androidide.treesitter:android-tree-sitter", version.ref = "tree-sitter" }
-androidide-ts-java = { module = "com.itsaky.androidide.treesitter:tree-sitter-java", version.ref = "tree-sitter" }
-androidide-ts-json = { module = "com.itsaky.androidide.treesitter:tree-sitter-json", version.ref = "tree-sitter" }
-androidide-ts-kotlin = { module = "com.itsaky.androidide.treesitter:tree-sitter-kotlin", version.ref = "tree-sitter" }
-androidide-ts-log = { module = "com.itsaky.androidide.treesitter:tree-sitter-log", version.ref = "tree-sitter" }
-androidide-ts-xml = { module = "com.itsaky.androidide.treesitter:tree-sitter-xml", version.ref = "tree-sitter" }
+androidide-ts = { module = "com.hmx.ide.treesitter:android-tree-sitter", version.ref = "tree-sitter" }
+androidide-ts-java = { module = "com.hmx.ide.treesitter:tree-sitter-java", version.ref = "tree-sitter" }
+androidide-ts-json = { module = "com.hmx.ide.treesitter:tree-sitter-json", version.ref = "tree-sitter" }
+androidide-ts-kotlin = { module = "com.hmx.ide.treesitter:tree-sitter-kotlin", version.ref = "tree-sitter" }
+androidide-ts-log = { module = "com.hmx.ide.treesitter:tree-sitter-log", version.ref = "tree-sitter" }
+androidide-ts-xml = { module = "com.hmx.ide.treesitter:tree-sitter-xml", version.ref = "tree-sitter" }
 
 # Common
 common-editor = { module = "io.github.Rosemoe.sora-editor:editor", version.ref = "editor" }
@@ -124,7 +124,7 @@ aapt2-proto = { module = "com.android.tools.build:aapt2-proto", version = "8.3.0
 
 # use logback-core from logback-android instead
 #logging-logback-core = { module = "ch.qos.logback:logback-core", version.ref = "logback" }
-logging-logback-core = { module = "com.itsaky.androidide.build:logback-core" }
+logging-logback-core = { module = "com.hmx.ide.build:logback-core" }
 logging-logback-classic = { module = "ch.qos.logback:logback-classic", version.ref = "logback" }
 
 # XML
@@ -157,7 +157,7 @@ tests-barista = { module = "com.adevinta.android:barista", version = "4.3.0" }
 
 # Tooling
 tooling-builderModel = { module = "com.android.tools.build:builder-model", version.ref = "agp-tooling" }
-tooling-gradleApi = { module = "com.itsaky.androidide.gradle:gradle-tooling-api", version.ref = "gradle-tooling" }
+tooling-gradleApi = { module = "com.hmx.ide.gradle:gradle-tooling-api", version.ref = "gradle-tooling" }
 tooling-slf4j = { module = "org.slf4j:slf4j-api", version = "2.0.12" }
 
 # Classpaths
