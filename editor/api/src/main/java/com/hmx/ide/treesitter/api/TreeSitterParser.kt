@@ -17,7 +17,7 @@
 
 package com.hmx.ide.treesitter.api
 
-import com.hmx.ide.treesitter.TSParser
+import com.itsaky.androidide.treesitter.TSParser
 import com.hmx.ide.utils.DefaultRecyclable
 import com.hmx.ide.utils.RecyclableObjectPool
 

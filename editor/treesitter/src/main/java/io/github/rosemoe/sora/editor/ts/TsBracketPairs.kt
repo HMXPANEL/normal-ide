@@ -24,8 +24,8 @@
 
 package io.github.rosemoe.sora.editor.ts
 
-import com.hmx.ide.treesitter.TSQueryCursor
-import com.hmx.ide.treesitter.TSTree
+import com.itsaky.androidide.treesitter.TSQueryCursor
+import com.itsaky.androidide.treesitter.TSTree
 import com.hmx.ide.treesitter.api.TreeSitterQueryCapture
 import com.hmx.ide.treesitter.api.safeExecQueryCursor
 import io.github.rosemoe.sora.lang.brackets.BracketsProvider

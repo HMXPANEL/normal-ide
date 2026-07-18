@@ -17,8 +17,8 @@
 
 package com.hmx.ide.treesitter.api
 
-import com.hmx.ide.treesitter.TSQueryCapture
-import com.hmx.ide.treesitter.TSQueryMatch
+import com.itsaky.androidide.treesitter.TSQueryCapture
+import com.itsaky.androidide.treesitter.TSQueryMatch
 import com.hmx.ide.utils.DefaultRecyclable
 import com.hmx.ide.utils.RecyclableObjectPool
 

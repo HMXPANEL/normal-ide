@@ -31,7 +31,7 @@ enum class PredicateResult {
 
   /**
    * The given predicate is not handled by this [TsPredicate].
-   * The [com.hmx.ide.treesitter.TSQueryMatch] object will be passed to other [TsPredicate].
+   * The [com.itsaky.androidide.treesitter.TSQueryMatch] object will be passed to other [TsPredicate].
    */
   UNHANDLED,
 

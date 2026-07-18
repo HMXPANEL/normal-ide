@@ -28,14 +28,14 @@ import com.hmx.ide.lsp.models.TextEdit
 import com.hmx.ide.lsp.xml.XMLLanguageServer
 import com.hmx.ide.models.Range
 import com.hmx.ide.projects.FileManager
-import com.hmx.ide.treesitter.TSParser
-import com.hmx.ide.treesitter.TSQuery
-import com.hmx.ide.treesitter.TSQueryCapture
-import com.hmx.ide.treesitter.TSQueryCursor
-import com.hmx.ide.treesitter.TSQueryError
-import com.hmx.ide.treesitter.TSQueryMatch
-import com.hmx.ide.treesitter.TSTree
-import com.hmx.ide.treesitter.xml.TSLanguageXml
+import com.itsaky.androidide.treesitter.TSParser
+import com.itsaky.androidide.treesitter.TSQuery
+import com.itsaky.androidide.treesitter.TSQueryCapture
+import com.itsaky.androidide.treesitter.TSQueryCursor
+import com.itsaky.androidide.treesitter.TSQueryError
+import com.itsaky.androidide.treesitter.TSQueryMatch
+import com.itsaky.androidide.treesitter.TSTree
+import com.itsaky.androidide.treesitter.xml.TSLanguageXml
 
 /** @author Akash Yadav */
 object AdvancedEditProvider {

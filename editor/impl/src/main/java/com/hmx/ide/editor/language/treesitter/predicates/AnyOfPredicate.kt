@@ -17,9 +17,9 @@
 
 package com.hmx.ide.editor.language.treesitter.predicates
 
-import com.hmx.ide.treesitter.TSQuery
-import com.hmx.ide.treesitter.TSQueryMatch
-import com.hmx.ide.treesitter.TSQueryPredicateStep
+import com.itsaky.androidide.treesitter.TSQuery
+import com.itsaky.androidide.treesitter.TSQueryMatch
+import com.itsaky.androidide.treesitter.TSQueryPredicateStep
 import io.github.rosemoe.sora.editor.ts.predicate.PredicateResult
 import io.github.rosemoe.sora.editor.ts.predicate.TsClientPredicateStep
 import io.github.rosemoe.sora.editor.ts.predicate.TsPredicate

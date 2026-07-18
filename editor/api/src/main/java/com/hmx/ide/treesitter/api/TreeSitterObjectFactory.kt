@@ -17,24 +17,24 @@
 
 package com.hmx.ide.treesitter.api
 
-import com.hmx.ide.treesitter.TSInputEdit
-import com.hmx.ide.treesitter.TSLanguage
-import com.hmx.ide.treesitter.TSLookaheadIterator
-import com.hmx.ide.treesitter.TSNode
-import com.hmx.ide.treesitter.TSParser
-import com.hmx.ide.treesitter.TSPoint
-import com.hmx.ide.treesitter.TSQuery
-import com.hmx.ide.treesitter.TSQueryCapture
-import com.hmx.ide.treesitter.TSQueryCursor
-import com.hmx.ide.treesitter.TSQueryMatch
-import com.hmx.ide.treesitter.TSQueryPredicateStep
-import com.hmx.ide.treesitter.TSRange
-import com.hmx.ide.treesitter.TSTree
-import com.hmx.ide.treesitter.TSTreeCursor
-import com.hmx.ide.treesitter.TSTreeCursorNode
-import com.hmx.ide.treesitter.string.SynchronizedUTF16String
-import com.hmx.ide.treesitter.string.UTF16String
-import com.hmx.ide.treesitter.util.TSObjectFactory
+import com.itsaky.androidide.treesitter.TSInputEdit
+import com.itsaky.androidide.treesitter.TSLanguage
+import com.itsaky.androidide.treesitter.TSLookaheadIterator
+import com.itsaky.androidide.treesitter.TSNode
+import com.itsaky.androidide.treesitter.TSParser
+import com.itsaky.androidide.treesitter.TSPoint
+import com.itsaky.androidide.treesitter.TSQuery
+import com.itsaky.androidide.treesitter.TSQueryCapture
+import com.itsaky.androidide.treesitter.TSQueryCursor
+import com.itsaky.androidide.treesitter.TSQueryMatch
+import com.itsaky.androidide.treesitter.TSQueryPredicateStep
+import com.itsaky.androidide.treesitter.TSRange
+import com.itsaky.androidide.treesitter.TSTree
+import com.itsaky.androidide.treesitter.TSTreeCursor
+import com.itsaky.androidide.treesitter.TSTreeCursorNode
+import com.itsaky.androidide.treesitter.string.SynchronizedUTF16String
+import com.itsaky.androidide.treesitter.string.UTF16String
+import com.itsaky.androidide.treesitter.util.TSObjectFactory
 
 /**
  * [TSObjectFactory] implementation for AndroidIDE.

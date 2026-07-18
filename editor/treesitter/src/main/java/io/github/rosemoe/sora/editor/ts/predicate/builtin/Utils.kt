@@ -24,10 +24,10 @@
 
 package io.github.rosemoe.sora.editor.ts.predicate.builtin
 
-import com.hmx.ide.treesitter.TSQuery
-import com.hmx.ide.treesitter.TSQueryMatch
-import com.hmx.ide.treesitter.TSQueryPredicateStep.Type
-import com.hmx.ide.treesitter.string.UTF16String
+import com.itsaky.androidide.treesitter.TSQuery
+import com.itsaky.androidide.treesitter.TSQueryMatch
+import com.itsaky.androidide.treesitter.TSQueryPredicateStep.Type
+import com.itsaky.androidide.treesitter.string.UTF16String
 import io.github.rosemoe.sora.editor.ts.predicate.TsClientPredicateStep
 import io.github.rosemoe.sora.text.Content
 

@@ -17,11 +17,11 @@
 
 package com.hmx.ide.treesitter.api
 
-import com.hmx.ide.treesitter.TSNode
-import com.hmx.ide.treesitter.TSQuery
-import com.hmx.ide.treesitter.TSQueryCursor
-import com.hmx.ide.treesitter.TSQueryMatch
-import com.hmx.ide.treesitter.TSTree
+import com.itsaky.androidide.treesitter.TSNode
+import com.itsaky.androidide.treesitter.TSQuery
+import com.itsaky.androidide.treesitter.TSQueryCursor
+import com.itsaky.androidide.treesitter.TSQueryMatch
+import com.itsaky.androidide.treesitter.TSTree
 import org.slf4j.LoggerFactory
 
 @PublishedApi

@@ -17,7 +17,7 @@
 
 package com.hmx.ide.treesitter.api
 
-import com.hmx.ide.treesitter.TSQueryPredicateStep
+import com.itsaky.androidide.treesitter.TSQueryPredicateStep
 import com.hmx.ide.utils.DefaultRecyclable
 import com.hmx.ide.utils.RecyclableObjectPool
 

@@ -17,9 +17,9 @@
 
 package com.hmx.ide.editor.language.treesitter
 
-import com.hmx.ide.treesitter.TSLanguage
-import com.hmx.ide.treesitter.TSQuery
-import com.hmx.ide.treesitter.TSQueryError
+import com.itsaky.androidide.treesitter.TSLanguage
+import com.itsaky.androidide.treesitter.TSQuery
+import com.itsaky.androidide.treesitter.TSQueryError
 import io.github.rosemoe.sora.editor.ts.TsLanguageSpec
 import java.io.Closeable
 

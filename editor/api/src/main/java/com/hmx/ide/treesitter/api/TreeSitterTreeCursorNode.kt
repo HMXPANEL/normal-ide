@@ -17,7 +17,7 @@
 
 package com.hmx.ide.treesitter.api
 
-import com.hmx.ide.treesitter.TSTreeCursorNode
+import com.itsaky.androidide.treesitter.TSTreeCursorNode
 import com.hmx.ide.utils.DefaultRecyclable
 import com.hmx.ide.utils.RecyclableObjectPool
 

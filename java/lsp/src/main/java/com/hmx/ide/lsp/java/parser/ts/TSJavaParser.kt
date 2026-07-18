@@ -20,8 +20,8 @@ package com.hmx.ide.lsp.java.parser.ts
 import com.hmx.ide.eventbus.events.file.FileDeletionEvent
 import com.hmx.ide.eventbus.events.file.FileRenameEvent
 import com.hmx.ide.lsp.java.parser.IJavaParser
-import com.hmx.ide.treesitter.TSParser
-import com.hmx.ide.treesitter.java.TSLanguageJava
+import com.itsaky.androidide.treesitter.TSParser
+import com.itsaky.androidide.treesitter.java.TSLanguageJava
 import com.hmx.ide.utils.StopWatch
 import jdkx.tools.JavaFileObject
 import org.greenrobot.eventbus.EventBus

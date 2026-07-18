@@ -15,7 +15,7 @@
  *   along with AndroidIDE.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-package com.hmx.ide.treesitter
+package com.itsaky.androidide.treesitter
 
 /**
  * The 0-based start line number.

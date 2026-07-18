@@ -22,7 +22,7 @@ import com.hmx.ide.editor.language.treesitter.TreeSitterLanguage.Factory
 import com.hmx.ide.lsp.api.ILanguageServer
 import com.hmx.ide.lsp.api.ILanguageServerRegistry
 import com.hmx.ide.lsp.xml.XMLLanguageServer
-import com.hmx.ide.treesitter.xml.TSLanguageXml
+import com.itsaky.androidide.treesitter.xml.TSLanguageXml
 import io.github.rosemoe.sora.lang.Language.INTERRUPTION_LEVEL_STRONG
 import io.github.rosemoe.sora.util.MyCharacter
 

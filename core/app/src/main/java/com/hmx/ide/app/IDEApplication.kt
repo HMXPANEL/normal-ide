@@ -49,7 +49,7 @@ import com.hmx.ide.resources.localization.LocaleProvider
 import com.hmx.ide.stats.AndroidIDEStats
 import com.hmx.ide.stats.StatUploadWorker
 import com.hmx.ide.syntax.colorschemes.SchemeAndroidIDE
-import com.hmx.ide.treesitter.TreeSitter
+import com.itsaky.androidide.treesitter.TreeSitter
 import com.hmx.ide.ui.themes.IDETheme
 import com.hmx.ide.ui.themes.IThemeManager
 import com.hmx.ide.utils.RecyclableObjectPool

@@ -17,8 +17,8 @@
 
 package com.hmx.ide.treesitter.api
 
-import com.hmx.ide.treesitter.TSInputEdit
-import com.hmx.ide.treesitter.TSPoint
+import com.itsaky.androidide.treesitter.TSInputEdit
+import com.itsaky.androidide.treesitter.TSPoint
 import com.hmx.ide.utils.DefaultRecyclable
 import com.hmx.ide.utils.RecyclableObjectPool
 

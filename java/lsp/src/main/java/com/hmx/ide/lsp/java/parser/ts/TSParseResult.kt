@@ -17,7 +17,7 @@
 
 package com.hmx.ide.lsp.java.parser.ts
 
-import com.hmx.ide.treesitter.TSTree
+import com.itsaky.androidide.treesitter.TSTree
 import jdkx.tools.JavaFileObject
 import java.net.URI
 

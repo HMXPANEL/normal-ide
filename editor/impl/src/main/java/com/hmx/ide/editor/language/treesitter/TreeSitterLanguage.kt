@@ -26,7 +26,7 @@ import com.hmx.ide.editor.schemes.LanguageScheme
 import com.hmx.ide.editor.schemes.LanguageSpecProvider.getLanguageSpec
 import com.hmx.ide.editor.schemes.LocalCaptureSpecProvider.newLocalCaptureSpec
 import com.hmx.ide.editor.utils.isNonBlankLine
-import com.hmx.ide.treesitter.TSLanguage
+import com.itsaky.androidide.treesitter.TSLanguage
 import com.hmx.ide.utils.IntPair
 import io.github.rosemoe.sora.editor.ts.TsTheme
 import io.github.rosemoe.sora.lang.Language.INTERRUPTION_LEVEL_STRONG
