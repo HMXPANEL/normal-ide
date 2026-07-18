@@ -30,7 +30,7 @@
   <style name="Theme.AndroidIDE.Styled" parent="Theme.AndroidIDE.Base">
     <item name="switchPreferenceStyle">@style/AppTheme.SwitchPreference</item>
     <item name="shapeAppearanceLargeComponent">@style/AppTheme.ShapeOverlay.Large</item>
-    <item name="textAppearanceBodySmall">@style/TextAppearance.HMX IDE.BodySmall</item>
+    <item name="textAppearanceBodySmall">@style/TextAppearance.AndroidIDE.BodySmall</item>
     <item name="colorSuccess">@color/green_500</item>
   </style>
 
@@ -52,7 +52,7 @@
     <item name="windowSplashScreenBackground">@color/splash_bg</item>
     <item name="windowSplashScreenAnimatedIcon">@drawable/ic_launcher_animated</item>
     <item name="windowSplashScreenAnimationDuration">200</item>
-    <item name="postSplashScreenTheme">@style/Theme.HMX IDE</item>XZ
+    <item name="postSplashScreenTheme">@style/Theme.AndroidIDE</item>
   </style>
 
   <style name="AppTheme.SwitchPreference" parent="Preference.SwitchPreference.Material">
