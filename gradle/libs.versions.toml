@@ -39,12 +39,12 @@ composite-jdt = { module = "com.hmx.ide.build:jdt" }
 composite-layoutlibApi = { module = "com.hmx.ide.build:layoutlib-api" }
 
 # AndroidIDE
-androidide-ts = { module = "com.hmx.ide.treesitter:android-tree-sitter", version.ref = "tree-sitter" }
-androidide-ts-java = { module = "com.hmx.ide.treesitter:tree-sitter-java", version.ref = "tree-sitter" }
-androidide-ts-json = { module = "com.hmx.ide.treesitter:tree-sitter-json", version.ref = "tree-sitter" }
-androidide-ts-kotlin = { module = "com.hmx.ide.treesitter:tree-sitter-kotlin", version.ref = "tree-sitter" }
-androidide-ts-log = { module = "com.hmx.ide.treesitter:tree-sitter-log", version.ref = "tree-sitter" }
-androidide-ts-xml = { module = "com.hmx.ide.treesitter:tree-sitter-xml", version.ref = "tree-sitter" }
+androidide-ts = { module = "com.itsaky.androidide.treesitter:android-tree-sitter", version.ref = "tree-sitter" }
+androidide-ts-java = { module = "com.itsaky.androidide.treesitter:tree-sitter-java", version.ref = "tree-sitter" }
+androidide-ts-json = { module = "com.itsaky.androidide.treesitter:tree-sitter-json", version.ref = "tree-sitter" }
+androidide-ts-kotlin = { module = "com.itsaky.androidide.treesitter:tree-sitter-kotlin", version.ref = "tree-sitter" }
+androidide-ts-log = { module = "com.itsaky.androidide.treesitter:tree-sitter-log", version.ref = "tree-sitter" }
+androidide-ts-xml = { module = "com.itsaky.androidide.treesitter:tree-sitter-xml", version.ref = "tree-sitter" }
 
 # Common
 common-editor = { module = "io.github.Rosemoe.sora-editor:editor", version.ref = "editor" }
