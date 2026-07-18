@@ -116,7 +116,7 @@ if (FDroidConfig.hasRead && FDroidConfig.isFDroidBuild) {
   }
 }
 
-rootProject.name = "HMX IDE"
+rootProject.name = "hmx-ide"
 
 // keep this sorted alphabetically
 include(
