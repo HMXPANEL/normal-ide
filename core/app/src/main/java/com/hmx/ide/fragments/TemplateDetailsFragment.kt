@@ -28,16 +28,21 @@ import com.hmx.ide.R.string
 import com.hmx.ide.activities.MainActivity
 import com.hmx.ide.adapters.TemplateWidgetsListAdapter
 import com.hmx.ide.databinding.FragmentTemplateDetailsBinding
+import com.hmx.ide.preferences.internal.GeneralPreferences
 import com.hmx.ide.tasks.executeAsyncProvideError
 import com.hmx.ide.templates.ProjectTemplateRecipeResult
 import com.hmx.ide.templates.StringParameter
 import com.hmx.ide.templates.Template
+import com.hmx.ide.templates.base.util.getNewProjectName
 import com.hmx.ide.templates.impl.ConstraintVerifier
+import com.hmx.ide.utils.Environment
 import com.hmx.ide.utils.TemplateRecipeExecutor
+import com.hmx.ide.utils.DialogUtils
 import com.hmx.ide.utils.flashError
 import com.hmx.ide.utils.flashSuccess
 import com.hmx.ide.viewmodel.MainViewModel
 import org.slf4j.LoggerFactory
+import java.io.File
 
 /**
  * A fragment which shows a wizard-like interface for creating templates.
@@ -95,34 +100,73 @@ class TemplateDetailsFragment :
         return@setOnClickListener
       }
 
-      viewModel.creatingProject.value = true
-      executeAsyncProvideError({
-        template.recipe.execute(TemplateRecipeExecutor())
-      }) { result, err ->
+      val stringParams = template.parameters.filterIsInstance<StringParameter>()
+      val projectNameParam = stringParams.firstOrNull { it.name == string.project_app_name }
+      val saveLocationParam = stringParams.firstOrNull { it.name == string.wizard_save_location }
 
-        viewModel.creatingProject.value = false
-        if (result == null || err != null || result !is ProjectTemplateRecipeResult) {
-          err?.printStackTrace()
-          log.error("Failed to create project. result={}, err={}", result, err?.message)
-          if (err != null) {
-            flashError(err.cause?.message ?: err.message)
-          } else {
-            flashError(string.project_creation_failed)
-          }
-          return@executeAsyncProvideError
-        }
-
-        viewModel.setScreen(MainViewModel.SCREEN_MAIN)
-        flashSuccess(string.project_created_successfully)
-
-        viewModel.postTransition(viewLifecycleOwner) {
-          // open the project
-          (requireActivity() as MainActivity).openProject(result.data.projectDir)
-        }
+      val projectDir = projectNameParam?.let {
+        val base = saveLocationParam?.value ?: Environment.PROJECTS_DIR.absolutePath
+        File(base, it.value)
       }
+
+      if (projectDir != null && projectDir.exists() && projectDir.listFiles()
+          ?.isNotEmpty() == true
+      ) {
+        viewModel.creatingProject.value = false
+        showProjectExistsDialog(template, projectNameParam!!)
+        return@setOnClickListener
+      }
+
+      createProject(template)
     }
 
     binding.widgets.layoutManager = LinearLayoutManager(requireContext())
+  }
+
+  private fun createProject(template: Template<*>) {
+    viewModel.creatingProject.value = true
+    executeAsyncProvideError({
+      template.recipe.execute(TemplateRecipeExecutor())
+    }) { result, err ->
+
+      viewModel.creatingProject.value = false
+      if (result == null || err != null || result !is ProjectTemplateRecipeResult) {
+        err?.printStackTrace()
+        log.error("Failed to create project. result={}, err={}", result, err?.message)
+        if (err != null) {
+          flashError(err.cause?.message ?: err.message)
+        } else {
+          flashError(string.project_creation_failed)
+        }
+        return@executeAsyncProvideError
+      }
+
+      // Persist the created project so it shows up in Open Existing Project.
+      GeneralPreferences.addRecentProject(result.data.projectDir.absolutePath)
+
+      viewModel.setScreen(MainViewModel.SCREEN_MAIN)
+      flashSuccess(string.project_created_successfully)
+
+      viewModel.postTransition(viewLifecycleOwner) {
+        // open the project
+        (requireActivity() as MainActivity).openProject(result.data.projectDir)
+      }
+    }
+  }
+
+  private fun showProjectExistsDialog(template: Template<*>, projectNameParam: StringParameter) {
+    val baseName = projectNameParam.value
+    val suggested = getNewProjectName(Environment.PROJECTS_DIR.absolutePath, baseName)
+
+    DialogUtils.newMaterialDialogBuilder(requireContext())
+      .setTitle(string.title_project_exists)
+      .setMessage(string.msg_project_exists)
+      .setPositiveButton(string.action_rename_project) { _, _ ->
+        projectNameParam.setValue(suggested)
+        createProject(template)
+      }
+      .setNegativeButton(android.R.string.cancel, null)
+      .show()
   }
 
   private fun bindWithTemplate(template: Template<*>?) {

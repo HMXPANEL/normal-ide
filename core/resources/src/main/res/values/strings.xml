@@ -79,6 +79,9 @@
   <string name="msg_no_projects_match">No projects match your search.</string>
   <string name="msg_unsupported_project">Selected folder is not a supported project.</string>
   <string name="title_unsupported_project">Unsupported project</string>
+  <string name="title_project_exists">Project already exists</string>
+  <string name="msg_project_exists">A project with this name already exists.</string>
+  <string name="action_rename_project">Rename</string>
   <string name="title_confirm_project_close">Close project</string>
 
   <!-- Templates -->
