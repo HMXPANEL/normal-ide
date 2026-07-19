@@ -38,7 +38,7 @@
     android:src="@drawable/ic_folder"
     app:tint="?attr/colorOnSurfaceVariant"
     app:shapeAppearanceOverlay="@style/AppTheme.ShapeOverlay.TemplateImage"
-    app:backgroundOverlay="?attr/colorSurfaceVariant" />
+    app:backgroundTint="?attr/colorSurfaceVariant" />
 
   <LinearLayout
     android:layout_width="0dp"
