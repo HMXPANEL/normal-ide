@@ -59,7 +59,7 @@ class MainFragment : BaseFragment() {
       val onClick = { action: MainScreenAction, _: View ->
         when (action.id) {
           MainScreenAction.ACTION_CREATE_PROJECT -> showCreateProject()
-          MainScreenAction.ACTION_OPEN_PROJECT -> pickDirectory()
+          MainScreenAction.ACTION_OPEN_PROJECT -> showOpenProjectSheet()
           MainScreenAction.ACTION_CLONE_REPO -> cloneGitRepo()
           MainScreenAction.ACTION_RECENT_PROJECTS -> openRecentProject()
           MainScreenAction.ACTION_PREFERENCES -> gotoPreferences()
@@ -79,8 +79,8 @@ class MainFragment : BaseFragment() {
     binding = null
   }
 
-  private fun pickDirectory() {
-    pickDirectory(this::openProject)
+  private fun showOpenProjectSheet() {
+    OpenProjectSheet().show(childFragmentManager, OpenProjectSheet.TAG)
   }
 
   private fun showCreateProject() {

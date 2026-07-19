@@ -34,6 +34,8 @@ object GeneralPreferences {
   const val CONFIRM_PROJECT_OPEN = "idepref_general_confirmProjectOpen"
   const val LAST_OPENED_PROJECT = "ide_last_project"
 
+  const val RECENT_PROJECTS = "ide_recent_projects"
+
   const val NO_OPENED_PROJECT = "<NO_OPENED_PROJECT>"
 
   var uiMode: Int
@@ -86,6 +88,34 @@ object GeneralPreferences {
     set(value) {
       prefManager.putString(LAST_OPENED_PROJECT, value)
     }
+
+  /**
+   * Recently opened projects, most-recent-first. Persisted across app restarts.
+   */
+  var recentProjects: List<String>
+    get() {
+      val raw = prefManager.getString(RECENT_PROJECTS, null) ?: return emptyList()
+      return raw.split(RECENT_PROJECTS_SEPARATOR).filter { it.isNotBlank() }
+    }
+    set(value) {
+      prefManager.putString(RECENT_PROJECTS, value.joinToString(RECENT_PROJECTS_SEPARATOR))
+    }
+
+  /**
+   * Add (or move to the top of) a project path in the recent projects list.
+   */
+  fun addRecentProject(path: String) {
+    val updated = buildList {
+      add(path)
+      recentProjects.forEach { if (it != path) add(it) }
+    }.take(MAX_RECENT_PROJECTS)
+    recentProjects = updated
+    lastOpenedProject = path
+  }
+
+  private const val RECENT_PROJECTS_SEPARATOR = "|"
+
+  private const val MAX_RECENT_PROJECTS = 20
 
 
 }

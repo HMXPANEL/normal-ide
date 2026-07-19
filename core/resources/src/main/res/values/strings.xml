@@ -71,6 +71,14 @@
   <string name="msg_create_new_project">Create new project</string>
   <string name="msg_open_existing_project">Open existing project</string>
   <string name="recent_projects">Recent project</string>
+  <string name="title_open_existing_project">Open Existing Project</string>
+  <string name="action_import_project">Import Project</string>
+  <string name="hint_search_projects">Search projects…</string>
+  <string name="title_recent_projects">Recent Projects</string>
+  <string name="msg_no_recent_projects">No recent projects yet. Import a project to get started.</string>
+  <string name="msg_no_projects_match">No projects match your search.</string>
+  <string name="msg_unsupported_project">Selected folder is not a supported project.</string>
+  <string name="title_unsupported_project">Unsupported project</string>
   <string name="title_confirm_project_close">Close project</string>
 
   <!-- Templates -->
