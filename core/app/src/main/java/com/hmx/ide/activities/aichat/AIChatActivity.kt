@@ -24,7 +24,8 @@ import com.hmx.ide.app.BaseIDEActivity
 import com.hmx.ide.databinding.ActivityAiChatBinding
 import com.hmx.ide.preferences.internal.GeneralPreferences
 import com.hmx.ide.projects.IProjectManager
-import com.hmx.ide.resources.R
+import com.hmx.ide.R.id
+import com.hmx.ide.resources.R.string
 import com.hmx.ide.utils.DialogUtils
 import com.hmx.ide.utils.flashError
 import com.hmx.ide.utils.flashSuccess
