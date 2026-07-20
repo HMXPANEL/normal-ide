@@ -39,9 +39,7 @@ import com.hmx.ide.actions.ActionsRegistry
 import com.hmx.ide.actions.FillMenuParams
 import com.hmx.ide.actions.SidebarActionItem
 import com.hmx.ide.actions.internal.DefaultActionsRegistry
-import com.hmx.ide.actions.sidebar.CloseProjectSidebarAction
 import com.hmx.ide.actions.sidebar.FileTreeSidebarAction
-import com.hmx.ide.actions.sidebar.PreferencesSidebarAction
 import com.hmx.ide.fragments.sidebar.EditorSidebarFragment
 import java.lang.ref.WeakReference
 
@@ -59,10 +57,11 @@ internal object EditorSidebarActions {
     val registry = ActionsRegistry.getInstance()
     var order = -1
 
+    // File Tree remains the default content of the navigation drawer (slide-out panel).
+    // The rail with its icon buttons was removed; Settings and Close Project are now
+    // exposed via the editor toolbar's overflow menu.
     @Suppress("KotlinConstantConditions")
     registry.registerAction(FileTreeSidebarAction(context, ++order))
-    registry.registerAction(PreferencesSidebarAction(context, ++order))
-    registry.registerAction(CloseProjectSidebarAction(context, ++order))
   }
 
   @JvmStatic
@@ -70,7 +69,6 @@ internal object EditorSidebarActions {
     val binding = sidebarFragment.getBinding() ?: return
     val controller = binding.fragmentContainer.getFragment<NavHostFragment>().navController
     val context = sidebarFragment.requireContext()
-    val rail = binding.navigation
 
     val registry = ActionsRegistry.getInstance()
     val actions = registry.getActions(ActionItem.Location.EDITOR_SIDEBAR)
@@ -78,48 +76,8 @@ internal object EditorSidebarActions {
       return
     }
 
-    rail.background = (rail.background as MaterialShapeDrawable).apply {
-      shapeAppearanceModel = shapeAppearanceModel.roundedOnRight()
-    }
-
-    rail.menu.clear()
-
     val data = ActionData()
     data.put(Context::class.java, context) // needed for inflating the menu
-
-    val titleRef = WeakReference(binding.title)
-    val params = FillMenuParams(data, ActionItem.Location.EDITOR_SIDEBAR,
-      rail.menu) { actionsRegistry, action, item, actionsData ->
-
-      action as SidebarActionItem
-
-      if (action.fragmentClass == null) {
-        // this action does not show any fragment
-        // execute the action instead
-        (actionsRegistry as DefaultActionsRegistry).executeAction(action, actionsData)
-        return@FillMenuParams true
-      }
-
-      return@FillMenuParams try {
-        controller.navigate(action.id, navOptions {
-          launchSingleTop = true
-          restoreState = true
-        })
-
-        // Return true only if the destination we've navigated to matches the MenuItem
-        val result = controller.currentDestination?.matchDestination(action.id) == true
-        if (result) {
-          item.isChecked = true
-          titleRef.get()?.text = item.title
-        }
-
-        result
-      } catch (e: IllegalArgumentException) {
-        false
-      }
-    }
-
-    registry.fillMenu(params)
 
     controller.graph = controller.createGraph(startDestination = FileTreeSidebarAction.ID) {
       actions.forEach { (actionId, action) ->
@@ -144,34 +102,6 @@ internal object EditorSidebarActions {
         destination(builder)
       }
     }
-
-    val railRef = WeakReference(rail)
-    controller.addOnDestinationChangedListener(
-      object : NavController.OnDestinationChangedListener {
-        override fun onDestinationChanged(
-          controller: NavController,
-          destination: NavDestination,
-          arguments: Bundle?
-        ) {
-          val railView = railRef.get()
-          if (railView == null) {
-            controller.removeOnDestinationChangedListener(this)
-            return
-          }
-          railView.menu.forEach { item ->
-            if (destination.matchDestination(item.itemId)) {
-              item.isChecked = true
-              titleRef.get()?.text = item.title
-            }
-          }
-        }
-      })
-    // make sure the 'File tree' item is checked by default
-    rail.menu.findItem(FileTreeSidebarAction.ID.hashCode())?.also {
-      it.isChecked = true
-      binding.title.text = it.title
-    }
-
   }
 
   /**

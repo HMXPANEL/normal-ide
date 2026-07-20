@@ -82,6 +82,18 @@
   <string name="title_project_exists">Project already exists</string>
   <string name="msg_project_exists">A project with this name already exists.</string>
   <string name="action_rename_project">Rename</string>
+  <string name="title_ai_chat">AI Chat</string>
+  <string name="title_ai_chat_send">Send</string>
+  <string name="hint_ai_chat_message">Ask about this project…</string>
+  <string name="msg_ai_chat_project_required">Open a project to use AI Chat.</string>
+  <string name="title_ai_chat_config">AI Chat</string>
+  <string name="hint_ai_chat_endpoint">API endpoint (e.g. http://localhost:11434/api/chat)</string>
+  <string name="hint_ai_chat_model">Model name</string>
+  <string name="action_apply_changes">Apply file changes</string>
+  <string name="title_ai_chat_config">AI Chat settings</string>
+  <string name="msg_ai_chat_applied">Applied %1$d file change(s) to the project.</string>
+  <string name="msg_ai_chat_no_endpoint">Set an AI Chat API endpoint in the menu first.</string>
+  <string name="msg_ai_chat_error">AI request failed: %1$s</string>
   <string name="title_confirm_project_close">Close project</string>
 
   <!-- Templates -->

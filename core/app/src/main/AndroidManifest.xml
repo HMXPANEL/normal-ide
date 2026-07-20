@@ -69,6 +69,10 @@
     <activity android:name=".activities.PreferencesActivity" />
     <activity android:name=".activities.AboutActivity" />
     <activity android:name=".activities.ContributorsActivity" />
+    <activity
+      android:exported="false"
+      android:name=".activities.aichat.AIChatActivity"
+      android:theme="@style/Theme.AndroidIDE" />
 
     <provider
       android:authorities="com.hmx.ide.documents"

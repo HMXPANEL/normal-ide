@@ -43,8 +43,7 @@ constructor(
     const val ACTION_CREATE_PROJECT = 0
     const val ACTION_OPEN_PROJECT = 1
     const val ACTION_CLONE_REPO = 2
-    const val ACTION_RECENT_PROJECTS = 3
-    const val ACTION_PREFERENCES = 4
+    const val ACTION_PREFERENCES = 3
 
     /**
      * Get all main screen actions.
@@ -67,11 +66,6 @@ constructor(
           R.string.git_clone_repo,
           R.drawable.ic_git)
 
-        val recentProjects = MainScreenAction(
-          ACTION_RECENT_PROJECTS,
-          R.string.recent_projects,
-          R.drawable.ic_folder)
-
         val preferences = MainScreenAction(
           ACTION_PREFERENCES,
           R.string.msg_preferences,
@@ -81,7 +75,6 @@ constructor(
           createProject,
           openProject,
           cloneGitRepository,
-          recentProjects,
           preferences
         )
       }

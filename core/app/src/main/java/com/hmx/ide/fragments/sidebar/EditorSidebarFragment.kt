@@ -41,21 +41,12 @@ class EditorSidebarFragment : FragmentWithBinding<FragmentEditorSidebarBinding>(
 
   internal fun onApplyWindowInsets(insets: Insets) {
     _binding?.apply {
-      title.updateLayoutParams<MarginLayoutParams> {
-        updateMarginsRelative(
-          top = title.marginTop + insets.top,
-        )
-      }
       fragmentContainer.updateLayoutParams<MarginLayoutParams> {
         updateMarginsRelative(
+          top = insets.top,
           bottom = fragmentContainer.marginBottom + insets.bottom,
         )
       }
-      navigation.updatePadding(
-        top = navigation.paddingTop + insets.top,
-        bottom = navigation.paddingBottom + insets.bottom,
-        left = navigation.paddingLeft + insets.left,
-      )
     }
   }
 

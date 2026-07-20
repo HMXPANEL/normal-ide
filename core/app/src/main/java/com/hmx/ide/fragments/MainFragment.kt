@@ -16,7 +16,6 @@ import com.hmx.ide.app.BaseIDEActivity
 import com.hmx.ide.common.databinding.LayoutDialogProgressBinding
 import com.hmx.ide.databinding.FragmentMainBinding
 import com.hmx.ide.models.MainScreenAction
-import com.hmx.ide.preferences.internal.GeneralPreferences
 import com.hmx.ide.preferences.databinding.LayoutDialogTextInputBinding
 import com.hmx.ide.resources.R.string
 import com.hmx.ide.tasks.runOnUiThread
@@ -61,7 +60,6 @@ class MainFragment : BaseFragment() {
           MainScreenAction.ACTION_CREATE_PROJECT -> showCreateProject()
           MainScreenAction.ACTION_OPEN_PROJECT -> showOpenProjectSheet()
           MainScreenAction.ACTION_CLONE_REPO -> cloneGitRepo()
-          MainScreenAction.ACTION_RECENT_PROJECTS -> openRecentProject()
           MainScreenAction.ACTION_PREFERENCES -> gotoPreferences()
         }
       }
@@ -85,22 +83,6 @@ class MainFragment : BaseFragment() {
 
   private fun showCreateProject() {
     viewModel.setScreen(MainViewModel.SCREEN_TEMPLATE_LIST)
-  }
-
-  private fun openRecentProject() {
-    val opened = GeneralPreferences.lastOpenedProject
-    if (GeneralPreferences.NO_OPENED_PROJECT == opened || opened.isNullOrBlank()) {
-      flashError(string.msg_opened_project_does_not_exist)
-      return
-    }
-
-    val project = File(opened)
-    if (!project.exists()) {
-      flashError(string.msg_opened_project_does_not_exist)
-      return
-    }
-
-    openProject(project)
   }
 
   fun openProject(root: File) {

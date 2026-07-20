@@ -28,6 +28,9 @@ import com.hmx.ide.actions.editor.ExpandSelectionAction
 import com.hmx.ide.actions.editor.LongSelectAction
 import com.hmx.ide.actions.editor.PasteAction
 import com.hmx.ide.actions.editor.SelectAllAction
+import com.hmx.ide.actions.editor.AIChatAction
+import com.hmx.ide.actions.editor.CloseProjectAction
+import com.hmx.ide.actions.editor.SettingsAction
 import com.hmx.ide.actions.etc.FindActionMenu
 import com.hmx.ide.actions.etc.PreviewLayoutAction
 import com.hmx.ide.actions.etc.ReloadColorSchemesAction
@@ -68,6 +71,9 @@ class EditorActivityActions {
       registry.registerAction(FindActionMenu(context, order++))
       registry.registerAction(ProjectSyncAction(context, order++))
       registry.registerAction(ReloadColorSchemesAction(context, order++))
+      registry.registerAction(SettingsAction(context, order++))
+      registry.registerAction(AIChatAction(context, order++))
+      registry.registerAction(CloseProjectAction(context, order++))
 
       // editor text actions
       registry.registerAction(ExpandSelectionAction(context, order++))
