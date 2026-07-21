@@ -628,5 +628,10 @@
   <string name="idepref_ai_error_network">Network unavailable</string>
   <string name="idepref_ai_error_invalid_url">Invalid URL — check the endpoint</string>
   <string name="idepref_ai_error_unknown">Connection Failed: %1$s</string>
+  <string name="idepref_ai_error_forbidden">Forbidden — check your API key permissions</string>
+  <string name="idepref_ai_error_dns">DNS failure — %1$s</string>
+  <string name="idepref_ai_error_ssl">SSL error — %1$s</string>
+  <string name="idepref_ai_error_refused">Connection refused — %1$s</string>
+  <string name="idepref_ai_error_blocked">Network blocked — %1$s</string>
   <string name="idepref_ai_fetch_models_failed">Failed to fetch models</string>
 </resources>

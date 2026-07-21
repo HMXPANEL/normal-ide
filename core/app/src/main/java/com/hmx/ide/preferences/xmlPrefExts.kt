@@ -32,7 +32,9 @@ class XMLPreferencesScreen(
 ) : IPreferenceGroup() {
 
   init {
-    addPreference(XMLFormattingOptions())
+    if (children.isEmpty()) {
+      addPreference(XMLFormattingOptions())
+    }
   }
 }
 
@@ -45,21 +47,23 @@ private class XMLFormattingOptions(
 ) : IPreferenceScreen() {
 
   init {
-    addPreference(TrimFinalNewLines())
-    addPreference(InsertFinalNewLine())
-    addPreference(SplitAttributes())
-    addPreference(JoinCDataLines())
-    addPreference(JoinCommentLines())
-    addPreference(JoinContentLines())
-    addPreference(SpaceBeforeEmptyCloseTag())
-    addPreference(PreserveEmptyContent())
-    addPreference(PreserveAttributeLineBreaks())
-    addPreference(ClosingBracketNewLine())
-    addPreference(TrimTrailingWhitespace())
-    addPreference(MaxLineWidth())
-    addPreference(PreservedNewLines())
-    addPreference(SplitAttributesIndentSize())
-    addPreference(EmptyElementsBehavior())
+    if (children.isEmpty()) {
+      addPreference(TrimFinalNewLines())
+      addPreference(InsertFinalNewLine())
+      addPreference(SplitAttributes())
+      addPreference(JoinCDataLines())
+      addPreference(JoinCommentLines())
+      addPreference(JoinContentLines())
+      addPreference(SpaceBeforeEmptyCloseTag())
+      addPreference(PreserveEmptyContent())
+      addPreference(PreserveAttributeLineBreaks())
+      addPreference(ClosingBracketNewLine())
+      addPreference(TrimTrailingWhitespace())
+      addPreference(MaxLineWidth())
+      addPreference(PreservedNewLines())
+      addPreference(SplitAttributesIndentSize())
+      addPreference(EmptyElementsBehavior())
+    }
   }
 }
 

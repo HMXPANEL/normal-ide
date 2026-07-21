@@ -22,10 +22,13 @@ import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
+import org.slf4j.LoggerFactory
+import java.net.ConnectException
 import java.net.HttpURLConnection
 import java.net.SocketTimeoutException
 import java.net.URL
 import java.net.UnknownHostException
+import javax.net.ssl.SSLException
 
 class AIModelsActivity : EdgeToEdgeIDEActivity() {
 
@@ -38,16 +41,18 @@ class AIModelsActivity : EdgeToEdgeIDEActivity() {
     return _binding!!.root
   }
 
+  private val log = LoggerFactory.getLogger(AIModelsActivity::class.java)
+
   private val providers = listOf(
     AiProvider("gemini", R.string.idepref_ai_provider_gemini, R.drawable.ic_provider_gemini, "https://generativelanguage.googleapis.com"),
     AiProvider("claude", R.string.idepref_ai_provider_claude, R.drawable.ic_provider_claude, "https://api.anthropic.com"),
     AiProvider("openai", R.string.idepref_ai_provider_openai, R.drawable.ic_provider_openai, "https://api.openai.com"),
-    AiProvider("openrouter", R.string.idepref_ai_provider_openrouter, R.drawable.ic_provider_openrouter, "https://openrouter.ai/api"),
+    AiProvider("openrouter", R.string.idepref_ai_provider_openrouter, R.drawable.ic_provider_openrouter, "https://openrouter.ai/api/v1"),
     AiProvider("nvidia", R.string.idepref_ai_provider_nvidia, R.drawable.ic_provider_nvidia, "https://integrate.api.nvidia.com"),
     AiProvider("groq", R.string.idepref_ai_provider_groq, R.drawable.ic_provider_groq, "https://api.groq.com"),
     AiProvider("deepseek", R.string.idepref_ai_provider_deepseek, R.drawable.ic_provider_deepseek, "https://api.deepseek.com"),
     AiProvider("mistral", R.string.idepref_ai_provider_mistral, R.drawable.ic_provider_mistral, "https://api.mistral.ai"),
-    AiProvider("togetherai", R.string.idepref_ai_provider_togetherai, R.drawable.ic_provider_togetherai, "https://api.together.xyz"),
+    AiProvider("togetherai", R.string.idepref_ai_provider_togetherai, R.drawable.ic_provider_togetherai, "https://api.together.ai"),
     AiProvider("fireworks", R.string.idepref_ai_provider_fireworks, R.drawable.ic_provider_fireworks, "https://api.fireworks.ai"),
     AiProvider("xai", R.string.idepref_ai_provider_xai, R.drawable.ic_provider_xai, "https://api.x.ai"),
     AiProvider("ollama", R.string.idepref_ai_provider_ollama, R.drawable.ic_provider_ollama, "http://localhost:11434", needsApiKey = false, needsEndpoint = true),
@@ -86,10 +91,15 @@ class AIModelsActivity : EdgeToEdgeIDEActivity() {
     val changed = provider.id != previousProviderId
     previousProviderId = provider.id
     binding.connectionStatus.visibility = View.GONE
+
+    // Load saved settings for the selected provider
+    binding.apiKeyInput.setText(AIModelsPreferences.getApiKey(provider.id))
+    binding.baseUrlInput.setText(AIModelsPreferences.getBaseUrl(provider.id))
+    binding.endpointInput.setText(AIModelsPreferences.getEndpoint(provider.id))
+    binding.modelDropdown.setText(AIModelsPreferences.getModel(provider.id), false)
+    binding.systemPromptInput.setText(AIModelsPreferences.getSystemPrompt(provider.id))
+
     updateApiFieldsVisibility()
-    if (changed && !provider.needsBaseUrl) {
-      binding.baseUrlInput.setText(provider.defaultBaseUrl)
-    }
   }
 
   private fun setupProviderDropdown() {
@@ -103,17 +113,17 @@ class AIModelsActivity : EdgeToEdgeIDEActivity() {
   }
 
   private fun loadSavedPreferences() {
-    val savedProvider = AIModelsPreferences.provider
+    val savedProvider = AIModelsPreferences.currentProvider
     val provider = providers.find { it.id == savedProvider }
     if (provider != null) {
       previousProviderId = provider.id
       binding.providerDropdown.setText(provider.getTitle(this), false)
+      binding.apiKeyInput.setText(AIModelsPreferences.getApiKey(provider.id))
+      binding.baseUrlInput.setText(AIModelsPreferences.getBaseUrl(provider.id))
+      binding.endpointInput.setText(AIModelsPreferences.getEndpoint(provider.id))
+      binding.modelDropdown.setText(AIModelsPreferences.getModel(provider.id), false)
+      binding.systemPromptInput.setText(AIModelsPreferences.getSystemPrompt(provider.id))
     }
-    binding.apiKeyInput.setText(AIModelsPreferences.apiKey)
-    binding.baseUrlInput.setText(AIModelsPreferences.baseUrl)
-    binding.endpointInput.setText(AIModelsPreferences.endpoint)
-    binding.modelDropdown.setText(AIModelsPreferences.model, false)
-    binding.systemPromptInput.setText(AIModelsPreferences.systemPrompt)
   }
 
   private fun updateApiFieldsVisibility() {
@@ -130,22 +140,6 @@ class AIModelsActivity : EdgeToEdgeIDEActivity() {
     return providers.find { it.getTitle(this) == text }
   }
 
-  private fun resolveBaseUrl(provider: AiProvider): String {
-    return when {
-      provider.needsEndpoint && binding.endpointInput.text?.isNotEmpty() == true ->
-        binding.endpointInput.text.toString().trim()
-      provider.needsBaseUrl && binding.baseUrlInput.text?.isNotEmpty() == true ->
-        binding.baseUrlInput.text.toString().trim()
-      provider.defaultBaseUrl.isNotEmpty() -> provider.defaultBaseUrl
-      else -> ""
-    }
-  }
-
-  private sealed class ConnectionResult {
-    data class Success(val responseCode: Int) : ConnectionResult()
-    data class Failure(val reason: String) : ConnectionResult()
-  }
-
   private fun testConnection() {
     val provider = getSelectedProvider()
     if (provider == null) {
@@ -154,7 +148,8 @@ class AIModelsActivity : EdgeToEdgeIDEActivity() {
     }
 
     val apiKey = binding.apiKeyInput.text?.toString()?.trim() ?: ""
-    val baseUrl = resolveBaseUrl(provider)
+    val baseUrl = binding.baseUrlInput.text?.toString()?.trim() ?: ""
+    val endpoint = binding.endpointInput.text?.toString()?.trim() ?: ""
 
     if (provider.needsApiKey && apiKey.isEmpty()) {
       showStatus(getString(R.string.idepref_ai_enter_api_key), false)
@@ -164,7 +159,7 @@ class AIModelsActivity : EdgeToEdgeIDEActivity() {
       showStatus(getString(R.string.idepref_ai_enter_base_url), false)
       return
     }
-    if (provider.needsEndpoint && baseUrl.isEmpty()) {
+    if (provider.needsEndpoint && endpoint.isEmpty()) {
       showStatus(getString(R.string.idepref_ai_enter_endpoint), false)
       return
     }
@@ -173,14 +168,14 @@ class AIModelsActivity : EdgeToEdgeIDEActivity() {
     binding.testConnectionBtn.text = getString(R.string.please_wait)
 
     CoroutineScope(Dispatchers.IO).launch {
-      val result = performConnectionTest(provider, apiKey, baseUrl)
+      val result = performConnectionTest(provider, apiKey, baseUrl, endpoint)
       withContext(Dispatchers.Main) {
         binding.testConnectionBtn.isEnabled = true
         binding.testConnectionBtn.text = getString(R.string.idepref_ai_test_connection)
         when (result) {
           is ConnectionResult.Success -> {
             showStatus(getString(R.string.idepref_ai_connected_successfully), true)
-            fetchModels(provider, apiKey, baseUrl)
+            fetchModels(provider, apiKey, baseUrl, endpoint)
           }
           is ConnectionResult.Failure -> {
             showStatus(result.reason, false)
@@ -190,124 +185,144 @@ class AIModelsActivity : EdgeToEdgeIDEActivity() {
     }
   }
 
-  private fun performConnectionTest(provider: AiProvider, apiKey: String, baseUrl: String): ConnectionResult {
-    return try {
-      val testUrl = when (provider.id) {
-        "ollama" -> "$baseUrl/api/tags"
-        "gemini" -> "https://generativelanguage.googleapis.com/v1/models?key=$apiKey"
-        else -> "$baseUrl/v1/models"
-      }
+  private fun performConnectionTest(
+    provider: AiProvider, apiKey: String, baseUrl: String, endpoint: String
+  ): ConnectionResult {
+    val handler = providerHandler(provider.id)
+    val config = handler.testConnectionConfig(apiKey, baseUrl, endpoint)
 
-      val connection = URL(testUrl).openConnection() as HttpURLConnection
+    log.info("Testing connection for {}: {} {} headers={}",
+      provider.id, config.method, config.url, config.headers.keys)
+
+    return try {
+      val connection = URL(config.url).openConnection() as HttpURLConnection
       connection.connectTimeout = 8000
       connection.readTimeout = 8000
-      connection.requestMethod = "GET"
+      connection.requestMethod = config.method
       connection.setRequestProperty("Content-Type", "application/json")
-      if (apiKey.isNotEmpty()) {
-        connection.setRequestProperty("Authorization", "Bearer $apiKey")
+      connection.setRequestProperty("User-Agent", "HMX-IDE/1.0")
+      for ((name, value) in config.headers) {
+        if (value.isNotEmpty()) {
+          connection.setRequestProperty(name, value)
+        }
       }
       connection.connect()
 
       val code = connection.responseCode
+      log.info("Connection test response for {}: HTTP {}", provider.id, code)
+
       when (code) {
         in 200..299 -> ConnectionResult.Success(code)
-        401, 403 -> ConnectionResult.Failure(getString(R.string.idepref_ai_error_unauthorized))
+        401 -> ConnectionResult.Failure(getString(R.string.idepref_ai_error_unauthorized))
+        403 -> ConnectionResult.Failure(getString(R.string.idepref_ai_error_forbidden))
         404 -> ConnectionResult.Failure(getString(R.string.idepref_ai_error_invalid_url))
-        429 -> ConnectionResult.Failure(getString(R.string.idepref_ai_error_unknown, "Rate limited (429)"))
-        in 400..499 -> ConnectionResult.Failure(getString(R.string.idepref_ai_error_invalid_api_key))
-        in 500..599 -> ConnectionResult.Failure(getString(R.string.idepref_ai_error_unknown, "Server error ($code)"))
-        else -> ConnectionResult.Failure(getString(R.string.idepref_ai_error_unknown, "HTTP $code"))
+        429 -> ConnectionResult.Failure(getString(R.string.idepref_ai_error_unknown,
+          "Rate limited (429)"))
+        in 400..499 -> ConnectionResult.Failure(
+          getString(R.string.idepref_ai_error_unknown, "HTTP $code"))
+        in 500..599 -> ConnectionResult.Failure(
+          getString(R.string.idepref_ai_error_unknown, "Server error ($code)"))
+        else -> ConnectionResult.Failure(
+          getString(R.string.idepref_ai_error_unknown, "HTTP $code"))
       }
-    } catch (e: SocketTimeoutException) {
-      ConnectionResult.Failure(getString(R.string.idepref_ai_error_timeout))
     } catch (e: UnknownHostException) {
-      ConnectionResult.Failure(getString(R.string.idepref_ai_error_network))
+      log.error("DNS resolution failed for {}: {}", provider.id, e.message)
+      ConnectionResult.Failure(getString(R.string.idepref_ai_error_dns, e.localizedMessage ?: ""))
+    } catch (e: SocketTimeoutException) {
+      log.error("Connection timed out for {}: {}", provider.id, e.message)
+      ConnectionResult.Failure(getString(R.string.idepref_ai_error_timeout))
+    } catch (e: SSLException) {
+      log.error("SSL error for {}: {}", provider.id, e.message)
+      ConnectionResult.Failure(getString(R.string.idepref_ai_error_ssl, e.localizedMessage ?: ""))
+    } catch (e: ConnectException) {
+      log.error("Connection refused for {}: {}", provider.id, e.message)
+      ConnectionResult.Failure(getString(R.string.idepref_ai_error_refused, e.localizedMessage ?: ""))
     } catch (e: IllegalArgumentException) {
+      log.error("Invalid URL for {}: {}", provider.id, e.message)
       ConnectionResult.Failure(getString(R.string.idepref_ai_error_invalid_url))
+    } catch (e: SecurityException) {
+      log.error("Security exception for {}: {}", provider.id, e.message)
+      ConnectionResult.Failure(getString(R.string.idepref_ai_error_blocked, e.localizedMessage ?: ""))
     } catch (e: Exception) {
-      ConnectionResult.Failure(getString(R.string.idepref_ai_error_unknown, e.localizedMessage ?: e.javaClass.simpleName))
+      log.error("Connection test failed for {}: {}: {}",
+        provider.id, e.javaClass.simpleName, e.localizedMessage)
+      ConnectionResult.Failure(
+        getString(R.string.idepref_ai_error_unknown,
+          "${e.javaClass.simpleName}: ${e.localizedMessage}"))
     }
   }
 
-  private fun fetchModels(provider: AiProvider, apiKey: String, baseUrl: String) {
+  private fun fetchModels(
+    provider: AiProvider, apiKey: String, baseUrl: String, endpoint: String
+  ) {
     binding.modelDropdown.setText("")
     val loadingMsg = getString(R.string.idepref_ai_fetching_models)
-    binding.modelDropdown.setAdapter(ArrayAdapter(this, android.R.layout.simple_dropdown_item_1line, listOf(loadingMsg)))
+    binding.modelDropdown.setAdapter(ArrayAdapter(this,
+      android.R.layout.simple_dropdown_item_1line, listOf(loadingMsg)))
     binding.modelDropdown.dismissDropDown()
 
     CoroutineScope(Dispatchers.IO).launch {
       val models = try {
-        fetchModelsFromProvider(provider, apiKey, baseUrl)
-      } catch (_: Exception) {
+        fetchModelsFromProvider(provider, apiKey, baseUrl, endpoint)
+      } catch (e: Exception) {
+        log.error("Model fetch failed for {}: {}: {}",
+          provider.id, e.javaClass.simpleName, e.localizedMessage)
         emptyList()
       }
       withContext(Dispatchers.Main) {
-        val fallback = fallbackModels(provider)
+        val handler = providerHandler(provider.id)
+        val fallback = handler.fallbackModels()
         val allModels = if (models.isNotEmpty()) models else fallback
         if (allModels.isNotEmpty()) {
-          binding.modelDropdown.setAdapter(ArrayAdapter(this@AIModelsActivity, android.R.layout.simple_dropdown_item_1line, allModels))
-          binding.modelDropdown.setText(AIModelsPreferences.model.takeIf { it in allModels } ?: allModels.first(), false)
+          binding.modelDropdown.setAdapter(ArrayAdapter(this@AIModelsActivity,
+            android.R.layout.simple_dropdown_item_1line, allModels))
+          val savedModel = AIModelsPreferences.getModel(provider.id)
+          binding.modelDropdown.setText(
+            savedModel.takeIf { it in allModels } ?: allModels.first(), false)
         } else {
-          binding.modelDropdown.setAdapter(ArrayAdapter(this@AIModelsActivity, android.R.layout.simple_dropdown_item_1line, listOf(getString(R.string.idepref_ai_no_models))))
+          binding.modelDropdown.setAdapter(ArrayAdapter(this@AIModelsActivity,
+            android.R.layout.simple_dropdown_item_1line,
+            listOf(getString(R.string.idepref_ai_no_models))))
           showStatus(getString(R.string.idepref_ai_fetch_models_failed), false)
         }
       }
     }
   }
 
-  private fun fetchModelsFromProvider(provider: AiProvider, apiKey: String, baseUrl: String): List<String> {
-    val modelsUrl = when (provider.id) {
-      "ollama" -> "$baseUrl/api/tags"
-      "gemini" -> "https://generativelanguage.googleapis.com/v1/models?key=$apiKey"
-      "opencode" -> "$baseUrl/models"
-      else -> "$baseUrl/v1/models"
-    }
+  private fun fetchModelsFromProvider(
+    provider: AiProvider, apiKey: String, baseUrl: String, endpoint: String
+  ): List<String> {
+    val handler = providerHandler(provider.id)
+    val config = handler.fetchModelsConfig(apiKey, baseUrl, endpoint)
 
-    val connection = URL(modelsUrl).openConnection() as HttpURLConnection
+    log.info("Fetching models for {}: {} {} headers={}",
+      provider.id, config.method, config.url, config.headers.keys)
+
+    val connection = URL(config.url).openConnection() as HttpURLConnection
     connection.connectTimeout = 10000
     connection.readTimeout = 10000
-    connection.requestMethod = "GET"
-    if (apiKey.isNotEmpty()) {
-      connection.setRequestProperty("Authorization", "Bearer $apiKey")
-    }
+    connection.requestMethod = config.method
     connection.setRequestProperty("Content-Type", "application/json")
+    connection.setRequestProperty("User-Agent", "HMX-IDE/1.0")
+    for ((name, value) in config.headers) {
+      if (value.isNotEmpty()) {
+        connection.setRequestProperty(name, value)
+      }
+    }
 
-    if (connection.responseCode !in 200..299) return emptyList()
+    val code = connection.responseCode
+    if (code !in 200..299) {
+      log.warn("Model fetch for {} returned HTTP {}", provider.id, code)
+      return emptyList()
+    }
 
     val response = connection.inputStream.bufferedReader().readText()
-
-    return when (provider.id) {
-      "ollama" -> parseOllamaModels(response)
-      else -> parseOpenAiModels(response)
-    }
+    return handler.parseModels(response)
   }
 
-  private fun parseOllamaModels(response: String): List<String> {
-    val models = mutableListOf<String>()
-    val regex = "\"name\"\\s*:\\s*\"([^\"]+)\"".toRegex()
-    regex.findAll(response).forEach { models.add(it.groupValues[1]) }
-    return models
-  }
-
-  private fun parseOpenAiModels(response: String): List<String> {
-    val models = mutableListOf<String>()
-    val regex = "\"id\"\\s*:\\s*\"([^\"]+)\"".toRegex()
-    regex.findAll(response).forEach { models.add(it.groupValues[1]) }
-    return models
-  }
-
-  private fun fallbackModels(provider: AiProvider): List<String> {
-    return when (provider.id) {
-      "gemini" -> listOf("gemini-2.0-flash", "gemini-2.0-flash-lite", "gemini-1.5-pro", "gemini-1.5-flash")
-      "claude" -> listOf("claude-sonnet-4-20250514", "claude-3-5-sonnet-latest", "claude-3-5-haiku-latest", "claude-3-opus-latest")
-      "openai" -> listOf("gpt-4o", "gpt-4o-mini", "gpt-4.1", "gpt-4.1-mini", "gpt-4.1-nano", "o3", "o4-mini")
-      "nvidia" -> listOf("meta/llama-3.1-405b-instruct", "mistralai/mistral-large-2-instruct")
-      "groq" -> listOf("llama-3.3-70b-versatile", "llama-3.1-8b-instant", "mixtral-8x7b-32768", "gemma2-9b-it")
-      "deepseek" -> listOf("deepseek-chat", "deepseek-reasoner")
-      "mistral" -> listOf("mistral-large-latest", "mistral-medium-latest", "mistral-small-latest", "codestral-latest")
-      "xai" -> listOf("grok-2-latest", "grok-beta")
-      else -> emptyList()
-    }
+  private sealed class ConnectionResult {
+    data class Success(val responseCode: Int) : ConnectionResult()
+    data class Failure(val reason: String) : ConnectionResult()
   }
 
   private fun showStatus(message: String, isSuccess: Boolean) {
@@ -350,13 +365,15 @@ class AIModelsActivity : EdgeToEdgeIDEActivity() {
       return
     }
 
-    AIModelsPreferences.provider = provider.id
-    AIModelsPreferences.apiKey = apiKey
-    AIModelsPreferences.baseUrl = baseUrl
-    AIModelsPreferences.endpoint = endpoint
-    AIModelsPreferences.model = model
-    AIModelsPreferences.systemPrompt = systemPrompt
+    // Save per-provider — no global keys, each provider is independent
+    AIModelsPreferences.currentProvider = provider.id
+    AIModelsPreferences.setApiKey(provider.id, apiKey)
+    AIModelsPreferences.setBaseUrl(provider.id, baseUrl)
+    AIModelsPreferences.setEndpoint(provider.id, endpoint)
+    AIModelsPreferences.setModel(provider.id, model)
+    AIModelsPreferences.setSystemPrompt(provider.id, systemPrompt)
 
+    log.info("Saved preferences for provider {}", provider.id)
     Snackbar.make(binding.root, R.string.idepref_ai_saved, Snackbar.LENGTH_SHORT).show()
   }
 

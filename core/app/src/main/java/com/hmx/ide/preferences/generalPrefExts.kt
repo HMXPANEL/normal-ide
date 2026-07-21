@@ -40,8 +40,10 @@ class GeneralPreferencesScreen(
 ) : IPreferenceScreen() {
 
   init {
-    addPreference(InterfaceConfig())
-    addPreference(ProjectConfig())
+    if (children.isEmpty()) {
+      addPreference(InterfaceConfig())
+      addPreference(ProjectConfig())
+    }
   }
 }
 
@@ -53,9 +55,11 @@ class InterfaceConfig(
 ) : IPreferenceGroup() {
 
   init {
-    addPreference(UiMode())
-    addPreference(ThemeSelector())
-    addPreference(LocaleSelector())
+    if (children.isEmpty()) {
+      addPreference(UiMode())
+      addPreference(ThemeSelector())
+      addPreference(LocaleSelector())
+    }
   }
 }
 
@@ -67,8 +71,10 @@ class ProjectConfig(
 ) : IPreferenceGroup() {
 
   init {
-    addPreference(OpenLastProject())
-    addPreference(ConfirmProjectOpen())
+    if (children.isEmpty()) {
+      addPreference(OpenLastProject())
+      addPreference(ConfirmProjectOpen())
+    }
   }
 }
 

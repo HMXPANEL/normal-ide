@@ -36,7 +36,9 @@ class BuildAndRunPreferences(
 ) : IPreferenceScreen() {
 
   init {
-    addPreference(GradleJDKVersionPreference())
+    if (children.isEmpty()) {
+      addPreference(GradleJDKVersionPreference())
+    }
   }
 }
 

@@ -31,8 +31,10 @@ internal class JavaCodeConfigurations(
 ) : IPreferenceGroup() {
 
   init {
-    addPreference(GoogleCodeStyle())
-    addPreference(JavaDiagnosticsEnabled())
+    if (children.isEmpty()) {
+      addPreference(GoogleCodeStyle())
+      addPreference(JavaDiagnosticsEnabled())
+    }
   }
 }
 

@@ -34,10 +34,12 @@ class ConfigurationPreferences(
 ) : IPreferenceGroup() {
 
   init {
-    addPreference(GeneralPreferencesScreen())
-    addPreference(EditorPreferencesScreen())
-    addPreference(aiModelsPreference)
-    addPreference(BuildAndRunPreferences())
+    if (children.isEmpty()) {
+      addPreference(GeneralPreferencesScreen())
+      addPreference(EditorPreferencesScreen())
+      addPreference(aiModelsPreference)
+      addPreference(BuildAndRunPreferences())
+    }
   }
 }
 
@@ -49,7 +51,9 @@ class DeveloperOptionsPreferences(
 ) : IPreferenceGroup() {
 
   init {
-    addPreference(DeveloperOptionsScreen())
+    if (children.isEmpty()) {
+      addPreference(DeveloperOptionsScreen())
+    }
   }
 }
 
@@ -61,7 +65,9 @@ class AboutPreferences(
 ) : IPreferenceGroup() {
 
   init {
-    addPreference(changelog)
-    addPreference(about)
+    if (children.isEmpty()) {
+      addPreference(changelog)
+      addPreference(about)
+    }
   }
 }

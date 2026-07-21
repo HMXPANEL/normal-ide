@@ -58,9 +58,11 @@ class EditorPreferencesScreen(
 ) : IPreferenceScreen() {
 
   init {
-    addPreference(CommonConfigurations())
-    addPreference(JavaCodeConfigurations())
-    addPreference(XMLPreferencesScreen())
+    if (children.isEmpty()) {
+      addPreference(CommonConfigurations())
+      addPreference(JavaCodeConfigurations())
+      addPreference(XMLPreferencesScreen())
+    }
   }
 }
 
@@ -72,23 +74,25 @@ private class CommonConfigurations(
 ) : IPreferenceGroup() {
 
   init {
-    addPreference(TextSize())
-    addPreference(TabSize())
-    addPreference(ColorSchemePreference())
-    addPreference(NonPrintablePaintingFlags())
-    addPreference(FontLigatures())
-    addPreference(UseCustomFont())
-    addPreference(UseSoftTab())
-    addPreference(WordWrap())
-    addPreference(UseMagnifier())
-    addPreference(UseICU())
-    addPreference(AutoSave())
-    addPreference(VisibiblePasswordFlag())
-    addPreference(DeleteEmptyLines())
-    addPreference(DeleteTabs())
-    addPreference(StickyScrollEnabled())
-    addPreference(PinLineNumbersEnabled())
-    addPreference(CompletionsMatchLower())
+    if (children.isEmpty()) {
+      addPreference(TextSize())
+      addPreference(TabSize())
+      addPreference(ColorSchemePreference())
+      addPreference(NonPrintablePaintingFlags())
+      addPreference(FontLigatures())
+      addPreference(UseCustomFont())
+      addPreference(UseSoftTab())
+      addPreference(WordWrap())
+      addPreference(UseMagnifier())
+      addPreference(UseICU())
+      addPreference(AutoSave())
+      addPreference(VisibiblePasswordFlag())
+      addPreference(DeleteEmptyLines())
+      addPreference(DeleteTabs())
+      addPreference(StickyScrollEnabled())
+      addPreference(PinLineNumbersEnabled())
+      addPreference(CompletionsMatchLower())
+    }
   }
 }
 

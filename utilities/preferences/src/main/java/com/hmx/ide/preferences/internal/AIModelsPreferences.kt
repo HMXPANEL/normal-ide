@@ -2,46 +2,37 @@ package com.hmx.ide.preferences.internal
 
 object AIModelsPreferences {
 
-  const val PROVIDER = "idepref_ai_provider"
-  const val API_KEY = "idepref_ai_api_key"
-  const val BASE_URL = "idepref_ai_base_url"
-  const val ENDPOINT = "idepref_ai_endpoint"
-  const val MODEL = "idepref_ai_model"
-  const val SYSTEM_PROMPT = "idepref_ai_system_prompt"
+  private const val CURRENT_PROVIDER = "ai_prefs_current_provider"
 
-  var provider: String
-    get() = prefManager.getString(PROVIDER, "ollama")
-    set(value) {
-      prefManager.putString(PROVIDER, value)
-    }
+  fun key(providerId: String, suffix: String) = "ai_prefs_${providerId}_$suffix"
 
-  var apiKey: String
-    get() = prefManager.getString(API_KEY, "")
-    set(value) {
-      prefManager.putString(API_KEY, value)
-    }
+  var currentProvider: String
+    get() = prefManager.getString(CURRENT_PROVIDER, "ollama")
+    set(value) { prefManager.putString(CURRENT_PROVIDER, value) }
 
-  var baseUrl: String
-    get() = prefManager.getString(BASE_URL, "")
-    set(value) {
-      prefManager.putString(BASE_URL, value)
-    }
+  fun getApiKey(providerId: String): String =
+    prefManager.getString(key(providerId, "api_key"), "")
+  fun setApiKey(providerId: String, value: String) =
+    prefManager.putString(key(providerId, "api_key"), value)
 
-  var endpoint: String
-    get() = prefManager.getString(ENDPOINT, "")
-    set(value) {
-      prefManager.putString(ENDPOINT, value)
-    }
+  fun getBaseUrl(providerId: String): String =
+    prefManager.getString(key(providerId, "base_url"), "")
+  fun setBaseUrl(providerId: String, value: String) =
+    prefManager.putString(key(providerId, "base_url"), value)
 
-  var model: String
-    get() = prefManager.getString(MODEL, "")
-    set(value) {
-      prefManager.putString(MODEL, value)
-    }
+  fun getEndpoint(providerId: String): String =
+    prefManager.getString(key(providerId, "endpoint"), "")
+  fun setEndpoint(providerId: String, value: String) =
+    prefManager.putString(key(providerId, "endpoint"), value)
 
-  var systemPrompt: String
-    get() = prefManager.getString(SYSTEM_PROMPT, "You are a helpful AI coding assistant.")
-    set(value) {
-      prefManager.putString(SYSTEM_PROMPT, value)
-    }
+  fun getModel(providerId: String): String =
+    prefManager.getString(key(providerId, "model"), "")
+  fun setModel(providerId: String, value: String) =
+    prefManager.putString(key(providerId, "model"), value)
+
+  fun getSystemPrompt(providerId: String): String =
+    prefManager.getString(key(providerId, "system_prompt"),
+      "You are a helpful AI coding assistant.")
+  fun setSystemPrompt(providerId: String, value: String) =
+    prefManager.putString(key(providerId, "system_prompt"), value)
 }
