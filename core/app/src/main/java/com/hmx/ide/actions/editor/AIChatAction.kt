@@ -19,7 +19,6 @@ package com.hmx.ide.actions.editor
 
 import android.content.Context
 import android.content.Intent
-import androidx.core.content.ContextCompat
 import com.hmx.ide.R
 import com.hmx.ide.actions.ActionData
 import com.hmx.ide.actions.EditorActivityAction
@@ -27,13 +26,12 @@ import com.hmx.ide.activities.aichat.AIChatActivity
 
 /**
  * Opens the project-aware AI Chat in a full-screen activity.
- * Only available when a project is opened.
+ * Only available in the overflow menu when a project is opened.
  */
 class AIChatAction(context: Context, override val order: Int) : EditorActivityAction() {
 
   init {
     label = context.getString(R.string.title_ai_chat)
-    icon = ContextCompat.getDrawable(context, R.drawable.ic_ai_chat)
   }
 
   override val id: String = "ide.editor.aiChat"

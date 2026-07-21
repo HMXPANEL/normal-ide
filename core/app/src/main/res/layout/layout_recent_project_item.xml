@@ -47,15 +47,37 @@
     android:layout_marginStart="12dp"
     android:orientation="vertical">
 
-    <TextView
-      android:id="@+id/projectName"
+    <LinearLayout
       android:layout_width="wrap_content"
       android:layout_height="wrap_content"
-      android:singleLine="true"
-      android:ellipsize="end"
-      android:textAppearance="@style/TextAppearance.Material3.BodyLarge"
-      android:textColor="?attr/colorOnBackground"
-      tools:text="MyProject" />
+      android:orientation="horizontal"
+      android:gravity="center_vertical">
+
+      <TextView
+        android:id="@+id/projectName"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:singleLine="true"
+        android:ellipsize="end"
+        android:textAppearance="@style/TextAppearance.Material3.BodyLarge"
+        android:textColor="?attr/colorOnBackground"
+        tools:text="MyProject" />
+
+      <TextView
+        android:id="@+id/recentBadge"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="8dp"
+        android:paddingHorizontal="6dp"
+        android:paddingVertical="1dp"
+        android:text="@string/badge_recent"
+        android:textSize="11sp"
+        android:textColor="?attr/colorOnSecondaryContainer"
+        android:background="@drawable/bg_recent_badge"
+        android:visibility="gone"
+        tools:visibility="visible" />
+
+    </LinearLayout>
 
     <TextView
       android:id="@+id/projectPath"

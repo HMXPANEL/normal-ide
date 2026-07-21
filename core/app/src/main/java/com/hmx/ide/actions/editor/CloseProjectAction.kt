@@ -18,20 +18,17 @@
 package com.hmx.ide.actions.editor
 
 import android.content.Context
-import androidx.core.content.ContextCompat
 import com.hmx.ide.R
 import com.hmx.ide.actions.ActionData
 import com.hmx.ide.actions.EditorActivityAction
 
 /**
- * Closes the currently opened project. Shown in the editor's overflow menu
- * after the sidebar navigation rail was removed.
+ * Closes the currently opened project. Shown in the editor's overflow menu.
  */
 class CloseProjectAction(context: Context, override val order: Int) : EditorActivityAction() {
 
   init {
     label = context.getString(R.string.title_close_project)
-    icon = ContextCompat.getDrawable(context, R.drawable.ic_folder_close)
   }
 
   override val id: String = "ide.editor.closeProject"

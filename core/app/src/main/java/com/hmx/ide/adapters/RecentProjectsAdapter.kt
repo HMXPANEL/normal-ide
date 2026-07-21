@@ -24,17 +24,17 @@ import com.hmx.ide.databinding.LayoutRecentProjectItemBinding
 import java.io.File
 
 /**
- * Adapter for the list of recent projects shown in the Open Existing Project sheet.
+ * Adapter for the list of projects shown in the Open Existing Project sheet.
  */
 class RecentProjectsAdapter(
   private val onClick: (File) -> Unit
 ) : RecyclerView.Adapter<RecentProjectsAdapter.VH>() {
 
-  private val items = mutableListOf<String>()
+  private val items = mutableListOf<Pair<String, Boolean>>()
 
   class VH(val binding: LayoutRecentProjectItemBinding) : RecyclerView.ViewHolder(binding.root)
 
-  fun submit(list: List<String>) {
+  fun submit(list: List<Pair<String, Boolean>>) {
     items.clear()
     items.addAll(list)
     notifyDataSetChanged()
@@ -46,10 +46,11 @@ class RecentProjectsAdapter(
   override fun getItemCount() = items.size
 
   override fun onBindViewHolder(holder: VH, position: Int) {
-    val path = items[position]
+    val (path, isRecent) = items[position]
     val file = File(path)
     holder.binding.projectName.text = file.name.ifBlank { path }
     holder.binding.projectPath.text = path
+    holder.binding.recentBadge.visibility = if (isRecent) android.view.View.VISIBLE else android.view.View.GONE
     holder.binding.root.setOnClickListener { onClick(file) }
   }
 }

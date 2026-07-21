@@ -19,7 +19,6 @@ package com.hmx.ide.fragments
 
 import android.content.Intent
 import android.os.Bundle
-import android.os.Environment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -33,6 +32,7 @@ import com.hmx.ide.databinding.LayoutOpenProjectSheetBinding
 import com.hmx.ide.preferences.internal.GeneralPreferences
 import com.hmx.ide.resources.R.string
 import com.hmx.ide.utils.DialogUtils
+import com.hmx.ide.utils.Environment
 import com.hmx.ide.utils.ProjectValidator
 import com.hmx.ide.utils.flashError
 import com.hmx.ide.adapters.RecentProjectsAdapter
@@ -85,7 +85,7 @@ class OpenProjectSheet : BottomSheetDialogFragment() {
           flashError(getString(string.msg_select_from_primary_storage))
           return@registerForActivityResult
         }
-        File(Environment.getExternalStorageDirectory(), split[1])
+        File(android.os.Environment.getExternalStorageDirectory(), split[1])
       }
 
       if (!dir.exists() || !dir.isDirectory) {
@@ -130,15 +130,30 @@ class OpenProjectSheet : BottomSheetDialogFragment() {
   }
 
   private fun refreshList(query: String) {
-    val all = GeneralPreferences.recentProjects
+    val recent = GeneralPreferences.recentProjects
       .filter { it.isNotBlank() }
       .filter { File(it).exists() }
+      .toSet()
+
+    val scanned = scanProjectsDir()
       .filter { matches(it, query) }
-    adapter.submit(all)
-    binding!!.emptyView.visibility = if (all.isEmpty()) View.VISIBLE else View.GONE
+      .map { it to (it in recent) }
+
+    adapter.submit(scanned)
+    binding!!.emptyView.visibility = if (scanned.isEmpty()) View.VISIBLE else View.GONE
     binding!!.emptyView.setText(
       if (query.isBlank()) string.msg_no_recent_projects else string.msg_no_projects_match
     )
+  }
+
+  private fun scanProjectsDir(): List<String> {
+    val dir = Environment.PROJECTS_DIR
+    if (!dir.isDirectory) return emptyList()
+    return dir.listFiles()
+      ?.filter { it.isDirectory && ProjectValidator.isSupportedProject(it) }
+      ?.map { it.absolutePath }
+      ?.sortedBy { it.lowercase() }
+      .orEmpty()
   }
 
   private fun matches(path: String, query: String): Boolean {
