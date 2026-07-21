@@ -6,14 +6,10 @@
     <path
         android:fillColor="#6C5CE7"
         android:pathData="M4,12h6l2,3l2,-3l2,3l2,-3h4" />
-    <circle
+    <path
         android:fillColor="#A29BFE"
-        android:cx="4"
-        android:cy="12"
-        android:r="2" />
-    <circle
+        android:pathData="M4,10A2,2 0 1,1 4,14A2,2 0 1,1 4,10z" />
+    <path
         android:fillColor="#A29BFE"
-        android:cx="22"
-        android:cy="12"
-        android:r="2" />
+        android:pathData="M22,10A2,2 0 1,1 22,14A2,2 0 1,1 22,10z" />
 </vector>
