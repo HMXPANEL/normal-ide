@@ -85,7 +85,7 @@ class AIModelsActivity : EdgeToEdgeIDEActivity() {
   private fun onProviderChanged(provider: AiProvider) {
     val changed = provider.id != previousProviderId
     previousProviderId = provider.id
-    connectionStatus.visibility = View.GONE
+    binding.connectionStatus.visibility = View.GONE
     updateApiFieldsVisibility()
     if (changed && !provider.needsBaseUrl) {
       binding.baseUrlInput.setText(provider.defaultBaseUrl)
@@ -99,7 +99,7 @@ class AIModelsActivity : EdgeToEdgeIDEActivity() {
   }
 
   private fun setupModelDropdown() {
-    binding.modelDropdown.setAdapter(ArrayAdapter(this, android.R.layout.simple_dropdown_item_1line, emptyList()))
+    binding.modelDropdown.setAdapter(ArrayAdapter(this, android.R.layout.simple_dropdown_item_1line, emptyList<String>()))
   }
 
   private fun loadSavedPreferences() {
