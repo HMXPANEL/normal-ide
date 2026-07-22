@@ -26,13 +26,9 @@ import com.hmx.ide.tooling.api.IToolingApiServer
 import com.hmx.ide.tooling.api.messages.GradleDistributionParams
 import com.hmx.ide.tooling.api.messages.InitializeProjectParams
 import com.hmx.ide.tooling.api.messages.LogMessageParams
-import com.hmx.ide.tooling.api.messages.result.BuildInfo
-import com.hmx.ide.tooling.api.messages.result.BuildResult
-import com.hmx.ide.tooling.api.messages.result.GradleWrapperCheckResult
 import com.hmx.ide.tooling.api.messages.toLogLine
 import com.hmx.ide.tooling.api.util.ToolingApiLauncher
 import com.hmx.ide.tooling.api.util.ToolingProps
-import com.hmx.ide.tooling.events.ProgressEvent
 import com.hmx.ide.utils.FileProvider
 import com.hmx.ide.utils.ILogger
 import org.slf4j.Logger
@@ -150,7 +146,6 @@ object ToolingApiTestLauncher {
       // perform the action
       ToolingApiTestScope(server, project, result).action()
     } finally {
-      server.cancelCurrentBuild().get()
       server.shutdown().get()
     }
   }
@@ -204,11 +199,7 @@ object ToolingApiTestLauncher {
     private val log: Logger = LoggerFactory.getLogger(MultiVersionTestClient::class.java),
     private val extraArgs: List<String> = emptyList(),
     private var excludeUnresolvedDependency: Boolean = false,
-    var outputValidator: (String) -> Boolean = { true },
   ) : IToolingApiClient {
-
-    var isOutputValid = false
-      private set
 
     val gradleDistParams: GradleDistributionParams
       get() = GradleDistributionParams.forVersion(this.gradleVersion)
@@ -243,50 +234,7 @@ object ToolingApiTestLauncher {
       }
     }
 
-    override fun logOutput(line: String) {
-      val trimmed = line.trim()
-      val curr = this.isOutputValid;
-      this.isOutputValid = this.isOutputValid || outputValidator(trimmed)
 
-      if (!curr && this.isOutputValid) {
-        log.debug("Output validation succeeded")
-      }
-
-      log.debug(trimmed)
-    }
-
-    override fun prepareBuild(buildInfo: BuildInfo) {
-      log.debug("---------- PREPARE BUILD ----------")
-      log.debug("AGP Version : ${this.agpVersion}")
-      log.debug("Gradle Version : ${this.gradleVersion}")
-      log.debug("-----------------------------------")
-
-      projectDir.resolve(buildFileIn)
-        .replaceContents(dest = projectDir.resolve(buildFile),
-          candidate = "@@TOOLING_API_TEST_AGP_VERSION@@" to this.agpVersion)
-
-      projectDir.resolve(appBuildFileIn)
-        .replaceContents(
-          projectDir.resolve(appBuildFile),
-          "//",
-          "@@ANDROID_BLOCK_CONFIG@@" to androidBlockConfig,
-          "@@UNRESOLVED_DEPENDENCY@@" to if (!excludeUnresolvedDependency) "implementation 'unresolved:unresolved:unresolved'" else "")
-    }
-
-    override fun onBuildSuccessful(result: BuildResult) {
-      onBuildResult(result)
-    }
-
-    override fun onBuildFailed(result: BuildResult) {
-      onBuildResult(result)
-    }
-
-    private fun onBuildResult(@Suppress("UNUSED_PARAMETER") result: BuildResult) {
-      projectDir.resolve(buildFile).deleteIfExists()
-      projectDir.resolve(appBuildFile).deleteIfExists()
-    }
-
-    override fun onProgressEvent(event: ProgressEvent) {}
 
     override fun getBuildArguments(): CompletableFuture<List<String>> {
       return CompletableFuture.completedFuture(

@@ -16,7 +16,7 @@ interface ProviderHandler {
 private fun bearerAuth(apiKey: String) = "Bearer $apiKey"
 
 // ---- OpenAI-compatible ----
-private class OpenAICompatibleHandler(
+private open class OpenAICompatibleHandler(
   private val defaultBaseUrl: String,
   private val path: String = "/v1/models",
   private val fallback: List<String> = emptyList()
