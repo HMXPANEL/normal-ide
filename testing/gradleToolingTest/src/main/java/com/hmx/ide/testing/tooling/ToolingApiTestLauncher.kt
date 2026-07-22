@@ -26,6 +26,7 @@ import com.hmx.ide.tooling.api.IToolingApiServer
 import com.hmx.ide.tooling.api.messages.GradleDistributionParams
 import com.hmx.ide.tooling.api.messages.InitializeProjectParams
 import com.hmx.ide.tooling.api.messages.LogMessageParams
+import com.hmx.ide.tooling.api.messages.result.GradleWrapperCheckResult
 import com.hmx.ide.tooling.api.messages.toLogLine
 import com.hmx.ide.tooling.api.util.ToolingApiLauncher
 import com.hmx.ide.tooling.api.util.ToolingProps
