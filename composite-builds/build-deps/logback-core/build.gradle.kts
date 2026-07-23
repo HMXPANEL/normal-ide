@@ -22,7 +22,14 @@ plugins {
 
 java {
     sourceSets.getByName("main") {
-        java.srcDirs(project.projectDir.resolve("../../external/logback-android/logback-core/src/main/java"))
+        val srcDir =
+            rootProject.projectDir.resolve("../external/logback-android/logback-core/src/main/java")
+        java.srcDirs(srcDir)
+
+        val modInfo = srcDir.resolve("module-info.java")
+        if (modInfo.exists() && modInfo.isFile) {
+            modInfo.renameTo(srcDir.resolve("module-info.java.exclude"))
+        }
     }
 
     sourceCompatibility = JavaVersion.VERSION_11
