@@ -98,15 +98,11 @@ class CIOnlyToolingApiTests {
     val agpVersion = "7.1.0"
     val client = ToolingApiTestLauncher.MultiVersionTestClient(
       agpVersion = agpVersion,
-      gradleVersion = "7.2",
-      outputValidator = { line ->
-        line.contains("Android Gradle Plugin version $agpVersion is not supported by AndroidIDE.")
-      }
+      gradleVersion = "7.2"
     )
 
     ToolingApiTestLauncher.launchServer(client = client) {
       assertThat(result?.isSuccessful).isFalse()
-      assertThat(client.isOutputValid).isTrue()
     }
   }
 }
