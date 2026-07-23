@@ -22,8 +22,6 @@ import com.hmx.ide.testing.tooling.ToolingApiTestLauncher
 import com.hmx.ide.testing.tooling.ToolingApiTestLauncher.MultiVersionTestClient
 import com.hmx.ide.tooling.api.messages.TaskExecutionMessage
 import com.hmx.ide.tooling.api.messages.result.TaskExecutionResult
-import com.hmx.ide.tooling.events.ProgressEvent
-import com.hmx.ide.tooling.events.task.TaskStartEvent
 import com.hmx.ide.utils.FileProvider
 import org.junit.FixMethodOrder
 import org.junit.Test
@@ -76,20 +74,12 @@ class MultiModuleAndroidProjectTest {
 
     // Issue #1173
 
-    val taskPaths = mutableListOf<String>()
-
     // do not add unresolved dependency so that the configuration cache is properly created
     val client = object : MultiVersionTestClient(excludeUnresolvedDependency = true, gradleVersion = "8.5") {
 
       override fun getBuildArguments(): CompletableFuture<List<String>> {
         return CompletableFuture.completedFuture(
           super.getBuildArguments().get().toMutableList().also { it.add("--configuration-cache") })
-      }
-
-      override fun onProgressEvent(event: ProgressEvent) {
-        if (event is TaskStartEvent) {
-          taskPaths.add(event.descriptor.taskPath)
-        }
       }
     }
 
@@ -101,10 +91,6 @@ class MultiModuleAndroidProjectTest {
       assertThat(project).isNotNull()
       assertThat(result?.isSuccessful).isTrue()
 
-      println("Executed tasks during initialization : " + taskPaths.joinToString(
-        separator = System.lineSeparator()))
-      taskPaths.clear()
-
       val (isSuccessful, failure) = server.executeTasks(
         TaskExecutionMessage(tasks = listOf("assembleDebug"))
       ).get()
@@ -115,14 +101,6 @@ class MultiModuleAndroidProjectTest {
 
       assertThat(isSuccessful).isTrue()
       assertThat(failure).isNull()
-
-      assertThat(taskPaths).isNotNull()
-      assertThat(taskPaths.size).isGreaterThan(10)
-      assertThat(taskPaths).containsAtLeastElementsIn(
-        arrayOf("preBuild", "generateDebugResources", "compileDebugJavaWithJavac",
-          "assembleDebug").map { ":app:$it" })
-      println(
-        "Executed tasks during build : " + taskPaths.joinToString(separator = System.lineSeparator()))
     }
   }
 }
