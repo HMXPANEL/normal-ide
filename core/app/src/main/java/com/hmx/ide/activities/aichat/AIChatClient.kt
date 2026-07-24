@@ -17,11 +17,10 @@
 
 package com.hmx.ide.activities.aichat
 
+import com.hmx.ide.activities.HttpConfig
+import com.hmx.ide.activities.executeHttp
 import org.json.JSONArray
 import org.json.JSONObject
-import java.io.OutputStreamWriter
-import java.net.HttpURLConnection
-import java.net.URL
 
 /**
  * Minimal OpenAI-compatible chat client (also works with Ollama's /api/chat
@@ -38,15 +37,6 @@ object AIChatClient {
    * @throws Throwable if the request fails.
    */
   fun chat(endpoint: String, model: String, messages: List<ChatMessage>): String {
-    val url = URL(endpoint)
-    val conn = (url.openConnection() as HttpURLConnection).apply {
-      requestMethod = "POST"
-      doOutput = true
-      setRequestProperty("Content-Type", "application/json")
-      connectTimeout = 30_000
-      readTimeout = 300_000
-    }
-
     val body = JSONObject().apply {
       put("model", model)
       put("stream", false)
@@ -57,14 +47,9 @@ object AIChatClient {
       })
     }
 
-    OutputStreamWriter(conn.outputStream, Charsets.UTF_8).use { it.write(body.toString()) }
-
-    val code = conn.responseCode
-    val raw = if (code in 200..299) {
-      conn.inputStream.bufferedReader().readText()
-    } else {
-      conn.errorStream?.bufferedReader()?.readText().orEmpty()
-    }
+    val config = HttpConfig(url = endpoint, method = "POST")
+    val (code, raw) = executeHttp(config, body = body.toString(),
+      connectTimeout = 30_000, readTimeout = 300_000)
 
     if (code !in 200..299) {
       throw RuntimeException("HTTP $code: $raw")

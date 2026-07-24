@@ -1,0 +1,53 @@
+package com.hmx.ide.ai.storage
+
+import android.content.Context
+import android.content.SharedPreferences
+import com.hmx.ide.ai.registry.ProviderRegistry
+
+class ProviderStorage(context: Context) {
+
+  private val prefs: SharedPreferences =
+    context.getSharedPreferences("hmx_ai_providers", Context.MODE_PRIVATE)
+
+  // ponytail: plain SharedPreferences; EncryptedSharedPreferences if storing real API keys in prod
+
+  init {
+    getActiveProviderId()?.let { ProviderRegistry.activeProviderId = it }
+  }
+
+  fun getApiKey(providerId: String): String =
+    prefs.getString(key(providerId, "api_key"), "") ?: ""
+
+  fun setApiKey(providerId: String, key: String) {
+    prefs.edit().putString(key(providerId, "api_key"), key).apply()
+  }
+
+  fun getBaseUrl(providerId: String): String =
+    prefs.getString(key(providerId, "base_url"), "") ?: ""
+
+  fun setBaseUrl(providerId: String, url: String) {
+    prefs.edit().putString(key(providerId, "base_url"), url).apply()
+  }
+
+  fun getModel(providerId: String): String =
+    prefs.getString(key(providerId, "model"), "") ?: ""
+
+  fun setModel(providerId: String, model: String) {
+    prefs.edit().putString(key(providerId, "model"), model).apply()
+  }
+
+  fun getActiveProviderId(): String? =
+    prefs.getString("active_provider_id", null)
+
+  fun setActiveProviderId(providerId: String?) {
+    prefs.edit().putString("active_provider_id", providerId).apply()
+    ProviderRegistry.activeProviderId = providerId
+  }
+
+  fun clear() {
+    prefs.edit().clear().apply()
+  }
+
+  private fun key(providerId: String, field: String): String =
+    "provider_${providerId}_$field"
+}

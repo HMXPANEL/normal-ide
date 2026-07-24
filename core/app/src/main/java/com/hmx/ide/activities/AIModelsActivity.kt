@@ -24,9 +24,7 @@ import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 import org.slf4j.LoggerFactory
 import java.net.ConnectException
-import java.net.HttpURLConnection
 import java.net.SocketTimeoutException
-import java.net.URL
 import java.net.UnknownHostException
 import javax.net.ssl.SSLException
 
@@ -72,7 +70,6 @@ class AIModelsActivity : EdgeToEdgeIDEActivity() {
       toolbar.setNavigationOnClickListener { onBackPressedDispatcher.onBackPressed() }
 
       setupProviderDropdown()
-      setupModelDropdown()
       loadSavedPreferences()
       updateApiFieldsVisibility()
 
@@ -105,11 +102,6 @@ class AIModelsActivity : EdgeToEdgeIDEActivity() {
   private fun setupProviderDropdown() {
     val adapter = ProviderAdapter(this, providers)
     binding.providerDropdown.setAdapter(adapter)
-    binding.providerDropdown.onItemClickListener = null
-  }
-
-  private fun setupModelDropdown() {
-    binding.modelDropdown.setAdapter(ArrayAdapter(this, android.R.layout.simple_dropdown_item_1line, emptyList<String>()))
   }
 
   private fun loadSavedPreferences() {
@@ -195,20 +187,7 @@ class AIModelsActivity : EdgeToEdgeIDEActivity() {
       provider.id, config.method, config.url, config.headers.keys)
 
     return try {
-      val connection = URL(config.url).openConnection() as HttpURLConnection
-      connection.connectTimeout = 8000
-      connection.readTimeout = 8000
-      connection.requestMethod = config.method
-      connection.setRequestProperty("Content-Type", "application/json")
-      connection.setRequestProperty("User-Agent", "HMX-IDE/1.0")
-      for ((name, value) in config.headers) {
-        if (value.isNotEmpty()) {
-          connection.setRequestProperty(name, value)
-        }
-      }
-      connection.connect()
-
-      val code = connection.responseCode
+      val (code, _) = executeHttp(config, connectTimeout = 8000, readTimeout = 8000)
       log.info("Connection test response for {}: HTTP {}", provider.id, code)
 
       when (code) {
@@ -298,25 +277,12 @@ class AIModelsActivity : EdgeToEdgeIDEActivity() {
     log.info("Fetching models for {}: {} {} headers={}",
       provider.id, config.method, config.url, config.headers.keys)
 
-    val connection = URL(config.url).openConnection() as HttpURLConnection
-    connection.connectTimeout = 10000
-    connection.readTimeout = 10000
-    connection.requestMethod = config.method
-    connection.setRequestProperty("Content-Type", "application/json")
-    connection.setRequestProperty("User-Agent", "HMX-IDE/1.0")
-    for ((name, value) in config.headers) {
-      if (value.isNotEmpty()) {
-        connection.setRequestProperty(name, value)
-      }
-    }
-
-    val code = connection.responseCode
+    val (code, response) = executeHttp(config, connectTimeout = 10000, readTimeout = 10000)
     if (code !in 200..299) {
       log.warn("Model fetch for {} returned HTTP {}", provider.id, code)
       return emptyList()
     }
 
-    val response = connection.inputStream.bufferedReader().readText()
     return handler.parseModels(response)
   }
 

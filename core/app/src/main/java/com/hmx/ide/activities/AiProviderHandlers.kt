@@ -36,11 +36,11 @@ private open class OpenAICompatibleHandler(
 // ---- Gemini ----
 private class GeminiHandler : ProviderHandler {
   override fun testConnectionConfig(apiKey: String, baseUrl: String, endpoint: String): HttpConfig {
-    val url = "https://generativelanguage.googleapis.com/v1beta/models"
+    val url = resolveUrl(baseUrl, "https://generativelanguage.googleapis.com", endpoint, "/v1beta/models")
     return HttpConfig(url, headers = mapOf("x-goog-api-key" to apiKey))
   }
   override fun fetchModelsConfig(apiKey: String, baseUrl: String, endpoint: String): HttpConfig {
-    val url = "https://generativelanguage.googleapis.com/v1beta/models"
+    val url = resolveUrl(baseUrl, "https://generativelanguage.googleapis.com", endpoint, "/v1beta/models")
     return HttpConfig(url, headers = mapOf("x-goog-api-key" to apiKey))
   }
   override fun parseModels(response: String): List<String> = parseGeminiModels(response)
@@ -52,14 +52,14 @@ private class GeminiHandler : ProviderHandler {
 // ---- Claude (Anthropic) ----
 private class ClaudeHandler : ProviderHandler {
   override fun testConnectionConfig(apiKey: String, baseUrl: String, endpoint: String): HttpConfig {
-    val url = "https://api.anthropic.com/v1/models"
+    val url = resolveUrl(baseUrl, "https://api.anthropic.com", endpoint, "/v1/models")
     return HttpConfig(url, headers = mapOf(
       "x-api-key" to apiKey,
       "anthropic-version" to "2023-06-01"
     ))
   }
   override fun fetchModelsConfig(apiKey: String, baseUrl: String, endpoint: String): HttpConfig {
-    val url = "https://api.anthropic.com/v1/models"
+    val url = resolveUrl(baseUrl, "https://api.anthropic.com", endpoint, "/v1/models")
     return HttpConfig(url, headers = mapOf(
       "x-api-key" to apiKey,
       "anthropic-version" to "2023-06-01"
@@ -75,11 +75,11 @@ private class ClaudeHandler : ProviderHandler {
 // ---- Groq ----
 private class GroqHandler : ProviderHandler {
   override fun testConnectionConfig(apiKey: String, baseUrl: String, endpoint: String): HttpConfig {
-    val url = "https://api.groq.com/openai/v1/models"
+    val url = resolveUrl(baseUrl, "https://api.groq.com", endpoint, "/openai/v1/models")
     return HttpConfig(url, headers = mapOf("Authorization" to bearerAuth(apiKey)))
   }
   override fun fetchModelsConfig(apiKey: String, baseUrl: String, endpoint: String): HttpConfig {
-    val url = "https://api.groq.com/openai/v1/models"
+    val url = resolveUrl(baseUrl, "https://api.groq.com", endpoint, "/openai/v1/models")
     return HttpConfig(url, headers = mapOf("Authorization" to bearerAuth(apiKey)))
   }
   override fun parseModels(response: String): List<String> = parseOpenAiModels(response)
@@ -91,11 +91,11 @@ private class GroqHandler : ProviderHandler {
 // ---- Together AI ----
 private class TogetherAIHandler : ProviderHandler {
   override fun testConnectionConfig(apiKey: String, baseUrl: String, endpoint: String): HttpConfig {
-    val url = "https://api.together.ai/v1/models"
+    val url = resolveUrl(baseUrl, "https://api.together.ai", endpoint, "/v1/models")
     return HttpConfig(url, headers = mapOf("Authorization" to bearerAuth(apiKey)))
   }
   override fun fetchModelsConfig(apiKey: String, baseUrl: String, endpoint: String): HttpConfig {
-    val url = "https://api.together.ai/v1/models"
+    val url = resolveUrl(baseUrl, "https://api.together.ai", endpoint, "/v1/models")
     return HttpConfig(url, headers = mapOf("Authorization" to bearerAuth(apiKey)))
   }
   override fun parseModels(response: String): List<String> = parseOpenAiModels(response)
@@ -179,6 +179,35 @@ private class CustomHandler : OpenAICompatibleHandler(
   defaultBaseUrl = "",
   fallback = emptyList()
 )
+
+// ---- Shared HTTP helper ----
+internal fun executeHttp(
+  config: HttpConfig,
+  body: String? = null,
+  connectTimeout: Int = 10_000,
+  readTimeout: Int = 10_000,
+): Pair<Int, String> {
+  val connection = java.net.URL(config.url).openConnection() as java.net.HttpURLConnection
+  connection.connectTimeout = connectTimeout
+  connection.readTimeout = readTimeout
+  connection.requestMethod = config.method
+  connection.setRequestProperty("Content-Type", "application/json")
+  connection.setRequestProperty("User-Agent", "HMX-IDE/1.0")
+  for ((name, value) in config.headers) {
+    if (value.isNotEmpty()) connection.setRequestProperty(name, value)
+  }
+  if (body != null) {
+    connection.doOutput = true
+    java.io.OutputStreamWriter(connection.outputStream, Charsets.UTF_8).use { it.write(body) }
+  }
+  val code = connection.responseCode
+  val response = if (code in 200..299) {
+    connection.inputStream.bufferedReader().readText()
+  } else {
+    connection.errorStream?.bufferedReader()?.readText().orEmpty()
+  }
+  return code to response
+}
 
 // ---- Resolve URL ----
 private fun resolveUrl(
