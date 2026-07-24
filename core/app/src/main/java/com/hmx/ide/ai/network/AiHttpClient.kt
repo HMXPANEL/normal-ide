@@ -6,6 +6,7 @@ import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.flow
 import kotlinx.coroutines.flow.flowOn
+import kotlinx.coroutines.currentCoroutineContext
 import kotlinx.coroutines.isActive
 import kotlinx.coroutines.withContext
 import org.slf4j.LoggerFactory
@@ -39,7 +40,7 @@ class AiHttpClient(
   ): Flow<String> = flow {
     val attempt = retry(config, body) { cfg, b -> streamSync(cfg, b) }
     attempt.forEach { line ->
-      if (!isActive) return@forEach
+      if (!currentCoroutineContext().isActive) return@forEach
       emit(line)
     }
   }.flowOn(Dispatchers.IO)
