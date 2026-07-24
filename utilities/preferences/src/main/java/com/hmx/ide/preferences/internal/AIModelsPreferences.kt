@@ -1,5 +1,13 @@
 package com.hmx.ide.preferences.internal
 
+/**
+ * Legacy per-provider preference store. This is the old System A persistence
+ * layer. New code should use [com.hmx.ide.ai.storage.ProviderStorage] instead.
+ *
+ * Dual-write between this and ProviderStorage is active during migration.
+ * Remove this file once AIChatActivity is fully migrated to the new AI engine
+ * and no code reads from AIModelsPreferences.
+ */
 object AIModelsPreferences {
 
   private const val CURRENT_PROVIDER = "ai_prefs_current_provider"

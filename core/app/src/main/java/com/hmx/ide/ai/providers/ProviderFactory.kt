@@ -52,7 +52,7 @@ object ProviderFactory {
       apiKey = storedApiKey(storage, "opencode")),
     GeminiProvider(apiKey = storedApiKey(storage, "gemini")),
     ClaudeProvider(apiKey = storedApiKey(storage, "claude")),
-    OllamaProvider(),
+    OllamaProvider(baseUrl = storedBaseUrl(storage, "ollama", "http://localhost:11434")),
   )
 
   fun registerAll(storage: ProviderStorage? = null) {

@@ -20,14 +20,13 @@ import org.json.JSONArray
 import org.json.JSONObject
 
 class OllamaProvider(
+  private val baseUrl: String = "http://localhost:11434",
   private val client: AiHttpClient = AiHttpClient(readTimeout = 120_000),
 ) : AiProvider {
 
   override val providerId: String = "ollama"
   override val displayName: String = "Ollama"
   override val capabilities: Set<Capability> = setOf(Capability.streaming)
-
-  private val baseUrl = "http://localhost:11434"
 
   override suspend fun chat(request: ChatRequest): ChatResponse {
     val url = "$baseUrl/api/chat"

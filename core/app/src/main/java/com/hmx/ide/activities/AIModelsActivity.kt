@@ -17,6 +17,7 @@ import com.google.android.material.snackbar.Snackbar
 import com.hmx.ide.R
 import com.hmx.ide.app.EdgeToEdgeIDEActivity
 import com.hmx.ide.databinding.ActivityAiModelsBinding
+import com.hmx.ide.ai.storage.ProviderStorage
 import com.hmx.ide.preferences.internal.AIModelsPreferences
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
@@ -338,6 +339,14 @@ class AIModelsActivity : EdgeToEdgeIDEActivity() {
     AIModelsPreferences.setEndpoint(provider.id, endpoint)
     AIModelsPreferences.setModel(provider.id, model)
     AIModelsPreferences.setSystemPrompt(provider.id, systemPrompt)
+
+    // Temporary dual-write to new ProviderStorage during migration
+    val ps = ProviderStorage(this)
+    ps.setApiKey(provider.id, apiKey)
+    ps.setBaseUrl(provider.id, baseUrl)
+    ps.setModel(provider.id, model)
+    ps.setActiveProviderId(provider.id)
+    // endpoint and systemPrompt not migrated — new system uses baseUrl + per-chat prompt
 
     log.info("Saved preferences for provider {}", provider.id)
     Snackbar.make(binding.root, R.string.idepref_ai_saved, Snackbar.LENGTH_SHORT).show()
