@@ -23,12 +23,16 @@ import org.json.JSONArray
 import org.json.JSONObject
 
 /**
+ * LEGACY — replaced by ChatEngine + AiProvider implementations.
+ *
  * Minimal OpenAI-compatible chat client (also works with Ollama's /api/chat
  * and LM Studio). Uses [HttpURLConnection] so no extra dependency is needed.
  *
  * The assistant may return file edits wrapped as:
  *   [[WRITE:relative/path]]\n<file content>\n[[END]]
  * which the activity detects and offers to apply to the open project.
+ *
+ * Remove this file once all callers use [com.hmx.ide.ai.engine.ChatEngine].
  */
 object AIChatClient {
 

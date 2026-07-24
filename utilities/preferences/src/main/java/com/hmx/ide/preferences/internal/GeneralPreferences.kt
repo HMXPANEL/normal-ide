@@ -120,6 +120,8 @@ object GeneralPreferences {
 
   private const val MAX_RECENT_PROJECTS = 20
 
+  // LEGACY — replaced by ProviderStorage per-provider config.
+  // Only read by the old AIChatClient path. Remove when AIChatClient is deleted.
   var aiChatEndpoint: String
     get() = prefManager.getString(AI_CHAT_ENDPOINT, "http://localhost:11434/api/chat")
     set(value) {

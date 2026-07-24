@@ -20,9 +20,10 @@ package com.hmx.ide.activities.aichat
 import android.os.Bundle
 import android.view.View
 import androidx.recyclerview.widget.LinearLayoutManager
+import com.hmx.ide.ai.AiFactory
+import com.hmx.ide.ai.engine.ChatEngine
 import com.hmx.ide.app.BaseIDEActivity
 import com.hmx.ide.databinding.ActivityAiChatBinding
-import com.hmx.ide.preferences.internal.GeneralPreferences
 import com.hmx.ide.projects.IProjectManager
 import com.hmx.ide.R
 import com.hmx.ide.resources.R.string
@@ -35,11 +36,6 @@ import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 import java.io.File
 
-/**
- * Full-screen, project-aware AI Chat. The AI always knows which project is
- * currently open and can read its files, explain/ generate code, and (via
- * [[WRITE:path]] blocks) create or modify project files.
- */
 class AIChatActivity : BaseIDEActivity() {
 
   private lateinit var binding: ActivityAiChatBinding
@@ -47,10 +43,10 @@ class AIChatActivity : BaseIDEActivity() {
   private val scope = CoroutineScope(Dispatchers.Main)
 
   private var projectDir: File? = null
-  private val messages = mutableListOf<ChatMessage>()
-
-  // Pending file edits parsed from the last assistant message: path -> content
   private var pendingEdits = linkedMapOf<String, String>()
+
+  private val chatEngine by lazy { ChatEngine(AiFactory.engine()) }
+  private var systemPrompt: String? = null
 
   override fun bindLayout(): View {
     binding = ActivityAiChatBinding.inflate(layoutInflater)
@@ -78,14 +74,13 @@ class AIChatActivity : BaseIDEActivity() {
     binding.send.setOnClickListener { sendMessage() }
 
     if (projectDir != null) {
-      val welcome = "You are an AI coding assistant for the Android project " +
+      systemPrompt = "You are an AI coding assistant for the Android project " +
         "'${projectDir!!.name}'.\n\n" +
         "Project structure:\n${ProjectContext.describe(projectDir!!)}\n\n" +
         "You can read project files when asked. To create or modify a file, " +
         "respond with a fenced block like:\n" +
         "[[WRITE:relative/path/File.kt]]\n<full file content>\n[[END]]\n" +
         "Otherwise just answer conversationally."
-      messages.add(ChatMessage("system", welcome))
       adapter.add(
         ChatMessage("assistant",
           "Hi! I can see the '${projectDir!!.name}' project. " +
@@ -102,30 +97,39 @@ class AIChatActivity : BaseIDEActivity() {
     if (text.isBlank()) return
     binding.messageInput.text?.clear()
 
-    messages.add(ChatMessage("user", text))
     adapter.add(ChatMessage("user", text))
-
     adapter.add(ChatMessage("assistant", "…"))
     binding.send.isEnabled = false
 
-    val requestMessages = messages.toList()
-    val endpoint = GeneralPreferences.aiChatEndpoint
-    val model = GeneralPreferences.aiChatModel
-
     scope.launch(Dispatchers.Main) {
       val result = withContext(Dispatchers.IO) {
-        runCatching { AIChatClient.chat(endpoint, model, requestMessages) }
+        runCatching {
+          val engine = AiFactory.engine()
+          val providerId = engine.activeProvider().providerId
+          val model = storedModel(providerId)
+          val response = chatEngine.send(model, text, systemPrompt)
+          response.message.content
+        }
       }
       binding.send.isEnabled = true
       result.onSuccess { content ->
         adapter.setLastContent(content)
-        messages[messages.lastIndex] = ChatMessage("assistant", content)
         collectEdits(content)
       }.onFailure { err ->
         adapter.setLastContent("⚠ ${err.message}")
-        messages[messages.lastIndex] = ChatMessage("assistant", "⚠ ${err.message}")
         flashError(getString(string.msg_ai_chat_error, err.message))
       }
+    }
+  }
+
+  private fun storedModel(providerId: String): String {
+    val model = AiFactory.storage().getModel(providerId)
+    if (model.isNotBlank()) return model
+    return when (providerId) {
+      "ollama" -> "qwen2.5-coder:7b"
+      "gemini" -> "gemini-2.0-flash"
+      "openai" -> "gpt-4o-mini"
+      else -> "gpt-4o-mini"
     }
   }
 
@@ -160,15 +164,14 @@ class AIChatActivity : BaseIDEActivity() {
       layoutInflater)
     val builder = DialogUtils.newMaterialDialogBuilder(this)
     builder.setTitle(string.title_ai_chat_config)
+    val provider = AiFactory.engine().activeProvider()
+    val model = storedModel(provider.providerId)
+    builder.setMessage("Provider: ${provider.displayName}\n\nModel: $model\n\nChange model:")
     builder.setView(bindingInput.root)
-    builder.setMessage("Endpoint:\n${GeneralPreferences.aiChatEndpoint}\n\nModel:\n${GeneralPreferences.aiChatModel}")
     builder.setPositiveButton(android.R.string.ok) { _, _ ->
       val input = bindingInput.name.editText?.text?.toString()?.trim()
       if (!input.isNullOrBlank()) {
-        // Accept "endpoint|model" on one line for simplicity
-        val parts = input.split("|")
-        GeneralPreferences.aiChatEndpoint = parts[0].trim()
-        if (parts.size > 1) GeneralPreferences.aiChatModel = parts[1].trim()
+        AiFactory.storage().setModel(provider.providerId, input)
       }
     }
     builder.setNegativeButton(android.R.string.cancel, null)
