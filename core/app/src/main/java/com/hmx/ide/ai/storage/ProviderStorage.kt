@@ -1,15 +1,20 @@
 package com.hmx.ide.ai.storage
 
 import android.content.Context
-import android.content.SharedPreferences
+import androidx.security.crypto.EncryptedSharedPreferences
+import androidx.security.crypto.MasterKeys
 import com.hmx.ide.ai.registry.ProviderRegistry
 
 class ProviderStorage(context: Context) {
 
   private val prefs: SharedPreferences =
-    context.getSharedPreferences("hmx_ai_providers", Context.MODE_PRIVATE)
-
-  // ponytail: plain SharedPreferences; EncryptedSharedPreferences if storing real API keys in prod
+    EncryptedSharedPreferences.create(
+      "hmx_ai_providers_encrypted",
+      MasterKeys.getOrCreate(MasterKeys.AES256_GCM_SPEC),
+      context,
+      EncryptedSharedPreferences.PrefKeyEncryptionScheme.AES256_SIV,
+      EncryptedSharedPreferences.PrefValueEncryptionScheme.AES256_GCM,
+    )
 
   init {
     getActiveProviderId()?.let { ProviderRegistry.activeProviderId = it }

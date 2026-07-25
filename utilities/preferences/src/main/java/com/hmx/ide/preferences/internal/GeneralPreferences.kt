@@ -36,9 +36,6 @@ object GeneralPreferences {
 
   const val RECENT_PROJECTS = "ide_recent_projects"
 
-  const val AI_CHAT_ENDPOINT = "ide_ai_chat_endpoint"
-  const val AI_CHAT_MODEL = "ide_ai_chat_model"
-
   const val NO_OPENED_PROJECT = "<NO_OPENED_PROJECT>"
 
   var uiMode: Int
@@ -119,20 +116,4 @@ object GeneralPreferences {
   private const val RECENT_PROJECTS_SEPARATOR = "|"
 
   private const val MAX_RECENT_PROJECTS = 20
-
-  // LEGACY — replaced by ProviderStorage per-provider config.
-  // Only read by the old AIChatClient path. Remove when AIChatClient is deleted.
-  var aiChatEndpoint: String
-    get() = prefManager.getString(AI_CHAT_ENDPOINT, "http://localhost:11434/api/chat")
-    set(value) {
-      prefManager.putString(AI_CHAT_ENDPOINT, value)
-    }
-
-  var aiChatModel: String
-    get() = prefManager.getString(AI_CHAT_MODEL, "qwen2.5-coder:7b")
-    set(value) {
-      prefManager.putString(AI_CHAT_MODEL, value)
-    }
-
-
 }

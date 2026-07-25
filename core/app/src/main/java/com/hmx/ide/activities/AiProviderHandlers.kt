@@ -10,7 +10,6 @@ interface ProviderHandler {
   fun testConnectionConfig(apiKey: String, baseUrl: String, endpoint: String): HttpConfig
   fun fetchModelsConfig(apiKey: String, baseUrl: String, endpoint: String): HttpConfig
   fun parseModels(response: String): List<String>
-  fun fallbackModels(): List<String>
 }
 
 private fun bearerAuth(apiKey: String) = "Bearer $apiKey"
@@ -18,8 +17,7 @@ private fun bearerAuth(apiKey: String) = "Bearer $apiKey"
 // ---- OpenAI-compatible ----
 private open class OpenAICompatibleHandler(
   private val defaultBaseUrl: String,
-  private val path: String = "/v1/models",
-  private val fallback: List<String> = emptyList()
+  private val path: String = "/v1/models"
 ) : ProviderHandler {
   override fun testConnectionConfig(apiKey: String, baseUrl: String, endpoint: String): HttpConfig {
     val url = resolveUrl(baseUrl, defaultBaseUrl, endpoint, path)
@@ -30,7 +28,6 @@ private open class OpenAICompatibleHandler(
     return HttpConfig(url, headers = mapOf("Authorization" to bearerAuth(apiKey)))
   }
   override fun parseModels(response: String): List<String> = parseOpenAiModels(response)
-  override fun fallbackModels(): List<String> = fallback
 }
 
 // ---- Gemini ----
@@ -44,9 +41,6 @@ private class GeminiHandler : ProviderHandler {
     return HttpConfig(url, headers = mapOf("x-goog-api-key" to apiKey))
   }
   override fun parseModels(response: String): List<String> = parseGeminiModels(response)
-  override fun fallbackModels(): List<String> = listOf(
-    "gemini-2.0-flash", "gemini-2.0-flash-lite", "gemini-1.5-pro", "gemini-1.5-flash"
-  )
 }
 
 // ---- Claude (Anthropic) ----
@@ -66,10 +60,6 @@ private class ClaudeHandler : ProviderHandler {
     ))
   }
   override fun parseModels(response: String): List<String> = parseOpenAiModels(response)
-  override fun fallbackModels(): List<String> = listOf(
-    "claude-sonnet-4-20250514", "claude-3-5-sonnet-latest",
-    "claude-3-5-haiku-latest", "claude-3-opus-latest"
-  )
 }
 
 // ---- Groq ----
@@ -83,9 +73,6 @@ private class GroqHandler : ProviderHandler {
     return HttpConfig(url, headers = mapOf("Authorization" to bearerAuth(apiKey)))
   }
   override fun parseModels(response: String): List<String> = parseOpenAiModels(response)
-  override fun fallbackModels(): List<String> = listOf(
-    "llama-3.3-70b-versatile", "llama-3.1-8b-instant", "mixtral-8x7b-32768", "gemma2-9b-it"
-  )
 }
 
 // ---- Together AI ----
@@ -99,7 +86,6 @@ private class TogetherAIHandler : ProviderHandler {
     return HttpConfig(url, headers = mapOf("Authorization" to bearerAuth(apiKey)))
   }
   override fun parseModels(response: String): List<String> = parseOpenAiModels(response)
-  override fun fallbackModels(): List<String> = emptyList()
 }
 
 // ---- OpenCode ----
@@ -114,7 +100,6 @@ private class OpenCodeHandler : ProviderHandler {
     return HttpConfig(url, headers = mapOf("Authorization" to bearerAuth(apiKey)))
   }
   override fun parseModels(response: String): List<String> = parseOpenAiModels(response)
-  override fun fallbackModels(): List<String> = emptyList()
 }
 
 // ---- Fireworks AI ----
@@ -126,58 +111,35 @@ private class FireworksHandler : ProviderHandler {
     return HttpConfig(url, headers = mapOf("Authorization" to bearerAuth(apiKey)))
   }
   override fun fetchModelsConfig(apiKey: String, baseUrl: String, endpoint: String): HttpConfig {
-    // Try the generic endpoint; if it fails fallback will be used
     val url = resolveUrl(baseUrl, "https://api.fireworks.ai", endpoint, "/v1/models")
     return HttpConfig(url, headers = mapOf("Authorization" to bearerAuth(apiKey)))
   }
   override fun parseModels(response: String): List<String> = parseOpenAiModels(response)
-  override fun fallbackModels(): List<String> = emptyList()
-}
-
-// ---- Ollama ----
-private class OllamaHandler : ProviderHandler {
-  override fun testConnectionConfig(apiKey: String, baseUrl: String, endpoint: String): HttpConfig {
-    val url = resolveUrl(baseUrl, "http://localhost:11434", endpoint, "/api/tags")
-    return HttpConfig(url, headers = emptyMap())
-  }
-  override fun fetchModelsConfig(apiKey: String, baseUrl: String, endpoint: String): HttpConfig {
-    val url = resolveUrl(baseUrl, "http://localhost:11434", endpoint, "/api/tags")
-    return HttpConfig(url, headers = emptyMap())
-  }
-  override fun parseModels(response: String): List<String> = parseOllamaModels(response)
-  override fun fallbackModels(): List<String> = emptyList()
 }
 
 // ---- DeepSeek ----
 private class DeepSeekHandler : OpenAICompatibleHandler(
-  defaultBaseUrl = "https://api.deepseek.com",
-  fallback = listOf("deepseek-chat", "deepseek-reasoner")
+  defaultBaseUrl = "https://api.deepseek.com"
 )
 
 // ---- NVIDIA NIM ----
 private class NvidiaHandler : OpenAICompatibleHandler(
-  defaultBaseUrl = "https://integrate.api.nvidia.com",
-  path = "/v1/models",
-  fallback = listOf("meta/llama-3.1-405b-instruct", "mistralai/mistral-large-2-instruct")
+  defaultBaseUrl = "https://integrate.api.nvidia.com"
 )
 
 // ---- xAI ----
 private class XaiHandler : OpenAICompatibleHandler(
-  defaultBaseUrl = "https://api.x.ai",
-  fallback = listOf("grok-2-latest", "grok-beta")
+  defaultBaseUrl = "https://api.x.ai"
 )
 
 // ---- Mistral ----
 private class MistralHandler : OpenAICompatibleHandler(
-  defaultBaseUrl = "https://api.mistral.ai",
-  fallback = listOf("mistral-large-latest", "mistral-medium-latest",
-    "mistral-small-latest", "codestral-latest")
+  defaultBaseUrl = "https://api.mistral.ai"
 )
 
 // ---- Custom (OpenAI Compatible) ----
 private class CustomHandler : OpenAICompatibleHandler(
-  defaultBaseUrl = "",
-  fallback = emptyList()
+  defaultBaseUrl = ""
 )
 
 // ---- Shared HTTP helper ----
@@ -236,13 +198,6 @@ internal fun parseOpenAiModels(response: String): List<String> {
   return models
 }
 
-internal fun parseOllamaModels(response: String): List<String> {
-  val models = mutableListOf<String>()
-  val regex = "\"name\"\\s*:\\s*\"([^\"]+)\"".toRegex()
-  regex.findAll(response).forEach { models.add(it.groupValues[1]) }
-  return models
-}
-
 internal fun parseGeminiModels(response: String): List<String> {
   // Gemini returns {"models": [{"name": "models/gemini-2.0-flash", ...}]}
   // Extract name and strip "models/" prefix
@@ -256,11 +211,8 @@ internal fun parseGeminiModels(response: String): List<String> {
 internal fun providerHandler(providerId: String): ProviderHandler = when (providerId) {
   "gemini" -> GeminiHandler()
   "claude" -> ClaudeHandler()
-  "openai" -> OpenAICompatibleHandler("https://api.openai.com",
-    fallback = listOf("gpt-4o", "gpt-4o-mini", "gpt-4.1", "gpt-4.1-mini",
-      "gpt-4.1-nano", "o3", "o4-mini"))
-  "openrouter" -> OpenAICompatibleHandler("https://openrouter.ai/api/v1",
-    fallback = emptyList())
+  "openai" -> OpenAICompatibleHandler("https://api.openai.com")
+  "openrouter" -> OpenAICompatibleHandler("https://openrouter.ai/api/v1")
   "nvidia" -> NvidiaHandler()
   "groq" -> GroqHandler()
   "deepseek" -> DeepSeekHandler()
@@ -268,7 +220,6 @@ internal fun providerHandler(providerId: String): ProviderHandler = when (provid
   "togetherai" -> TogetherAIHandler()
   "fireworks" -> FireworksHandler()
   "xai" -> XaiHandler()
-  "ollama" -> OllamaHandler()
   "opencode" -> OpenCodeHandler()
   "custom" -> CustomHandler()
   else -> OpenAICompatibleHandler("")

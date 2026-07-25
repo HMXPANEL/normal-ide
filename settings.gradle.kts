@@ -65,6 +65,18 @@ dependencyResolutionManagement {
     }
   }
 
+  // Substitute standard logback-core with the Android-patched version to prevent
+  // NoSuchMethodError on Android ART (Class.getModule() is unavailable).
+  // logback-classic from Maven Central transitively depends on ch.qos.logback:logback-core,
+  // which calls Class.getModule() — not available on Android.
+  includeBuild("composite-builds/build-deps") {
+    name = "build-deps"
+    dependencySubstitution {
+      substitute(module("ch.qos.logback:logback-core"))
+        .using(project(":logback-core"))
+    }
+  }
+
   repositoriesMode.set(RepositoriesMode.FAIL_ON_PROJECT_REPOS)
   repositories {
     google()

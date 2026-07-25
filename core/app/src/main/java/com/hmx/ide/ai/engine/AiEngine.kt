@@ -1,6 +1,7 @@
 package com.hmx.ide.ai.engine
 
 import com.hmx.ide.ai.AiProvider
+import com.hmx.ide.ai.errors.ProviderConfigurationException
 import com.hmx.ide.ai.errors.ProviderException
 import com.hmx.ide.ai.models.AiModel
 import com.hmx.ide.ai.models.ChatMessage
@@ -21,11 +22,36 @@ class AiEngine(
   val providers: List<AiProvider>
     get() = ProviderRegistry.all()
 
-  suspend fun chat(request: ChatRequest): ChatResponse =
-    activeProvider().chat(request)
+  fun validateConfig(provider: AiProvider) {
+    val store = storage
+      ?: throw ProviderConfigurationException("Settings storage is not available.")
 
-  fun stream(request: ChatRequest): Flow<Chunk> =
-    activeProvider().stream(request)
+    val apiKey = store.getApiKey(provider.providerId)
+    if (apiKey.isBlank()) {
+      throw ProviderConfigurationException(
+        "No API key configured for ${provider.displayName}. " +
+        "Open Settings → AI Providers → ${provider.displayName} and enter your API key.")
+    }
+
+    val model = store.getModel(provider.providerId)
+    if (model.isBlank()) {
+      throw ProviderConfigurationException(
+        "No model selected for ${provider.displayName}. " +
+        "Open Settings → AI Providers → ${provider.displayName} and choose a model.")
+    }
+  }
+
+  suspend fun chat(request: ChatRequest): ChatResponse {
+    val provider = activeProvider()
+    validateConfig(provider)
+    return provider.chat(request)
+  }
+
+  fun stream(request: ChatRequest): Flow<Chunk> {
+    val provider = activeProvider()
+    validateConfig(provider)
+    return provider.stream(request)
+  }
 
   suspend fun listModels(): List<AiModel> =
     activeProvider().listModels()

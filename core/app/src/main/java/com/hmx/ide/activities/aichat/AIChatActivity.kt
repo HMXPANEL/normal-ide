@@ -22,6 +22,7 @@ import android.view.View
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.hmx.ide.ai.AiFactory
 import com.hmx.ide.ai.engine.ChatEngine
+import com.hmx.ide.ai.errors.ProviderConfigurationException
 import com.hmx.ide.app.BaseIDEActivity
 import com.hmx.ide.databinding.ActivityAiChatBinding
 import com.hmx.ide.projects.IProjectManager
@@ -106,7 +107,7 @@ class AIChatActivity : BaseIDEActivity() {
         runCatching {
           val engine = AiFactory.engine()
           val providerId = engine.activeProvider().providerId
-          val model = storedModel(providerId)
+          val model = AiFactory.storage().getModel(providerId)
           val response = chatEngine.send(model, text, systemPrompt)
           response.message.content
         }
@@ -119,17 +120,6 @@ class AIChatActivity : BaseIDEActivity() {
         adapter.setLastContent("⚠ ${err.message}")
         flashError(getString(string.msg_ai_chat_error, err.message))
       }
-    }
-  }
-
-  private fun storedModel(providerId: String): String {
-    val model = AiFactory.storage().getModel(providerId)
-    if (model.isNotBlank()) return model
-    return when (providerId) {
-      "ollama" -> "qwen2.5-coder:7b"
-      "gemini" -> "gemini-2.0-flash"
-      "openai" -> "gpt-4o-mini"
-      else -> "gpt-4o-mini"
     }
   }
 
@@ -165,7 +155,7 @@ class AIChatActivity : BaseIDEActivity() {
     val builder = DialogUtils.newMaterialDialogBuilder(this)
     builder.setTitle(string.title_ai_chat_config)
     val provider = AiFactory.engine().activeProvider()
-    val model = storedModel(provider.providerId)
+    val model = AiFactory.storage().getModel(provider.providerId).ifBlank { "(not configured)" }
     builder.setMessage("Provider: ${provider.displayName}\n\nModel: $model\n\nChange model:")
     builder.setView(bindingInput.root)
     builder.setPositiveButton(android.R.string.ok) { _, _ ->

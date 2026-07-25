@@ -15,13 +15,14 @@ import com.hmx.ide.ai.models.Role
 import com.hmx.ide.ai.models.Usage
 import com.hmx.ide.ai.network.AiHttpClient
 import com.hmx.ide.ai.network.HttpResponse
+import com.hmx.ide.ai.storage.ProviderStorage
 import com.hmx.ide.activities.HttpConfig
 import kotlinx.coroutines.flow.Flow
 import org.json.JSONArray
 import org.json.JSONObject
 
 class ClaudeProvider(
-  private val apiKey: String = "",
+  private val storage: ProviderStorage? = null,
   private val client: AiHttpClient = AiHttpClient(),
 ) : AiProvider {
 
@@ -32,7 +33,7 @@ class ClaudeProvider(
   private val baseUrl = "https://api.anthropic.com"
 
   private fun headers() = mapOf(
-    "x-api-key" to apiKey,
+    "x-api-key" to (storage?.getApiKey(providerId) ?: ""),
     "anthropic-version" to "2023-06-01",
   )
 
@@ -53,7 +54,7 @@ class ClaudeProvider(
     val url = "$baseUrl/v1/models"
     val config = HttpConfig(url = url, headers = headers())
     val response = client.execute(config)
-    if (response.code !in 200..299) return fallbackModels()
+    if (response.code !in 200..299) return emptyList()
     return parseModels(response.body)
   }
 
@@ -106,11 +107,6 @@ class ClaudeProvider(
     }
     return list
   }
-
-  private fun fallbackModels(): List<AiModel> = listOf(
-    "claude-sonnet-4-20250514", "claude-3-5-sonnet-latest",
-    "claude-3-5-haiku-latest", "claude-3-opus-latest"
-  ).map { AiModel(it) }
 
   private fun mapError(response: HttpResponse): AiException {
     return when (response.code) {

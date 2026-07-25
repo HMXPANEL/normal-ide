@@ -20,3 +20,6 @@ class ProviderException(message: String, cause: Throwable? = null) :
 
 class StreamInterruptedException(message: String, cause: Throwable? = null) :
   AiException(message, cause)
+
+class ProviderConfigurationException(message: String, cause: Throwable? = null) :
+  AiException(message, cause)

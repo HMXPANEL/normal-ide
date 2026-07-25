@@ -133,8 +133,7 @@
               android:id="@+id/endpoint_input"
               android:layout_width="match_parent"
               android:layout_height="wrap_content"
-              android:inputType="textUri"
-              tools:text="http://localhost:11434" />
+              android:inputType="textUri" />
 
           </com.google.android.material.textfield.TextInputLayout>
 

@@ -16,6 +16,7 @@ import com.hmx.ide.ai.models.Role
 import com.hmx.ide.ai.models.Usage
 import com.hmx.ide.ai.network.AiHttpClient
 import com.hmx.ide.ai.network.HttpResponse
+import com.hmx.ide.ai.storage.ProviderStorage
 import com.hmx.ide.activities.HttpConfig
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.map
@@ -26,23 +27,24 @@ open class OpenAiProvider(
   override val providerId: String,
   override val displayName: String,
   private val defaultBaseUrl: String,
-  private val defaultModels: List<String> = emptyList(),
-  private val apiKey: String = "",
+  private val storage: ProviderStorage? = null,
   private val client: AiHttpClient = AiHttpClient(),
 ) : AiProvider {
 
   override val capabilities: Set<Capability> = setOf(Capability.streaming)
 
-  private fun baseUrl(userBaseUrl: String): String =
-    userBaseUrl.ifBlank { defaultBaseUrl }.trimEnd('/')
+  private fun resolveBaseUrl(): String {
+    val userBaseUrl = storage?.getBaseUrl(providerId) ?: ""
+    return userBaseUrl.ifBlank { defaultBaseUrl }.trimEnd('/')
+  }
 
   private fun buildUrl(baseUrl: String, path: String): String =
     "$baseUrl/$path".replace("//", "/")
 
   override suspend fun chat(request: ChatRequest): ChatResponse {
-    val base = baseUrl("")
+    val base = resolveBaseUrl()
     val url = buildUrl(base, "v1/chat/completions")
-    val headers = authHeaders(apiKey)
+    val headers = authHeaders()
     val body = buildRequestBody(request)
     val config = HttpConfig(url = url, method = "POST", headers = headers)
     val response = client.execute(config, body = body)
@@ -51,9 +53,9 @@ open class OpenAiProvider(
   }
 
   override fun stream(request: ChatRequest): Flow<Chunk> {
-    val base = baseUrl("")
+    val base = resolveBaseUrl()
     val url = buildUrl(base, "v1/chat/completions")
-    val headers = authHeaders(apiKey)
+    val headers = authHeaders()
     val streamRequest = request.copy(stream = true)
     val body = buildRequestBody(streamRequest)
     val config = HttpConfig(url = url, method = "POST", headers = headers)
@@ -67,26 +69,28 @@ open class OpenAiProvider(
   }
 
   override suspend fun listModels(): List<AiModel> {
-    val base = baseUrl("")
+    val base = resolveBaseUrl()
     val url = buildUrl(base, "v1/models")
-    val headers = authHeaders(apiKey)
+    val headers = authHeaders()
     val config = HttpConfig(url = url, headers = headers)
     val response = client.execute(config)
-    if (response.code !in 200..299) return defaultModels.map { AiModel(it) }
+    if (response.code !in 200..299) return emptyList()
     return parseModels(response.body)
   }
 
   override suspend fun testConnection(): Boolean {
-    val base = baseUrl("")
+    val base = resolveBaseUrl()
     val url = buildUrl(base, "v1/models")
-    val headers = authHeaders(apiKey)
+    val headers = authHeaders()
     val config = HttpConfig(url = url, headers = headers)
     val response = client.execute(config)
     return response.code in 200..299
   }
 
-  protected open fun authHeaders(apiKey: String): Map<String, String> =
-    if (apiKey.isNotBlank()) mapOf("Authorization" to "Bearer $apiKey") else emptyMap()
+  protected open fun authHeaders(): Map<String, String> {
+    val key = storage?.getApiKey(providerId) ?: ""
+    return if (key.isNotBlank()) mapOf("Authorization" to "Bearer $key") else emptyMap()
+  }
 
   protected open fun buildRequestBody(request: ChatRequest): String {
     val arr = JSONArray()
@@ -126,12 +130,12 @@ open class OpenAiProvider(
   protected open fun parseModels(body: String): List<AiModel> {
     val list = mutableListOf<AiModel>()
     val json = JSONObject(body)
-    val data = json.optJSONArray("data") ?: return defaultModels.map { AiModel(it) }
+    val data = json.optJSONArray("data") ?: return emptyList()
     for (i in 0 until data.length()) {
       val model = data.getJSONObject(i)
       list.add(AiModel(id = model.getString("id")))
     }
-    return list.ifEmpty { defaultModels.map { AiModel(it) } }
+    return list
   }
 
   protected open fun mapError(response: HttpResponse): AiException {

@@ -21,6 +21,7 @@ logback = "1.5.3"
 realm = "10.18.0"
 benchmark = "1.2.4"
 benchmark-junit4 = "1.2.4"
+security-crypto = "1.1.0"
 
 [libraries]
 
@@ -103,6 +104,7 @@ androidx-viewpager2 = { module = "androidx.viewpager2:viewpager2", version = "1.
 androidx-window-v1alpha9 = { module = "androidx.window:window", version = "1.0.0-alpha09" }
 androidx-work = { module = "androidx.work:work-runtime", version.ref = "androidx-work" }
 androidx-work-ktx = { module = "androidx.work:work-runtime-ktx", version.ref = "androidx-work" }
+androidx-security-crypto = { module = "androidx.security:security-crypto", version.ref = "security-crypto" }
 
 # Google
 google-material = { module = "com.google.android.material:material", version = "1.11.0" }

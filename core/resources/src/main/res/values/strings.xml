@@ -87,7 +87,7 @@
   <string name="title_ai_chat_send">Send</string>
   <string name="hint_ai_chat_message">Ask about this project…</string>
   <string name="msg_ai_chat_project_required">Open a project to use AI Chat.</string>
-  <string name="hint_ai_chat_endpoint">API endpoint (e.g. http://localhost:11434/api/chat)</string>
+  <string name="hint_ai_chat_endpoint">API endpoint</string>
   <string name="hint_ai_chat_model">Model name</string>
   <string name="action_apply_changes">Apply file changes</string>
   <string name="title_ai_chat_config">AI Chat settings</string>
@@ -619,7 +619,6 @@
   <string name="idepref_ai_provider_togetherai">Together AI</string>
   <string name="idepref_ai_provider_fireworks">Fireworks AI</string>
   <string name="idepref_ai_provider_xai">xAI (Grok)</string>
-  <string name="idepref_ai_provider_ollama">Ollama</string>
   <string name="idepref_ai_provider_opencode">OpenCode</string>
   <string name="idepref_ai_provider_custom">Custom OpenAI Compatible</string>
   <string name="idepref_ai_error_invalid_api_key">Invalid API Key</string>

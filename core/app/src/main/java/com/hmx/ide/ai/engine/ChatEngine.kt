@@ -8,6 +8,7 @@ import kotlinx.coroutines.flow.collect
 
 class ChatEngine(
   private val engine: AiEngine,
+  private val maxHistory: Int = 50,
 ) {
 
   private val messages = mutableListOf<ChatMessage>()
@@ -20,9 +21,11 @@ class ChatEngine(
     systemPrompt: String? = null,
   ): ChatResponse {
     messages.add(ChatMessage(Role.user, content))
+    trimHistory()
     val request = engine.buildChatRequest(model, messages, systemPrompt)
     val response = engine.chat(request)
     messages.add(response.message)
+    trimHistory()
     return response
   }
 
@@ -33,6 +36,7 @@ class ChatEngine(
     onChunk: (Chunk) -> Unit = {},
   ): ChatResponse {
     messages.add(ChatMessage(Role.user, content))
+    trimHistory()
     val request = engine.buildChatRequest(model, messages, systemPrompt, stream = true)
     val fullContent = StringBuilder()
     engine.stream(request).collect { chunk ->
@@ -41,8 +45,15 @@ class ChatEngine(
     }
     val assistantMsg = ChatMessage(Role.assistant, fullContent.toString())
     messages.add(assistantMsg)
+    trimHistory()
     return ChatResponse(message = assistantMsg)
   }
 
   fun clear() { messages.clear() }
+
+  private fun trimHistory() {
+    while (messages.size > maxHistory) {
+      messages.removeAt(0)
+    }
+  }
 }

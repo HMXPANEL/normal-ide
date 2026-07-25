@@ -54,7 +54,6 @@ class AIModelsActivity : EdgeToEdgeIDEActivity() {
     AiProvider("togetherai", R.string.idepref_ai_provider_togetherai, R.drawable.ic_provider_togetherai, "https://api.together.ai"),
     AiProvider("fireworks", R.string.idepref_ai_provider_fireworks, R.drawable.ic_provider_fireworks, "https://api.fireworks.ai"),
     AiProvider("xai", R.string.idepref_ai_provider_xai, R.drawable.ic_provider_xai, "https://api.x.ai"),
-    AiProvider("ollama", R.string.idepref_ai_provider_ollama, R.drawable.ic_provider_ollama, "http://localhost:11434", needsApiKey = false, needsEndpoint = true),
     AiProvider("opencode", R.string.idepref_ai_provider_opencode, R.drawable.ic_provider_opencode, "https://opencode.ai/zen/v1", needsBaseUrl = true),
     AiProvider("custom", R.string.idepref_ai_provider_custom, R.drawable.ic_provider_custom, "", needsApiKey = true, needsBaseUrl = true),
   )
@@ -250,15 +249,12 @@ class AIModelsActivity : EdgeToEdgeIDEActivity() {
         emptyList()
       }
       withContext(Dispatchers.Main) {
-        val handler = providerHandler(provider.id)
-        val fallback = handler.fallbackModels()
-        val allModels = if (models.isNotEmpty()) models else fallback
-        if (allModels.isNotEmpty()) {
+        if (models.isNotEmpty()) {
           binding.modelDropdown.setAdapter(ArrayAdapter(this@AIModelsActivity,
-            android.R.layout.simple_dropdown_item_1line, allModels))
+            android.R.layout.simple_dropdown_item_1line, models))
           val savedModel = AIModelsPreferences.getModel(provider.id)
           binding.modelDropdown.setText(
-            savedModel.takeIf { it in allModels } ?: allModels.first(), false)
+            savedModel.takeIf { it in models } ?: models.first(), false)
         } else {
           binding.modelDropdown.setAdapter(ArrayAdapter(this@AIModelsActivity,
             android.R.layout.simple_dropdown_item_1line,

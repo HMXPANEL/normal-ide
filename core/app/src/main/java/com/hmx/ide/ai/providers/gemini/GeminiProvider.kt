@@ -15,13 +15,14 @@ import com.hmx.ide.ai.models.Role
 import com.hmx.ide.ai.models.Usage
 import com.hmx.ide.ai.network.AiHttpClient
 import com.hmx.ide.ai.network.HttpResponse
+import com.hmx.ide.ai.storage.ProviderStorage
 import com.hmx.ide.activities.HttpConfig
 import kotlinx.coroutines.flow.Flow
 import org.json.JSONArray
 import org.json.JSONObject
 
 class GeminiProvider(
-  private val apiKey: String = "",
+  private val storage: ProviderStorage? = null,
   private val client: AiHttpClient = AiHttpClient(),
 ) : AiProvider {
 
@@ -31,7 +32,7 @@ class GeminiProvider(
 
   private val baseUrl = "https://generativelanguage.googleapis.com/v1beta"
 
-  private fun headers() = mapOf("x-goog-api-key" to apiKey)
+  private fun headers() = mapOf("x-goog-api-key" to (storage?.getApiKey(providerId) ?: ""))
 
   override suspend fun chat(request: ChatRequest): ChatResponse {
     val url = "$baseUrl/models/${request.model}:generateContent"
@@ -50,7 +51,7 @@ class GeminiProvider(
     val url = "$baseUrl/models"
     val config = HttpConfig(url = url, headers = headers())
     val response = client.execute(config)
-    if (response.code !in 200..299) return fallbackModels()
+    if (response.code !in 200..299) return emptyList()
     return parseModels(response.body)
   }
 
@@ -102,10 +103,6 @@ class GeminiProvider(
     }
     return list
   }
-
-  private fun fallbackModels(): List<AiModel> = listOf(
-    "gemini-2.0-flash", "gemini-2.0-flash-lite", "gemini-1.5-pro", "gemini-1.5-flash"
-  ).map { AiModel(it) }
 
   private fun mapError(response: HttpResponse): AiException {
     return when (response.code) {
