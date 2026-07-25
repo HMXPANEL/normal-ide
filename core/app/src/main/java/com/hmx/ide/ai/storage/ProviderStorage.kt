@@ -1,6 +1,7 @@
 package com.hmx.ide.ai.storage
 
 import android.content.Context
+import android.content.SharedPreferences
 import androidx.security.crypto.EncryptedSharedPreferences
 import androidx.security.crypto.MasterKeys
 import com.hmx.ide.ai.registry.ProviderRegistry
