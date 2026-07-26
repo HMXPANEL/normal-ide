@@ -29,6 +29,8 @@ open class OpenAiProvider(
   private val defaultBaseUrl: String,
   private val storage: ProviderStorage? = null,
   private val client: AiHttpClient = AiHttpClient(),
+  private val chatEndpointPath: String = "v1/chat/completions",
+  private val modelsEndpointPath: String = "v1/models",
 ) : AiProvider {
 
   override val capabilities: Set<Capability> = setOf(Capability.streaming)
@@ -39,11 +41,11 @@ open class OpenAiProvider(
   }
 
   private fun buildUrl(baseUrl: String, path: String): String =
-    "$baseUrl/$path".replace("//", "/")
+    "${baseUrl.trimEnd('/')}/${path.trimStart('/')}"
 
   override suspend fun chat(request: ChatRequest): ChatResponse {
     val base = resolveBaseUrl()
-    val url = buildUrl(base, "v1/chat/completions")
+    val url = buildUrl(base, chatEndpointPath)
     val headers = authHeaders()
     val body = buildRequestBody(request)
     val config = HttpConfig(url = url, method = "POST", headers = headers)
@@ -54,7 +56,7 @@ open class OpenAiProvider(
 
   override fun stream(request: ChatRequest): Flow<Chunk> {
     val base = resolveBaseUrl()
-    val url = buildUrl(base, "v1/chat/completions")
+    val url = buildUrl(base, chatEndpointPath)
     val headers = authHeaders()
     val streamRequest = request.copy(stream = true)
     val body = buildRequestBody(streamRequest)
@@ -70,7 +72,7 @@ open class OpenAiProvider(
 
   override suspend fun listModels(): List<AiModel> {
     val base = resolveBaseUrl()
-    val url = buildUrl(base, "v1/models")
+    val url = buildUrl(base, modelsEndpointPath)
     val headers = authHeaders()
     val config = HttpConfig(url = url, headers = headers)
     val response = client.execute(config)
@@ -80,7 +82,7 @@ open class OpenAiProvider(
 
   override suspend fun testConnection(): Boolean {
     val base = resolveBaseUrl()
-    val url = buildUrl(base, "v1/models")
+    val url = buildUrl(base, modelsEndpointPath)
     val headers = authHeaders()
     val config = HttpConfig(url = url, headers = headers)
     val response = client.execute(config)

@@ -21,6 +21,8 @@ import android.os.Bundle
 import android.view.View
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.hmx.ide.ai.AiFactory
+import com.hmx.ide.ai.context.ContextCache
+import com.hmx.ide.ai.context.PromptBuilder
 import com.hmx.ide.ai.engine.ChatEngine
 import com.hmx.ide.ai.errors.ProviderConfigurationException
 import com.hmx.ide.app.BaseIDEActivity
@@ -75,13 +77,8 @@ class AIChatActivity : BaseIDEActivity() {
     binding.send.setOnClickListener { sendMessage() }
 
     if (projectDir != null) {
-      systemPrompt = "You are an AI coding assistant for the Android project " +
-        "'${projectDir!!.name}'.\n\n" +
-        "Project structure:\n${ProjectContext.describe(projectDir!!)}\n\n" +
-        "You can read project files when asked. To create or modify a file, " +
-        "respond with a fenced block like:\n" +
-        "[[WRITE:relative/path/File.kt]]\n<full file content>\n[[END]]\n" +
-        "Otherwise just answer conversationally."
+      val ctx = ContextCache.getOrAnalyze(projectDir!!.absolutePath)
+      systemPrompt = PromptBuilder.build(ctx)
       adapter.add(
         ChatMessage("assistant",
           "Hi! I can see the '${projectDir!!.name}' project. " +

@@ -11,7 +11,8 @@ object ProviderFactory {
 
   fun createAll(storage: ProviderStorage? = null): List<AiProvider> = listOf(
     OpenAiProvider("openai", "OpenAI", "https://api.openai.com", storage = storage),
-    OpenAiProvider("openrouter", "OpenRouter", "https://openrouter.ai/api/v1", storage = storage),
+    OpenAiProvider("openrouter", "OpenRouter", "https://openrouter.ai/api/v1", storage = storage,
+      chatEndpointPath = "chat/completions", modelsEndpointPath = "models"),
     OpenAiProvider("deepseek", "DeepSeek", "https://api.deepseek.com", storage = storage),
     OpenAiProvider("nvidia", "NVIDIA NIM", "https://integrate.api.nvidia.com", storage = storage),
     OpenAiProvider("xai", "xAI (Grok)", "https://api.x.ai", storage = storage),
@@ -19,7 +20,8 @@ object ProviderFactory {
     OpenAiProvider("groq", "Groq", "https://api.groq.com", storage = storage),
     OpenAiProvider("togetherai", "Together AI", "https://api.together.ai", storage = storage),
     OpenAiProvider("fireworks", "Fireworks AI", "https://api.fireworks.ai", storage = storage),
-    OpenAiProvider("opencode", "OpenCode", "https://opencode.ai/zen/v1", storage = storage),
+    OpenAiProvider("opencode", "OpenCode", "https://opencode.ai/zen/v1", storage = storage,
+      chatEndpointPath = "chat/completions", modelsEndpointPath = "models"),
     GeminiProvider(storage = storage),
     ClaudeProvider(storage = storage),
   )
