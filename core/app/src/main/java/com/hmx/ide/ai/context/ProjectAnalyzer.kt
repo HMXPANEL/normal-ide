@@ -35,16 +35,16 @@ object ProjectAnalyzer {
     Architecture.CLEAN to listOf("UseCase", "Repository", "domain", "data.repository"),
   )
 
-  fun analyze(root: File, scanResult: ScanResult): ProjectContext {
+  fun analyze(root: File, scanResult: ScanResult): ProjectIndex {
     val language = detectLanguage(scanResult)
-    val ui = detectUi(scanResult, language)
+    val ui = detectUi(scanResult)
     val buildSystem = detectBuildSystem(scanResult)
     val manifestInfo = parseManifests(scanResult.manifestFiles, root)
     val libraries = detectLibraries(scanResult, manifestInfo.gradleText)
     val architecture = detectArchitecture(scanResult)
     val modules = detectModules(scanResult)
 
-    return ProjectContext(
+    val context = ProjectContext(
       language = language,
       ui = ui,
       architecture = architecture,
@@ -63,6 +63,13 @@ object ProjectAnalyzer {
       hasApplicationClass = manifestInfo.hasApplicationClass,
       projectDir = root.absolutePath,
     )
+
+    return ProjectIndex(
+      context = context,
+      files = scanResult.fileInfos,
+      totalSourceFiles = scanResult.allSourceFiles.size,
+      totalFiles = scanResult.kotlinFiles.size + scanResult.javaFiles.size,
+    )
   }
 
   private fun detectLanguage(scan: ScanResult): Language {
@@ -76,13 +83,11 @@ object ProjectAnalyzer {
     }
   }
 
-  private fun detectUi(scan: ScanResult, language: Language): UIFramework {
+  private fun detectUi(scan: ScanResult): UIFramework {
     val hasXmlLayouts = scan.xmlLayoutFiles.isNotEmpty()
-    val hasCompose = scan.allSourceFiles.any { f ->
-      runCatching {
-        val content = f.readText()
-        content.contains("import androidx.compose") || content.contains("setContent {")
-      }.getOrDefault(false)
+    val hasCompose = scan.fileInfos.any { f ->
+      f.imports.any { it.startsWith("androidx.compose") } ||
+      f.imports.any { it.startsWith("androidx.compose.material") }
     }
     return when {
       hasXmlLayouts && hasCompose -> UIFramework.MIXED
@@ -105,14 +110,8 @@ object ProjectAnalyzer {
 
   private fun detectLibraries(scan: ScanResult, gradleText: String): Set<String> {
     val found = mutableSetOf<String>()
-    val allText = buildString {
-      append(gradleText)
-      val limit = min(scan.allSourceFiles.size, 30)
-      for (i in 0 until limit) {
-        val content = runCatching { scan.allSourceFiles[i].readText() }.getOrNull() ?: continue
-        append(content)
-      }
-    }
+    val allImports = scan.fileInfos.flatMap { it.imports }.joinToString("\n")
+    val allText = "$gradleText\n$allImports"
     for ((sig, name) in LIBRARY_SIGNATURES) {
       if (allText.contains(sig)) found.add(name)
     }
@@ -120,13 +119,7 @@ object ProjectAnalyzer {
   }
 
   private fun detectArchitecture(scan: ScanResult): Architecture {
-    val sourceText = buildString {
-      val limit = min(scan.allSourceFiles.size, 30)
-      for (i in 0 until limit) {
-        val content = runCatching { scan.allSourceFiles[i].readText() }.getOrNull() ?: continue
-        append(content)
-      }
-    }
+    val sourceText = scan.fileInfos.flatMap { it.imports }.joinToString("\n")
     for ((arch, patterns) in ARCHIVE_PATTERNS) {
       if (patterns.any { sourceText.contains(it) }) return arch
     }

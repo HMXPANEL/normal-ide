@@ -5,25 +5,27 @@ import java.io.File
 object ContextCache {
 
   private data class Entry(
-    val context: ProjectContext,
+    val index: ProjectIndex,
     val trackedFiles: Map<String, Long>,
   )
 
   private val cache = mutableMapOf<String, Entry>()
 
-  fun get(projectDir: String): ProjectContext? {
+  fun get(projectDir: String): ProjectIndex? {
     val entry = cache[projectDir] ?: return null
     if (isStale(projectDir, entry)) {
       cache.remove(projectDir)
       return null
     }
-    return entry.context
+    return entry.index
   }
 
-  fun set(projectDir: String, context: ProjectContext) {
+  fun getContext(projectDir: String): ProjectContext? = get(projectDir)?.context
+
+  fun set(projectDir: String, index: ProjectIndex) {
     val root = File(projectDir)
     cache[projectDir] = Entry(
-      context = context,
+      index = index,
       trackedFiles = mapOf(
         "manifest" to getModStamp(File(root, "app/src/main/AndroidManifest.xml")),
         "gradle_app" to getModStamp(File(root, "app/build.gradle.kts")),
@@ -40,17 +42,22 @@ object ContextCache {
     cache.remove(projectDir)
   }
 
-  fun getOrAnalyze(projectDir: String): ProjectContext {
+  fun getOrAnalyze(projectDir: String, onProgress: ((String) -> Unit)? = null): ProjectIndex {
     val cached = get(projectDir)
     if (cached != null) return cached
 
     val root = File(projectDir)
-    if (!root.isDirectory) return ProjectContext(projectDir = projectDir)
+    if (!root.isDirectory) return ProjectIndex(
+      context = ProjectContext(projectDir = projectDir)
+    )
 
-    val scanResult = ProjectScanner.scan(root)
-    val context = ProjectAnalyzer.analyze(root, scanResult)
-    set(projectDir, context)
-    return context
+    onProgress?.invoke("Scanning project...")
+    val scanResult = ProjectScanner.scan(root, onProgress)
+    onProgress?.invoke("Analyzing project structure...")
+    val index = ProjectAnalyzer.analyze(root, scanResult)
+    set(projectDir, index)
+    onProgress?.invoke("✓ Project indexing completed")
+    return index
   }
 
   private fun isStale(projectDir: String, entry: Entry): Boolean {

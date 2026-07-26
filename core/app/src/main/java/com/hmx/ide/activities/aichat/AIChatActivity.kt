@@ -1,20 +1,3 @@
-/*
- *  This file is part of HMX IDE.
- *
- *  HMX IDE is free software: you can redistribute it and/or modify
- *  it under the terms of the GNU General Public License as published by
- *  the Free Software Foundation, either version 3 of the License, or
- *  (at your option) any later version.
- *
- *  HMX IDE is distributed in the hope that it will be useful,
- *  but WITHOUT ANY WARRANTY; without even the implied warranty of
- *  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- *  GNU General Public License for more details.
- *
- *  You should have received a copy of the GNU General Public License
- *   along with HMX IDE.  If not, see <https://www.gnu.org/licenses/>.
- */
-
 package com.hmx.ide.activities.aichat
 
 import android.os.Bundle
@@ -41,11 +24,16 @@ import java.io.File
 
 class AIChatActivity : BaseIDEActivity() {
 
+  companion object {
+    const val EXTRA_CURRENT_FILE = "current_file"
+  }
+
   private lateinit var binding: ActivityAiChatBinding
   private val adapter = AIChatAdapter()
   private val scope = CoroutineScope(Dispatchers.Main)
 
   private var projectDir: File? = null
+  private var currentFile: String? = null
   private var pendingEdits = linkedMapOf<String, String>()
 
   private val chatEngine by lazy { ChatEngine(AiFactory.engine()) }
@@ -60,6 +48,7 @@ class AIChatActivity : BaseIDEActivity() {
     super.onCreate(savedInstanceState)
 
     projectDir = runCatching { IProjectManager.getInstance().projectDir }.getOrNull()
+    currentFile = intent.getStringExtra(EXTRA_CURRENT_FILE)
 
     binding.messages.adapter = adapter
     binding.messages.layoutManager = LinearLayoutManager(this).apply {
@@ -77,13 +66,24 @@ class AIChatActivity : BaseIDEActivity() {
     binding.send.setOnClickListener { sendMessage() }
 
     if (projectDir != null) {
-      val ctx = ContextCache.getOrAnalyze(projectDir!!.absolutePath)
-      systemPrompt = PromptBuilder.build(ctx)
-      adapter.add(
-        ChatMessage("assistant",
+      scope.launch {
+        adapter.add(ChatMessage("assistant", "Scanning project..."))
+        val ctx = withContext(Dispatchers.IO) {
+          ContextCache.getOrAnalyze(projectDir!!.absolutePath) { msg ->
+            scope.launch { adapter.setLastContent(msg) }
+          }
+        }
+        val currentFileRel = currentFile?.let { f ->
+          runCatching { File(f).toRelativeString(projectDir!!) }.getOrDefault(f)
+        }
+        systemPrompt = PromptBuilder.build(ctx, currentFileRel ?: currentFile)
+        val fileCount = ctx.totalSourceFiles
+        adapter.setLastContent(
           "Hi! I can see the '${projectDir!!.name}' project. " +
-            "Ask me to explain code, generate files, or fix errors. " +
-            "I can read and modify your project files."))
+          "Indexed $fileCount files." +
+          (if (currentFileRel != null) "\n\nCurrent File:\n$currentFileRel" else "") +
+          "\n\nAsk me to explain code, generate files, fix errors, or analyze the project.")
+      }
     } else {
       adapter.add(ChatMessage("assistant",
         getString(string.msg_ai_chat_project_required)))
@@ -95,7 +95,23 @@ class AIChatActivity : BaseIDEActivity() {
     if (text.isBlank()) return
     binding.messageInput.text?.clear()
 
+    val isAnalysis = text.lowercase().startsWith("analyze")
     adapter.add(ChatMessage("user", text))
+
+    if (isAnalysis && projectDir != null) {
+      scope.launch {
+        adapter.add(ChatMessage("assistant", "…"))
+        binding.send.isEnabled = false
+        val analysis = withContext(Dispatchers.IO) {
+          val idx = ContextCache.getOrAnalyze(projectDir!!.absolutePath)
+          PromptBuilder.buildAnalysis(idx)
+        }
+        adapter.setLastContent(analysis)
+        binding.send.isEnabled = true
+      }
+      return
+    }
+
     adapter.add(ChatMessage("assistant", "…"))
     binding.send.isEnabled = false
 
