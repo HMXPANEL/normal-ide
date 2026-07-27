@@ -178,7 +178,7 @@ class MemoryManager(private val projectDir: File, private val appContext: Contex
 
   fun deleteProjectData() {
     if (::repo.isInitialized) {
-      MemoryContract.AllTables.forEach { table ->
+      MemoryContract.ALL_TABLES.forEach { table ->
         db.writableDatabase.delete(table,
           "${MemoryContract.Conversation.PROJECT_DIR} = ?",
           arrayOf(projectDir.absolutePath))
@@ -212,7 +212,7 @@ class MemoryManager(private val projectDir: File, private val appContext: Contex
       totalEntries = count.toInt(),
       dbSizeBytes = size,
       projectDir = projectDir.absolutePath,
-      hmxDir = hmxDir.absolutePath,
+      hmxDir = HmxFolder.getHmxDir(projectDir).absolutePath,
     )
   }
 }

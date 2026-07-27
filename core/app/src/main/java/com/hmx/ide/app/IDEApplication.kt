@@ -37,6 +37,7 @@ import com.hmx.ide.activities.CrashHandlerActivity
 import com.hmx.ide.activities.editor.IDELogcatReader
 import com.hmx.ide.buildinfo.BuildInfo
 import com.hmx.ide.ai.AiFactory
+import com.hmx.ide.ai.memory.MemoryService
 import com.hmx.ide.editor.schemes.IDEColorSchemeProvider
 import com.hmx.ide.eventbus.events.preferences.PreferenceChangeEvent
 import com.hmx.ide.events.AppEventsIndex
@@ -123,6 +124,7 @@ class IDEApplication : BaseApplication() {
     }
 
     AiFactory.init(this)
+    MemoryService.init(this)
   }
 
   fun showChangelog() {

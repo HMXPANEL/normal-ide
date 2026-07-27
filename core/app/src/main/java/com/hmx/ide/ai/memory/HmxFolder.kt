@@ -57,11 +57,9 @@ object HmxFolder {
     val versionFile = File(hmxDir, VERSION_JSON)
     if (!versionFile.exists()) {
       versionFile.writeText(
-        "{""
-        + "\"schemaVersion\": 1,"
-        + "\"createdAt\": \"${System.currentTimeMillis()}\","
-        + "\"lastMigrated\": 1"
-        + "}"
+        "{\"schemaVersion\": 1," +
+        "\"createdAt\": \"${System.currentTimeMillis()}\"," +
+        "\"lastMigrated\": 1}"
       )
     }
     getCacheDir(hmxDir)
@@ -71,6 +69,20 @@ object HmxFolder {
   fun ensureSetup(projectDir: File): File {
     val hmxDir = getHmxDir(projectDir)
     createHmxIgnore(projectDir)
+    syncHmxIgnoreToGit(projectDir)
     return hmxDir
+  }
+
+  fun syncHmxIgnoreToGit(projectDir: File) {
+    val ignoreFile = getHmxIgnoreFile(projectDir)
+    if (!ignoreFile.exists()) return
+    val gitDir = File(projectDir, ".git")
+    val excludeFile = File(gitDir, "info/exclude")
+    if (!excludeFile.exists()) return
+    val existing = if (excludeFile.exists()) excludeFile.readLines() else emptyList()
+    val newLines = ignoreFile.readLines().filter { it.isNotBlank() && !it.startsWith("#") }
+    val toAdd = newLines.filterNot { line -> existing.any { it.trim() == line.trim() } }
+    if (toAdd.isEmpty()) return
+    excludeFile.appendText("\n" + toAdd.joinToString("\n") + "\n")
   }
 }

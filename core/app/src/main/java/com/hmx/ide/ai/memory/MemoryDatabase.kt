@@ -7,8 +7,8 @@ import com.hmx.ide.ai.memory.MemoryContract.ALL_TABLES
 import com.hmx.ide.ai.memory.MemoryContract.DATABASE_NAME
 import com.hmx.ide.ai.memory.MemoryContract.DATABASE_VERSION
 
-class MemoryDatabase(context: Context, private val dbPath: String) :
-    SQLiteOpenHelper(context, dbPath, null, DATABASE_VERSION) {
+class MemoryDatabase(private val appContext: Context, private val dbPath: String) :
+    SQLiteOpenHelper(appContext, dbPath, null, DATABASE_VERSION) {
 
   override fun onCreate(db: SQLiteDatabase) {
     for (table in ALL_TABLES) {
@@ -17,7 +17,7 @@ class MemoryDatabase(context: Context, private val dbPath: String) :
   }
 
   override fun onUpgrade(db: SQLiteDatabase, oldVersion: Int, newVersion: Int) {
-    MigrationManager.applyMigrations(db, oldVersion, context)
+    MigrationManager.applyMigrations(db, oldVersion, appContext)
   }
 
   override fun onDowngrade(db: SQLiteDatabase, oldVersion: Int, newVersion: Int) {
