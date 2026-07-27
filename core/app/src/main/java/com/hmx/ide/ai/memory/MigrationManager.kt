@@ -140,7 +140,7 @@ object MigrationManager {
   )
 
   fun getVersion(context: Context): Int {
-    val hmxDir = HmxFolder.getHmxDir(context.applicationContext.applicationInfo.dataDir.split("/").dropLast(1).joinToString("/"))
+    val hmxDir = HmxFolder.getHmxDir(File(context.applicationContext.applicationInfo.dataDir.split("/").dropLast(1).joinToString("/")))
     val versionFile = HmxFolder.getVersionFile(hmxDir)
     if (!versionFile.exists()) return 0
     return runCatching {
@@ -150,7 +150,7 @@ object MigrationManager {
   }
 
   fun saveVersion(context: Context, version: Int) {
-    val hmxDir = HmxFolder.getHmxDir(context.applicationContext.applicationContext.applicationInfo.dataDir.split("/").dropLast(1).joinToString("/"))
+    val hmxDir = HmxFolder.getHmxDir(File(context.applicationContext.applicationInfo.dataDir.split("/").dropLast(1).joinToString("/")))
     val versionFile = HmxFolder.getVersionFile(hmxDir)
     val json = JsonObject().apply {
       addProperty("schemaVersion", version)

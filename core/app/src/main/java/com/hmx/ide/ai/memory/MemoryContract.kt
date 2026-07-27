@@ -6,15 +6,15 @@ object MemoryContract {
   const val DATABASE_NAME = "memory.db"
 
   object Tables {
-    const val CONVERSATION = "conversation"
-    const val SUMMARY = "summary"
-    const val DECISION = "decision"
-    const val TODO = "todo"
-    const val PREFERENCE = "preference"
-    const val SESSION = "session"
-    const val FACT = "fact"
-    const val NOTE = "note"
-    const val CACHE = "cache"
+    const val Conversation = "conversation"
+    const val Summary = "summary"
+    const val Decision = "decision"
+    const val Todo = "todo"
+    const val Preference = "preference"
+    const val Session = "session"
+    const val Fact = "fact"
+    const val Note = "note"
+    const val Cache = "cache"
   }
 
   object Conversation {
