@@ -1,6 +1,7 @@
 package com.hmx.ide.ai.pipeline
 
 import com.hmx.ide.ai.context.ContextManager
+import com.hmx.ide.ai.context.EditorContext
 import com.hmx.ide.ai.context.PromptBuilder
 import com.hmx.ide.ai.context.ProjectIndex
 import com.hmx.ide.ai.memory.MemoryManager
@@ -92,7 +93,7 @@ class ContextPipeline(
 
 data class PipelineContext(
   val projectIndex: ProjectIndex,
-  val editorContext: ContextManager.EditorContext,
+  val editorContext: EditorContext,
   val memorySummary: String,
   val relevantMemory: List<MemorySearchResult>?,
   val systemPrompt: String,
