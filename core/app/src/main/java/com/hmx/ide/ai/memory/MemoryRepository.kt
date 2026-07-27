@@ -3,11 +3,8 @@ package com.hmx.ide.ai.memory
 import android.content.ContentValues
 import android.database.Cursor
 import android.database.sqlite.SQLiteDatabase
-import com.google.gson.Gson
 
 class MemoryRepository(private val db: MemoryDatabase) {
-
-  private val gson = Gson()
   private val dbw get() = db.writableDatabase
   private val dbr get() = db.readableDatabase
 
