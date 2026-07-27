@@ -1,5 +1,6 @@
 package com.hmx.ide.ai.context
 
+import com.hmx.ide.projects.IProjectManager
 import java.io.File
 
 data class EditorContext(
