@@ -28,18 +28,17 @@ class JavaAstWalker(private val packageName: String, private val source: String)
     cursor.exec(typeQuery, rootNode)
     var match = cursor.nextMatch()
     while (match != null) {
-      val nameCapture = match.captures.find { typeQuery.getCaptureNameForId(it.index) == "name" } ?: run {
-        match = cursor.nextMatch(); continue
-      }
-      val declCapture = match.captures.find { typeQuery.getCaptureNameForId(it.index) == "decl" } ?: run {
-        match = cursor.nextMatch(); continue
-      }
+      val nameCapture = match.captures.find { typeQuery.getCaptureNameForId(it.index) == "name" }
+      if (nameCapture == null) { match = cursor.nextMatch(); continue }
+      val declCapture = match.captures.find { typeQuery.getCaptureNameForId(it.index) == "decl" }
+      if (declCapture == null) { match = cursor.nextMatch(); continue }
       val nameNode = nameCapture.node
       val declNode = declCapture.node
       if (!nameNode.canAccess() || !declNode.canAccess()) {
         match = cursor.nextMatch(); continue
       }
-      val name = extractText(nameNode) ?: run { match = cursor.nextMatch(); continue }
+      val name = extractText(nameNode)
+      if (name == null) { match = cursor.nextMatch(); continue }
       val kind = when (declNode.type) {
         "interface_declaration" -> SymbolKind.INTERFACE
         "enum_declaration" -> SymbolKind.ENUM
@@ -70,11 +69,11 @@ class JavaAstWalker(private val packageName: String, private val source: String)
     cursor.exec(memberQuery, declNode)
     var match = cursor.nextMatch()
     while (match != null) {
-      val nameCapture = match.captures.find { memberQuery.getCaptureNameForId(it.index) == "name" } ?: run {
-        match = cursor.nextMatch(); continue
-      }
+      val nameCapture = match.captures.find { memberQuery.getCaptureNameForId(it.index) == "name" }
+      if (nameCapture == null) { match = cursor.nextMatch(); continue }
       if (!nameCapture.node.canAccess()) { match = cursor.nextMatch(); continue }
-      val name = extractText(nameCapture.node) ?: run { match = cursor.nextMatch(); continue }
+      val name = extractText(nameCapture.node)
+      if (name == null) { match = cursor.nextMatch(); continue }
       out.add(
         DeclarationModel(
           kind = SymbolKind.METHOD, name = name, fqn = "$parentFqn.$name",
@@ -89,7 +88,7 @@ class JavaAstWalker(private val packageName: String, private val source: String)
   private fun extractModifiers(node: TSNode): List<String> {
     val mods = mutableListOf<String>()
     for (i in 0 until node.childCount) {
-      val child = node.child(i) ?: continue
+      val child = node.getChild(i) ?: continue
       if (child.canAccess() && child.type == "modifier") {
         extractText(child)?.let { mods.add(it) }
       }
@@ -100,7 +99,7 @@ class JavaAstWalker(private val packageName: String, private val source: String)
   private fun extractSupertypes(node: TSNode): List<String> {
     val types = mutableListOf<String>()
     for (i in 0 until node.childCount) {
-      val child = node.child(i) ?: continue
+      val child = node.getChild(i) ?: continue
       if (!child.canAccess()) continue
       when (child.type) {
         "superclass" -> findTypeIdentifiers(child, types)
@@ -112,7 +111,7 @@ class JavaAstWalker(private val packageName: String, private val source: String)
 
   private fun findTypeIdentifiers(node: TSNode, out: MutableList<String>) {
     for (i in 0 until node.childCount) {
-      val child = node.child(i) ?: continue
+      val child = node.getChild(i) ?: continue
       if (child.canAccess() && child.type == "type_identifier") {
         extractText(child)?.let { out.add(it) }
       }

@@ -81,10 +81,10 @@ class ContextPipeline(
   private fun collectProjectStructure(): String {
     val pc = index.context
     val sb = StringBuilder("Project: ${pc.projectType} | ${pc.language} | ${pc.buildSystem}")
-    if (pc.packageName.isNotBlank()) sb.append("\nPackage: ${pc.packageName}")
+    if (!pc.packageName.isNullOrBlank()) sb.append("\nPackage: ${pc.packageName}")
     if (pc.modules.isNotEmpty()) sb.append("\nModules: ${pc.modules.joinToString(", ")}")
     if (pc.libraries.isNotEmpty()) sb.append("\nLibraries: ${pc.libraries.joinToString(", ")}")
-    if (pc.minSdk > 0) sb.append("\nSDK: min=${pc.minSdk} target=${pc.targetSdk} compile=${pc.compileSdk}")
+    if ((pc.minSdk ?: 0) > 0) sb.append("\nSDK: min=${pc.minSdk} target=${pc.targetSdk} compile=${pc.compileSdk}")
     if (pc.activities.isNotEmpty()) sb.append("\nActivities: ${pc.activities.joinToString(", ")}")
     if (pc.fragments.isNotEmpty()) sb.append("\nFragments: ${pc.fragments.joinToString(", ")}")
     if (pc.services.isNotEmpty()) sb.append("\nServices: ${pc.services.joinToString(", ")}")
