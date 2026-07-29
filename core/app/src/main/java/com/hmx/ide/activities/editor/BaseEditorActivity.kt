@@ -297,8 +297,9 @@ abstract class BaseEditorActivity : EdgeToEdgeIDEActivity(), TabLayout.OnTabSele
     registerLanguageServers()
 
     if (savedInstanceState != null && savedInstanceState.containsKey(KEY_PROJECT_PATH)) {
-      IProjectManager.getInstance()
-        .openProject(savedInstanceState.getString(KEY_PROJECT_PATH)!!)
+      val projectPath = savedInstanceState.getString(KEY_PROJECT_PATH)!!
+      IProjectManager.getInstance().openProject(projectPath)
+      com.hmx.ide.knowledge.KnowledgeEngineImpl.refresh(File(projectPath))
     }
 
     onBackPressedDispatcher.addCallback(this, onBackPressedCallback)

@@ -103,6 +103,21 @@ class MemoryDatabase(private val appContext: Context, private val dbPath: String
           "${MemoryContract.Note.CONTENT} TEXT NOT NULL, " +
           "${MemoryContract.Note.CREATED_AT} INTEGER NOT NULL)"
       }
+      MemoryContract.Tables.ProjectKnowledge -> {
+        "CREATE TABLE ${MemoryContract.Tables.ProjectKnowledge} (" +
+          "${MemoryContract.ProjectKnowledge.ID} INTEGER PRIMARY KEY AUTOINCREMENT, " +
+          "${MemoryContract.ProjectKnowledge.PROJECT_DIR} TEXT NOT NULL, " +
+          "${MemoryContract.ProjectKnowledge.CATEGORY} TEXT NOT NULL, " +
+          "${MemoryContract.ProjectKnowledge.KEY} TEXT NOT NULL, " +
+          "${MemoryContract.ProjectKnowledge.VALUE} TEXT NOT NULL, " +
+          "${MemoryContract.ProjectKnowledge.TITLE} TEXT DEFAULT '', " +
+          "${MemoryContract.ProjectKnowledge.TAGS} TEXT DEFAULT '', " +
+          "${MemoryContract.ProjectKnowledge.CREATED_AT} INTEGER NOT NULL, " +
+          "${MemoryContract.ProjectKnowledge.UPDATED_AT} INTEGER NOT NULL, " +
+          "UNIQUE(${MemoryContract.ProjectKnowledge.PROJECT_DIR}, " +
+            "${MemoryContract.ProjectKnowledge.CATEGORY}, " +
+            "${MemoryContract.ProjectKnowledge.KEY}))"
+      }
       MemoryContract.Tables.Cache -> {
         "CREATE TABLE ${MemoryContract.Tables.Cache} (" +
           "${MemoryContract.Cache.ID} INTEGER PRIMARY KEY AUTOINCREMENT, " +

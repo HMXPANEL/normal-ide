@@ -1,13 +1,17 @@
 package com.hmx.ide.ai.pipeline
 
+import com.hmx.ide.ai.context.ContextCache
 import com.hmx.ide.ai.context.ContextManager
 import com.hmx.ide.ai.context.EditorContext
-import com.hmx.ide.ai.context.PromptBuilder
 import com.hmx.ide.ai.context.ProjectIndex
+import com.hmx.ide.ai.context.PromptBuilder
 import com.hmx.ide.ai.memory.MemoryManager
 import com.hmx.ide.ai.memory.MemorySearchResult
 import com.hmx.ide.ai.memory.MemoryService
 import com.hmx.ide.ai.memory.MemoryService.withProject
+import com.hmx.ide.ai.memory.MemoryService.withProjectKnowledge
+import com.hmx.ide.ai.models.ChatMessage
+import com.hmx.ide.ai.models.Role
 import java.io.File
 
 class ContextPipeline(
@@ -15,7 +19,7 @@ class ContextPipeline(
 ) {
 
   private val index: ProjectIndex by lazy {
-    com.hmx.ide.ai.context.ContextCache.getOrAnalyze(projectDir.absolutePath)
+    ContextCache.getOrAnalyze(projectDir.absolutePath)
   }
 
   private val memoryManager: MemoryManager by lazy {
@@ -42,6 +46,104 @@ class ContextPipeline(
       systemPrompt = buildSystemPromptWithMemory(currentFile),
     )
   }
+
+  fun processQuery(query: String): List<ChatMessage> {
+    val needs = QueryAnalyzer.analyze(query)
+    val ctx = ContextManager.collectContext()
+    val contextBlocks = mutableListOf<String>()
+
+    if (ContextNeed.CURRENT_FILE in needs)
+      contextBlocks.add(collectCurrentFile(ctx))
+    if (ContextNeed.DIAGNOSTICS in needs)
+      contextBlocks.add(collectDiagnostics(ctx))
+    if (ContextNeed.PROJECT_STRUCTURE in needs)
+      contextBlocks.add(collectProjectStructure())
+    if (ContextNeed.MANIFEST in needs)
+      contextBlocks.add(collectManifest())
+    if (ContextNeed.GRADLE_CONFIG in needs)
+      contextBlocks.add(collectGradleConfig())
+    if (ContextNeed.PROJECT_MEMORY in needs)
+      contextBlocks.add(collectProjectMemory(query))
+    if (ContextNeed.RELEVANT_FILES in needs)
+      contextBlocks.add(collectRelevantFiles(ctx, query))
+
+    val systemPrompt = buildSystemPrompt(ctx.currentFile)
+    val collected = contextBlocks.filter { it.isNotBlank() }.joinToString("\n\n")
+    val fullPrompt = if (collected.isNotBlank()) "$systemPrompt\n\nContext:\n$collected" else systemPrompt
+
+    return listOf(
+      ChatMessage(Role.system, fullPrompt),
+      ChatMessage(Role.user, query),
+    )
+  }
+
+  private fun collectCurrentFile(ctx: EditorContext): String {
+    val file = ctx.currentFile ?: return ""
+    val selected = ctx.selectedCode
+    if (!selected.isNullOrBlank())
+      return "Selected code in $file:\n```\n$selected\n```"
+    val content = ctx.currentFileContent ?: readFileSafely(file) ?: return ""
+    return "File $file:\n```\n$content\n```"
+  }
+
+  private fun collectDiagnostics(ctx: EditorContext): String {
+    val diag = ctx.diagnostics
+    if (diag.isEmpty()) return ""
+    return "Diagnostics:\n${diag.joinToString("\n") { "  - $it" }}"
+  }
+
+  private fun collectProjectStructure(): String {
+    val pc = index.context
+    val sb = StringBuilder("Project: ${pc.projectType} | ${pc.language} | ${pc.buildSystem}")
+    if (pc.packageName.isNotBlank()) sb.append("\nPackage: ${pc.packageName}")
+    if (pc.modules.isNotEmpty()) sb.append("\nModules: ${pc.modules.joinToString(", ")}")
+    if (pc.libraries.isNotEmpty()) sb.append("\nLibraries: ${pc.libraries.joinToString(", ")}")
+    if (pc.minSdk > 0) sb.append("\nSDK: min=${pc.minSdk} target=${pc.targetSdk} compile=${pc.compileSdk}")
+    sb.append("\nFiles: ${index.totalSourceFiles} source files, ${index.totalFiles} total")
+    return sb.toString()
+  }
+
+  private fun collectManifest(): String {
+    val pc = index.context
+    val sb = StringBuilder()
+    if (pc.activities.isNotEmpty())
+      sb.append("Activities: ${pc.activities.joinToString(", ")}\n")
+    if (pc.fragments.isNotEmpty())
+      sb.append("Fragments: ${pc.fragments.joinToString(", ")}\n")
+    if (pc.services.isNotEmpty())
+      sb.append("Services: ${pc.services.joinToString(", ")}\n")
+    if (pc.broadcastReceivers.isNotEmpty())
+      sb.append("BroadcastReceivers: ${pc.broadcastReceivers.joinToString(", ")}\n")
+    if (pc.contentProviders.isNotEmpty())
+      sb.append("ContentProviders: ${pc.contentProviders.joinToString(", ")}\n")
+    return sb.toString().trimEnd()
+  }
+
+  private fun collectGradleConfig(): String {
+    val pc = index.context
+    return "Build: ${pc.buildSystem}\nSDK: min=${pc.minSdk} target=${pc.targetSdk} compile=${pc.compileSdk}"
+  }
+
+  private fun collectProjectMemory(query: String): String {
+    val km = withProjectKnowledge(projectDir)
+    val entries = km.search(query).take(10)
+    if (entries.isEmpty()) return ""
+    return entries.joinToString("\n") { e ->
+      "[${e.category.label}] ${e.key}: ${e.value.take(200)}"
+    }
+  }
+
+  private fun collectRelevantFiles(ctx: EditorContext, query: String): String {
+    val results = memoryManager.search(query).take(10)
+    if (results.isEmpty()) return ""
+    return results.joinToString("\n") { r ->
+      "${r.type}: ${r.title ?: r.content.take(100)}"
+    }
+  }
+
+  private fun readFileSafely(path: String): String? = try {
+    File(path).readText()
+  } catch (_: Exception) { null }
 
   fun findRelevantMemory(query: String): List<MemorySearchResult> {
     return memoryManager.search(query)

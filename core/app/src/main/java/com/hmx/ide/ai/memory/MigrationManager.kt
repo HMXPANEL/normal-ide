@@ -2,14 +2,8 @@ package com.hmx.ide.ai.memory
 
 import android.content.Context
 import android.database.sqlite.SQLiteDatabase
-import com.google.gson.Gson
-import com.google.gson.JsonObject
-import java.io.File
-import java.io.FileReader
 
 object MigrationManager {
-
-  private val gson = Gson()
 
   data class Migration(
     val version: Int,
@@ -125,6 +119,30 @@ object MigrationManager {
           "${MemoryContract.Note.CREATED_AT} INTEGER NOT NULL)"
       )
     },
+    Migration(2) { db ->
+      db.execSQL(
+        "CREATE TABLE IF NOT EXISTS ${MemoryContract.Tables.ProjectKnowledge} (" +
+          "${MemoryContract.ProjectKnowledge.ID} INTEGER PRIMARY KEY AUTOINCREMENT, " +
+          "${MemoryContract.ProjectKnowledge.PROJECT_DIR} TEXT NOT NULL, " +
+          "${MemoryContract.ProjectKnowledge.CATEGORY} TEXT NOT NULL, " +
+          "${MemoryContract.ProjectKnowledge.KEY} TEXT NOT NULL, " +
+          "${MemoryContract.ProjectKnowledge.VALUE} TEXT NOT NULL, " +
+          "${MemoryContract.ProjectKnowledge.TITLE} TEXT DEFAULT '', " +
+          "${MemoryContract.ProjectKnowledge.TAGS} TEXT DEFAULT '', " +
+          "${MemoryContract.ProjectKnowledge.CREATED_AT} INTEGER NOT NULL, " +
+          "${MemoryContract.ProjectKnowledge.UPDATED_AT} INTEGER NOT NULL, " +
+          "UNIQUE(${MemoryContract.ProjectKnowledge.PROJECT_DIR}, " +
+            "${MemoryContract.ProjectKnowledge.CATEGORY}, " +
+            "${MemoryContract.ProjectKnowledge.KEY}))"
+      )
+      db.execSQL(
+        "CREATE INDEX IF NOT EXISTS idx_pk_project ON ${MemoryContract.Tables.ProjectKnowledge}(${MemoryContract.ProjectKnowledge.PROJECT_DIR})"
+      )
+      db.execSQL(
+        "CREATE INDEX IF NOT EXISTS idx_pk_category ON ${MemoryContract.Tables.ProjectKnowledge}(" +
+          "${MemoryContract.ProjectKnowledge.PROJECT_DIR}, ${MemoryContract.ProjectKnowledge.CATEGORY})"
+      )
+    },
     Migration(1) { db ->
       db.execSQL(
         "CREATE TABLE IF NOT EXISTS ${MemoryContract.Tables.Cache} (" +
@@ -138,27 +156,6 @@ object MigrationManager {
       )
     },
   )
-
-  fun getVersion(context: Context): Int {
-    val hmxDir = HmxFolder.getHmxDir(File(context.applicationContext.applicationInfo.dataDir.split("/").dropLast(1).joinToString("/")))
-    val versionFile = HmxFolder.getVersionFile(hmxDir)
-    if (!versionFile.exists()) return 0
-    return runCatching {
-      val json = gson.fromJson(FileReader(versionFile), JsonObject::class.java)
-      json.get("schemaVersion").asInt
-    }.getOrDefault(0)
-  }
-
-  fun saveVersion(context: Context, version: Int) {
-    val hmxDir = HmxFolder.getHmxDir(File(context.applicationContext.applicationInfo.dataDir.split("/").dropLast(1).joinToString("/")))
-    val versionFile = HmxFolder.getVersionFile(hmxDir)
-    val json = JsonObject().apply {
-      addProperty("schemaVersion", version)
-      addProperty("lastMigrated", version)
-      addProperty("updatedAt", System.currentTimeMillis())
-    }
-    versionFile.writeText(gson.toJson(json))
-  }
 
   fun applyMigrations(db: SQLiteDatabase, fromVersion: Int, context: Context): Int {
     var currentVersion = fromVersion

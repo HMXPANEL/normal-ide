@@ -86,11 +86,7 @@ class MemoryManager(private val projectDir: File, private val appContext: Contex
   }
 
   fun markTodoDone(id: Long): Int {
-    val cv = android.content.ContentValues().apply {
-      put(MemoryContract.Todo.DONE, 1)
-    }
-    return db.writableDatabase.update(MemoryContract.Tables.Todo, cv,
-      "${MemoryContract.Todo.ID} = ?", arrayOf(id.toString()))
+    return repo.markTodoDone(id)
   }
 
   fun savePreference(key: String, value: String): Long {

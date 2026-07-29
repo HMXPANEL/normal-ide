@@ -97,6 +97,12 @@ class MemoryRepository(private val db: MemoryDatabase) {
     return c.use { it.mapToTodos() }
   }
 
+  fun markTodoDone(id: Long): Int {
+    val cv = ContentValues().apply { put(MemoryContract.Todo.DONE, 1) }
+    return dbw.update(MemoryContract.Tables.Todo, cv,
+      "${MemoryContract.Todo.ID} = ?", arrayOf(id.toString()))
+  }
+
   fun insertPreference(entry: PreferenceEntry): Long {
     val values = ContentValues().apply {
       put(MemoryContract.Preference.PROJECT_DIR, entry.projectDir)

@@ -2,7 +2,7 @@ package com.hmx.ide.ai.memory
 
 object MemoryContract {
 
-  const val DATABASE_VERSION = 1
+  const val DATABASE_VERSION = 2
   const val DATABASE_NAME = "memory.db"
 
   object Tables {
@@ -15,6 +15,7 @@ object MemoryContract {
     const val Fact = "fact"
     const val Note = "note"
     const val Cache = "cache"
+    const val ProjectKnowledge = "project_knowledge"
   }
 
   object Conversation {
@@ -111,6 +112,19 @@ object MemoryContract {
     const val CREATED_AT = "created_at"
   }
 
+  object ProjectKnowledge {
+    const val TABLE = "project_knowledge"
+    const val ID = "_id"
+    const val PROJECT_DIR = "project_dir"
+    const val CATEGORY = "category"
+    const val KEY = "key"
+    const val VALUE = "value"
+    const val TITLE = "title"
+    const val TAGS = "tags"
+    const val CREATED_AT = "created_at"
+    const val UPDATED_AT = "updated_at"
+  }
+
   val ALL_TABLES = arrayOf(
     Conversation.TABLE,
     Summary.TABLE,
@@ -121,5 +135,6 @@ object MemoryContract {
     Fact.TABLE,
     Note.TABLE,
     Cache.TABLE,
+    ProjectKnowledge.TABLE,
   )
 }

@@ -4,6 +4,7 @@ import com.hmx.ide.ai.models.ChatMessage
 import com.hmx.ide.ai.models.ChatResponse
 import com.hmx.ide.ai.models.Chunk
 import com.hmx.ide.ai.models.Role
+import com.hmx.ide.ai.pipeline.ContextPipeline
 import kotlinx.coroutines.flow.collect
 
 class ChatEngine(
@@ -47,6 +48,29 @@ class ChatEngine(
     messages.add(assistantMsg)
     trimHistory()
     return ChatResponse(message = assistantMsg)
+  }
+
+  suspend fun sendQuery(
+    model: String,
+    query: String,
+    pipeline: ContextPipeline,
+  ): ChatResponse {
+    val pipelineMessages = pipeline.processQuery(query)
+    val systemPrompt = pipelineMessages.firstOrNull { it.role == Role.system }?.content
+    val userContent = pipelineMessages.firstOrNull { it.role == Role.user }?.content ?: query
+    return send(model, userContent, systemPrompt)
+  }
+
+  suspend fun streamQuery(
+    model: String,
+    query: String,
+    pipeline: ContextPipeline,
+    onChunk: (Chunk) -> Unit = {},
+  ): ChatResponse {
+    val pipelineMessages = pipeline.processQuery(query)
+    val systemPrompt = pipelineMessages.firstOrNull { it.role == Role.system }?.content
+    val userContent = pipelineMessages.firstOrNull { it.role == Role.user }?.content ?: query
+    return stream(model, userContent, systemPrompt, onChunk)
   }
 
   fun clear() { messages.clear() }

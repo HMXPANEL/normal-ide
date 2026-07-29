@@ -33,6 +33,7 @@ import com.hmx.ide.app.EdgeToEdgeIDEActivity
 import com.hmx.ide.databinding.ActivityMainBinding
 import com.hmx.ide.preferences.internal.GeneralPreferences
 import com.hmx.ide.projects.IProjectManager
+import com.hmx.ide.knowledge.KnowledgeEngineImpl
 import com.hmx.ide.resources.R.string
 import com.hmx.ide.templates.ITemplateProvider
 import com.hmx.ide.utils.DialogUtils
@@ -197,6 +198,7 @@ class MainActivity : EdgeToEdgeIDEActivity() {
 
   internal fun openProject(root: File) {
     IProjectManager.getInstance().openProject(root)
+    KnowledgeEngineImpl.refresh(root)
     startActivity(Intent(this, EditorActivityKt::class.java))
   }
 

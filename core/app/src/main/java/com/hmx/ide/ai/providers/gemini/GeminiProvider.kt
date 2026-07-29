@@ -18,6 +18,7 @@ import com.hmx.ide.ai.network.HttpResponse
 import com.hmx.ide.ai.storage.ProviderStorage
 import com.hmx.ide.activities.HttpConfig
 import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.flow
 import org.json.JSONArray
 import org.json.JSONObject
 
@@ -43,8 +44,9 @@ class GeminiProvider(
     return parseChatResponse(response.body)
   }
 
-  override fun stream(request: ChatRequest): Flow<Chunk> {
-    throw UnsupportedOperationException("Gemini streaming not yet implemented")
+  override fun stream(request: ChatRequest): Flow<Chunk> = flow {
+    val response = chat(request.copy(stream = false))
+    emit(Chunk(content = response.message.content, finishReason = "stop"))
   }
 
   override suspend fun listModels(): List<AiModel> {

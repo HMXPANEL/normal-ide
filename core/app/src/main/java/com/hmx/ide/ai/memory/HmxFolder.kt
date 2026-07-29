@@ -77,9 +77,10 @@ object HmxFolder {
     val ignoreFile = getHmxIgnoreFile(projectDir)
     if (!ignoreFile.exists()) return
     val gitDir = File(projectDir, ".git")
+    if (!gitDir.isDirectory) return
     val excludeFile = File(gitDir, "info/exclude")
     if (!excludeFile.exists()) return
-    val existing = if (excludeFile.exists()) excludeFile.readLines() else emptyList()
+    val existing = excludeFile.readLines()
     val newLines = ignoreFile.readLines().filter { it.isNotBlank() && !it.startsWith("#") }
     val toAdd = newLines.filterNot { line -> existing.any { it.trim() == line.trim() } }
     if (toAdd.isEmpty()) return

@@ -61,19 +61,16 @@ dependencyResolutionManagement {
           substitute(module("com.hmx.ide.build:${module}"))
             .using(project(":${module}"))
         }
-      }
-    }
-  }
 
-  // Substitute standard logback-core with the Android-patched version to prevent
-  // NoSuchMethodError on Android ART (Class.getModule() is unavailable).
-  // logback-classic from Maven Central transitively depends on ch.qos.logback:logback-core,
-  // which calls Class.getModule() — not available on Android.
-  includeBuild("composite-builds/build-deps") {
-    name = "build-deps"
-    dependencySubstitution {
-      substitute(module("ch.qos.logback:logback-core"))
-        .using(project(":logback-core"))
+        // Substitute standard ch.qos.logback:logback-core with the
+        // Android-patched version (composite-builds/external/logback-android)
+        // to prevent NoSuchMethodError on Android ART:
+        // Class.getModule() is a Java 9+ API and not available on Android.
+        if (build == "build-deps") {
+          substitute(module("ch.qos.logback:logback-core"))
+            .using(project(":logback-core"))
+        }
+      }
     }
   }
 
@@ -140,6 +137,7 @@ include(
   ":core:common",
   ":core:indexing-api",
   ":core:indexing-core",
+  ":core:knowledge-api",
   ":core:lsp-api",
   ":core:lsp-models",
   ":core:projects",
