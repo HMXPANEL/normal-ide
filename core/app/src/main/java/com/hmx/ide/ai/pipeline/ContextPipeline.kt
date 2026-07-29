@@ -54,18 +54,10 @@ class ContextPipeline(
 
     if (ContextNeed.CURRENT_FILE in needs)
       contextBlocks.add(collectCurrentFile(ctx))
-    if (ContextNeed.DIAGNOSTICS in needs)
-      contextBlocks.add(collectDiagnostics(ctx))
     if (ContextNeed.PROJECT_STRUCTURE in needs)
       contextBlocks.add(collectProjectStructure())
-    if (ContextNeed.MANIFEST in needs)
-      contextBlocks.add(collectManifest())
-    if (ContextNeed.GRADLE_CONFIG in needs)
-      contextBlocks.add(collectGradleConfig())
     if (ContextNeed.PROJECT_MEMORY in needs)
       contextBlocks.add(collectProjectMemory(query))
-    if (ContextNeed.RELEVANT_FILES in needs)
-      contextBlocks.add(collectRelevantFiles(ctx, query))
 
     val systemPrompt = buildSystemPrompt(ctx.currentFile)
     val collected = contextBlocks.filter { it.isNotBlank() }.joinToString("\n\n")
@@ -82,14 +74,8 @@ class ContextPipeline(
     val selected = ctx.selectedCode
     if (!selected.isNullOrBlank())
       return "Selected code in $file:\n```\n$selected\n```"
-    val content = ctx.currentFileContent ?: readFileSafely(file) ?: return ""
+    val content = try { File(file).readText() } catch (_: Exception) { null } ?: return ""
     return "File $file:\n```\n$content\n```"
-  }
-
-  private fun collectDiagnostics(ctx: EditorContext): String {
-    val diag = ctx.diagnostics
-    if (diag.isEmpty()) return ""
-    return "Diagnostics:\n${diag.joinToString("\n") { "  - $it" }}"
   }
 
   private fun collectProjectStructure(): String {
@@ -99,29 +85,13 @@ class ContextPipeline(
     if (pc.modules.isNotEmpty()) sb.append("\nModules: ${pc.modules.joinToString(", ")}")
     if (pc.libraries.isNotEmpty()) sb.append("\nLibraries: ${pc.libraries.joinToString(", ")}")
     if (pc.minSdk > 0) sb.append("\nSDK: min=${pc.minSdk} target=${pc.targetSdk} compile=${pc.compileSdk}")
+    if (pc.activities.isNotEmpty()) sb.append("\nActivities: ${pc.activities.joinToString(", ")}")
+    if (pc.fragments.isNotEmpty()) sb.append("\nFragments: ${pc.fragments.joinToString(", ")}")
+    if (pc.services.isNotEmpty()) sb.append("\nServices: ${pc.services.joinToString(", ")}")
+    if (pc.broadcastReceivers.isNotEmpty()) sb.append("\nBroadcastReceivers: ${pc.broadcastReceivers.joinToString(", ")}")
+    if (pc.contentProviders.isNotEmpty()) sb.append("\nContentProviders: ${pc.contentProviders.joinToString(", ")}")
     sb.append("\nFiles: ${index.totalSourceFiles} source files, ${index.totalFiles} total")
     return sb.toString()
-  }
-
-  private fun collectManifest(): String {
-    val pc = index.context
-    val sb = StringBuilder()
-    if (pc.activities.isNotEmpty())
-      sb.append("Activities: ${pc.activities.joinToString(", ")}\n")
-    if (pc.fragments.isNotEmpty())
-      sb.append("Fragments: ${pc.fragments.joinToString(", ")}\n")
-    if (pc.services.isNotEmpty())
-      sb.append("Services: ${pc.services.joinToString(", ")}\n")
-    if (pc.broadcastReceivers.isNotEmpty())
-      sb.append("BroadcastReceivers: ${pc.broadcastReceivers.joinToString(", ")}\n")
-    if (pc.contentProviders.isNotEmpty())
-      sb.append("ContentProviders: ${pc.contentProviders.joinToString(", ")}\n")
-    return sb.toString().trimEnd()
-  }
-
-  private fun collectGradleConfig(): String {
-    val pc = index.context
-    return "Build: ${pc.buildSystem}\nSDK: min=${pc.minSdk} target=${pc.targetSdk} compile=${pc.compileSdk}"
   }
 
   private fun collectProjectMemory(query: String): String {
@@ -132,18 +102,6 @@ class ContextPipeline(
       "[${e.category.label}] ${e.key}: ${e.value.take(200)}"
     }
   }
-
-  private fun collectRelevantFiles(ctx: EditorContext, query: String): String {
-    val results = memoryManager.search(query).take(10)
-    if (results.isEmpty()) return ""
-    return results.joinToString("\n") { r ->
-      "${r.type}: ${r.title ?: r.content.take(100)}"
-    }
-  }
-
-  private fun readFileSafely(path: String): String? = try {
-    File(path).readText()
-  } catch (_: Exception) { null }
 
   fun findRelevantMemory(query: String): List<MemorySearchResult> {
     return memoryManager.search(query)
