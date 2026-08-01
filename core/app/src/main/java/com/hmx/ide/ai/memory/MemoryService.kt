@@ -9,10 +9,12 @@ object MemoryService {
   private val managers = mutableMapOf<String, MemoryManager>()
   private val knowledgeManagers = mutableMapOf<String, ProjectKnowledgeManager>()
 
+  @Synchronized
   fun init(context: Context) {
     appContext = context.applicationContext
   }
 
+  @Synchronized
   fun withProject(projectDir: File): MemoryManager {
     val key = projectDir.absolutePath
     return managers.getOrPut(key) {
@@ -23,6 +25,7 @@ object MemoryService {
     }
   }
 
+  @Synchronized
   fun withProjectKnowledge(projectDir: File): ProjectKnowledgeManager {
     val key = projectDir.absolutePath
     return knowledgeManagers.getOrPut(key) {
@@ -33,6 +36,7 @@ object MemoryService {
     }
   }
 
+  @Synchronized
   fun releaseProject(projectDir: File) {
     val key = projectDir.absolutePath
     managers[key]?.close()
@@ -41,6 +45,7 @@ object MemoryService {
     knowledgeManagers.remove(key)
   }
 
+  @Synchronized
   fun releaseAll() {
     managers.values.forEach { it.close() }
     managers.clear()

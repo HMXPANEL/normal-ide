@@ -11,6 +11,7 @@ object ContextCache {
 
   private val cache = mutableMapOf<String, Entry>()
 
+  @Synchronized
   fun get(projectDir: String): ProjectIndex? {
     val entry = cache[projectDir] ?: return null
     if (isStale(projectDir, entry)) {
@@ -22,6 +23,7 @@ object ContextCache {
 
   fun getContext(projectDir: String): ProjectContext? = get(projectDir)?.context
 
+  @Synchronized
   fun set(projectDir: String, index: ProjectIndex) {
     val root = File(projectDir)
     cache[projectDir] = Entry(
@@ -38,10 +40,12 @@ object ContextCache {
     )
   }
 
+  @Synchronized
   fun invalidate(projectDir: String) {
     cache.remove(projectDir)
   }
 
+  @Synchronized
   fun getOrAnalyze(projectDir: String, onProgress: ((String) -> Unit)? = null): ProjectIndex {
     val cached = get(projectDir)
     if (cached != null) return cached

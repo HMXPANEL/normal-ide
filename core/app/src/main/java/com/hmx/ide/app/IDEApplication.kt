@@ -129,6 +129,17 @@ class IDEApplication : BaseApplication() {
     MemoryService.init(this)
     ContextManager.init()
     KnowledgeEngineImpl.start()
+    registerComponentCallbacks(object : android.content.ComponentCallbacks2 {
+      override fun onTrimMemory(level: Int) {
+        if (level >= TRIM_MEMORY_UI_HIDDEN) {
+          KnowledgeEngineImpl.destroy()
+        }
+      }
+      override fun onConfigurationChanged(cfg: android.content.res.Configuration?) {}
+      override fun onLowMemory() {
+        KnowledgeEngineImpl.destroy()
+      }
+    })
   }
 
   fun showChangelog() {

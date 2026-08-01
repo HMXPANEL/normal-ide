@@ -4,14 +4,20 @@ import com.hmx.ide.eventbus.events.editor.ChangeType
 import com.hmx.ide.eventbus.events.editor.DocumentChangeEvent
 import java.nio.file.Path
 
-class FileContentBuffer {
+class FileContentBuffer(maxOpenFiles: Int = 50) {
 
-  private val buffers = mutableMapOf<Path, String>()
+  private val buffers = linkedMapOf<Path, String>()
 
+  @Synchronized
   fun open(path: Path, text: String) {
+    if (buffers.size >= maxOpenFiles) {
+      val oldest = buffers.keys.firstOrNull()
+      if (oldest != null && oldest != path) buffers.remove(oldest)
+    }
     buffers[path] = text
   }
 
+  @Synchronized
   fun applyChange(path: Path, event: DocumentChangeEvent) {
     val old = buffers[path] ?: return
     val startIdx = event.changeRange.start.index
@@ -39,14 +45,18 @@ class FileContentBuffer {
     buffers[path] = sb.toString()
   }
 
+  @Synchronized
   fun close(path: Path) {
     buffers.remove(path)
   }
 
+  @Synchronized
   fun get(path: Path): String? = buffers[path]
 
+  @Synchronized
   fun isOpen(path: Path): Boolean = buffers.containsKey(path)
 
+  @Synchronized
   fun clear() {
     buffers.clear()
   }
