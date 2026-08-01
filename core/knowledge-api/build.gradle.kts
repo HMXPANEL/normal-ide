@@ -29,4 +29,5 @@ android {
 dependencies {
   api(projects.core.common)
   api(projects.core.projects)
+  api(projects.core.indexingApi)
 }

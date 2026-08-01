@@ -38,8 +38,4 @@ enum class SymbolKind {
   METHOD, CONSTRUCTOR, FIELD, PROPERTY, ENUM_CONSTANT,
 }
 
-data class SymbolLocation(
-  val filePath: String,
-  val line: Int,
-  val column: Int,
-)
+typealias SymbolLocation = com.hmx.ide.indexing.model.SymbolLocation
