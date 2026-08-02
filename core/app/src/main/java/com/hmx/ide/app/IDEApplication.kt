@@ -135,7 +135,7 @@ class IDEApplication : BaseApplication() {
           KnowledgeEngineImpl.destroy()
         }
       }
-      override fun onConfigurationChanged(cfg: android.content.res.Configuration?) {}
+      override fun onConfigurationChanged(cfg: android.content.res.Configuration) {}
       override fun onLowMemory() {
         KnowledgeEngineImpl.destroy()
       }

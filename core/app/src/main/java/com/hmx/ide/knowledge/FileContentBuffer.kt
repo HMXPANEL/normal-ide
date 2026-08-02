@@ -4,7 +4,7 @@ import com.hmx.ide.eventbus.events.editor.ChangeType
 import com.hmx.ide.eventbus.events.editor.DocumentChangeEvent
 import java.nio.file.Path
 
-class FileContentBuffer(maxOpenFiles: Int = 50) {
+class FileContentBuffer(val maxOpenFiles: Int = 50) {
 
   private val buffers = linkedMapOf<Path, String>()
 
