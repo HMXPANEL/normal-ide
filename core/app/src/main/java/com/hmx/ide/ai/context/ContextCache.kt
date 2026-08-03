@@ -12,6 +12,14 @@ object ContextCache {
 
   private val cache = mutableMapOf<String, Entry>()
 
+  private var _getOrAnalyzeCallCount: Int = 0
+  private var _bypassCount: Int = 0
+  private var _scanCount: Int = 0
+
+  val getOrAnalyzeCallCount get() = _getOrAnalyzeCallCount
+  val bypassCount get() = _bypassCount
+  val scanCount get() = _scanCount
+
   @Synchronized
   fun get(projectDir: String): ProjectIndex? {
     val entry = cache[projectDir] ?: return null
@@ -48,6 +56,7 @@ object ContextCache {
 
   @Synchronized
   fun getOrAnalyze(projectDir: String, onProgress: ((String) -> Unit)? = null): ProjectIndex {
+    _getOrAnalyzeCallCount++
     val cached = get(projectDir)
     if (cached != null) return cached
 
@@ -58,11 +67,13 @@ object ContextCache {
 
     val unified = KnowledgeEngineImpl.unifiedIndex?.project
     if (unified != null) {
+      _bypassCount++
       onProgress?.invoke("✓ Using cached project index")
       set(projectDir, unified)
       return unified
     }
 
+    _scanCount++
     @Suppress("DEPRECATION")
     val scanResult = deprecatedScan(root, onProgress)
     val index = ProjectAnalyzer.analyze(root, scanResult)

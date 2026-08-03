@@ -36,6 +36,15 @@ object KnowledgeEngineImpl : KnowledgeEngine {
    */
   var unifiedIndex: UnifiedIndex? = null
 
+  /** Performance counters — reset on each [refresh]. */
+  private var _scanCount: Int = 0
+  private var _fileReadCount: Int = 0
+  private var _refreshDurationMs: Long = 0
+
+  val scanCount get() = _scanCount
+  val fileReadCount get() = _fileReadCount
+  val refreshDurationMs get() = _refreshDurationMs
+
   override val currentProject: ProjectModel? get() = _currentProject
 
   override fun start() {
@@ -46,11 +55,15 @@ object KnowledgeEngineImpl : KnowledgeEngine {
 
   @Synchronized
   override fun refresh(projectDir: File) {
+    _scanCount = 0
+    _fileReadCount = 0
+    val start = System.currentTimeMillis()
     rootDir = projectDir
     indexer.destroy()
     indexer = IncrementalIndexer(index, rootDir = { rootDir })
     index.clear()
     val root = projectDir
+    _scanCount++
     val scan = ProjectScanner.scan(root)
     val analysis = ProjectAnalyzer.analyze(root, scan)
     unifiedIndex = UnifiedIndex(symbols = index, project = analysis)
@@ -62,6 +75,7 @@ object KnowledgeEngineImpl : KnowledgeEngine {
       modules = modules,
     )
     for (file in scan.javaFiles + scan.kotlinFiles) {
+      _fileReadCount++
       val content = runCatching { file.readText() }.getOrNull() ?: continue
       val model = FileParser.parse(file, root, content)
       if (model.packageName != null) {
@@ -71,6 +85,7 @@ object KnowledgeEngineImpl : KnowledgeEngine {
       }
       index.addFile(file.relativeTo(root).path, model)
     }
+    _refreshDurationMs = System.currentTimeMillis() - start
   }
 
   @Synchronized
