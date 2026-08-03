@@ -1,5 +1,6 @@
 package com.hmx.ide.ai.context
 
+import com.hmx.ide.knowledge.KnowledgeEngineImpl
 import java.io.File
 
 object ContextCache {
@@ -55,13 +56,32 @@ object ContextCache {
       context = ProjectContext(projectDir = projectDir)
     )
 
-    onProgress?.invoke("Scanning project...")
-    val scanResult = ProjectScanner.scan(root, onProgress)
-    onProgress?.invoke("Analyzing project structure...")
+    val unified = KnowledgeEngineImpl.unifiedIndex?.project
+    if (unified != null) {
+      onProgress?.invoke("✓ Using cached project index")
+      set(projectDir, unified)
+      return unified
+    }
+
+    @Suppress("DEPRECATION")
+    val scanResult = deprecatedScan(root, onProgress)
     val index = ProjectAnalyzer.analyze(root, scanResult)
     set(projectDir, index)
     onProgress?.invoke("✓ Project indexing completed")
     return index
+  }
+
+  /**
+   * @deprecated Use [KnowledgeEngineImpl.unifiedIndex] instead. This full project scan is
+   *   bypassed when the knowledge engine has already indexed the project. Kept for backward
+   *   compatibility and as a fallback when no project has been opened through [KnowledgeEngineImpl].
+   */
+  @Deprecated("Use KnowledgeEngineImpl.unifiedIndex instead; this path is a fallback only.")
+  private fun deprecatedScan(root: File, onProgress: ((String) -> Unit)?): ScanResult {
+    onProgress?.invoke("Scanning project...")
+    val scanResult = ProjectScanner.scan(root, onProgress)
+    onProgress?.invoke("Analyzing project structure...")
+    return scanResult
   }
 
   private fun isStale(projectDir: String, entry: Entry): Boolean {

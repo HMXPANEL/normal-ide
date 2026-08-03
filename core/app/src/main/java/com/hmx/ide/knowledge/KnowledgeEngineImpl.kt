@@ -1,11 +1,13 @@
 package com.hmx.ide.knowledge
 
 import com.hmx.ide.ai.context.ProjectAnalyzer
+import com.hmx.ide.ai.context.ProjectIndex
 import com.hmx.ide.ai.context.ProjectScanner
 import com.hmx.ide.eventbus.events.editor.DocumentChangeEvent
 import com.hmx.ide.eventbus.events.editor.DocumentCloseEvent
 import com.hmx.ide.eventbus.events.editor.DocumentOpenEvent
 import com.hmx.ide.eventbus.events.editor.DocumentSaveEvent
+import com.hmx.ide.indexing.UnifiedIndex
 import com.hmx.ide.knowledge.model.DeclarationModel
 import com.hmx.ide.knowledge.model.FileModel
 import com.hmx.ide.knowledge.model.ModuleModel
@@ -28,6 +30,12 @@ object KnowledgeEngineImpl : KnowledgeEngine {
   @Volatile
   private var rootDir: File? = null
 
+  /**
+   * The single source of truth for all index data produced by [refresh].
+   * Null until the first [refresh] completes.
+   */
+  var unifiedIndex: UnifiedIndex? = null
+
   override val currentProject: ProjectModel? get() = _currentProject
 
   override fun start() {
@@ -45,6 +53,7 @@ object KnowledgeEngineImpl : KnowledgeEngine {
     val root = projectDir
     val scan = ProjectScanner.scan(root)
     val analysis = ProjectAnalyzer.analyze(root, scan)
+    unifiedIndex = UnifiedIndex(symbols = index, project = analysis)
     val modules = analysis.context.modules.map { name ->
       ModuleModel(name = name, basePath = "$root/$name", files = emptyList())
     }
@@ -90,6 +99,7 @@ object KnowledgeEngineImpl : KnowledgeEngine {
   @Synchronized
   override fun invalidateAll() {
     index.clear()
+    unifiedIndex = null
     val root = rootDir ?: return
     refresh(root)
   }
@@ -98,6 +108,7 @@ object KnowledgeEngineImpl : KnowledgeEngine {
   fun destroy() {
     indexer.destroy()
     index.clear()
+    unifiedIndex = null
     _currentProject = null
     rootDir = null
     EventBus.getDefault().unregister(this)
