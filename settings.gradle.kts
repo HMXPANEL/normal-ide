@@ -136,7 +136,6 @@ include(
   ":core:app",
   ":core:common",
   ":core:indexing-api",
-  ":core:indexing-core",
   ":core:knowledge-api",
   ":core:lsp-api",
   ":core:lsp-models",
