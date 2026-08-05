@@ -31,6 +31,7 @@ import com.google.android.material.transition.MaterialSharedAxis
 import com.hmx.ide.activities.editor.EditorActivityKt
 import com.hmx.ide.app.EdgeToEdgeIDEActivity
 import com.hmx.ide.databinding.ActivityMainBinding
+import androidx.lifecycle.lifecycleScope
 import com.hmx.ide.preferences.internal.GeneralPreferences
 import com.hmx.ide.projects.IProjectManager
 import com.hmx.ide.knowledge.KnowledgeEngineImpl
@@ -43,6 +44,9 @@ import com.hmx.ide.viewmodel.MainViewModel.Companion.SCREEN_MAIN
 import com.hmx.ide.viewmodel.MainViewModel.Companion.SCREEN_TEMPLATE_DETAILS
 import com.hmx.ide.viewmodel.MainViewModel.Companion.SCREEN_TEMPLATE_LIST
 import java.io.File
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
 
 class MainActivity : EdgeToEdgeIDEActivity() {
 
@@ -198,8 +202,12 @@ class MainActivity : EdgeToEdgeIDEActivity() {
 
   internal fun openProject(root: File) {
     IProjectManager.getInstance().openProject(root)
-    KnowledgeEngineImpl.refresh(root)
-    startActivity(Intent(this, EditorActivityKt::class.java))
+    lifecycleScope.launch(Dispatchers.IO) {
+      KnowledgeEngineImpl.refresh(root)
+      withContext(Dispatchers.Main) {
+        startActivity(Intent(this@MainActivity, EditorActivityKt::class.java))
+      }
+    }
   }
 
   override fun onDestroy() {

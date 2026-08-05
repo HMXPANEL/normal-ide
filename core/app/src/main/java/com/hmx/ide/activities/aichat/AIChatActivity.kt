@@ -148,10 +148,15 @@ class AIChatActivity : BaseIDEActivity() {
 
   private fun applyEdits() {
     val root = projectDir ?: return
+    val canonicalRoot = runCatching { root.canonicalPath }.getOrNull() ?: return
     var count = 0
     pendingEdits.forEach { (rel, content) ->
       runCatching {
         val file = File(root, rel)
+        val canonicalFile = file.canonicalPath
+        if (!canonicalFile.startsWith(canonicalRoot + File.separator) && canonicalFile != canonicalRoot) {
+          return@forEach
+        }
         file.parentFile?.mkdirs()
         file.writeText(content)
         count++

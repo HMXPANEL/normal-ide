@@ -3,6 +3,7 @@ package com.hmx.ide.knowledge
 import com.hmx.ide.knowledge.index.SymbolIndex
 import com.hmx.ide.knowledge.model.DeclarationModel
 import com.hmx.ide.knowledge.model.SymbolLocation
+import kotlinx.coroutines.CancellationException
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.Job
@@ -13,7 +14,6 @@ import kotlinx.coroutines.isActive
 import kotlinx.coroutines.launch
 import org.slf4j.LoggerFactory
 import java.io.File
-import java.util.concurrent.CancellationException
 
 class IncrementalIndexer(
   private val index: SymbolIndex,
@@ -50,8 +50,10 @@ class IncrementalIndexer(
   }
 
   fun onFileClosed(file: File) {
-    synchronized(lock) { pendingJobs[file.absolutePath]?.cancel() }
-    synchronized(lock) { pendingJobs.remove(file.absolutePath) }
+    synchronized(lock) {
+      pendingJobs[file.absolutePath]?.cancel()
+      pendingJobs.remove(file.absolutePath)
+    }
     fileBuffer.close(file.toPath())
     index.removeFile(file.absolutePath)
   }
@@ -77,8 +79,8 @@ class IncrementalIndexer(
 
   private fun scheduleDebounced(file: File) {
     val key = file.absolutePath
-    synchronized(lock) { pendingJobs[key]?.cancel() }
     synchronized(lock) {
+      pendingJobs[key]?.cancel()
       pendingJobs[key] = scope.launch {
         delay(DEBOUNCE_MS)
         if (!isActive) return@launch
@@ -89,8 +91,8 @@ class IncrementalIndexer(
 
   private fun scheduleImmediate(file: File, fromMemory: Boolean) {
     val key = file.absolutePath
-    synchronized(lock) { pendingJobs[key]?.cancel() }
     synchronized(lock) {
+      pendingJobs[key]?.cancel()
       pendingJobs[key] = scope.launch {
         reindexFile(file, fromMemory)
       }

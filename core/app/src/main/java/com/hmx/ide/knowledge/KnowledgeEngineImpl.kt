@@ -34,6 +34,7 @@ object KnowledgeEngineImpl : KnowledgeEngine {
    * The single source of truth for all index data produced by [refresh].
    * Null until the first [refresh] completes.
    */
+  @Volatile
   var unifiedIndex: UnifiedIndex? = null
 
   /** Performance counters — reset on each [refresh]. */
@@ -55,6 +56,9 @@ object KnowledgeEngineImpl : KnowledgeEngine {
 
   @Synchronized
   override fun refresh(projectDir: File) {
+    if (!EventBus.getDefault().isRegistered(this)) {
+      EventBus.getDefault().register(this)
+    }
     _scanCount = 0
     _fileReadCount = 0
     val start = System.currentTimeMillis()
@@ -126,7 +130,9 @@ object KnowledgeEngineImpl : KnowledgeEngine {
     unifiedIndex = null
     _currentProject = null
     rootDir = null
-    EventBus.getDefault().unregister(this)
+    if (EventBus.getDefault().isRegistered(this)) {
+      EventBus.getDefault().unregister(this)
+    }
   }
 
   @Synchronized

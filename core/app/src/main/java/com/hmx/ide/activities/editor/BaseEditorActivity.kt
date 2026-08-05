@@ -99,6 +99,7 @@ import com.hmx.ide.xml.versions.ApiVersionsRegistry
 import com.hmx.ide.xml.widgets.WidgetTableRegistry
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.launch
 import org.greenrobot.eventbus.Subscribe
 import org.greenrobot.eventbus.ThreadMode.MAIN
 import org.slf4j.Logger
@@ -299,7 +300,9 @@ abstract class BaseEditorActivity : EdgeToEdgeIDEActivity(), TabLayout.OnTabSele
     if (savedInstanceState != null && savedInstanceState.containsKey(KEY_PROJECT_PATH)) {
       val projectPath = savedInstanceState.getString(KEY_PROJECT_PATH)!!
       IProjectManager.getInstance().openProject(projectPath)
-      com.hmx.ide.knowledge.KnowledgeEngineImpl.refresh(File(projectPath))
+      editorActivityScope.launch(Dispatchers.IO) {
+        com.hmx.ide.knowledge.KnowledgeEngineImpl.refresh(File(projectPath))
+      }
     }
 
     onBackPressedDispatcher.addCallback(this, onBackPressedCallback)
