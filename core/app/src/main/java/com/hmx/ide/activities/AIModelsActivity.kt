@@ -37,7 +37,7 @@ class AIModelsActivity : EdgeToEdgeIDEActivity() {
 
   override fun bindLayout(): View {
     _binding = ActivityAiModelsBinding.inflate(layoutInflater)
-    return _binding!!.root
+    return checkNotNull(_binding) { "Binding inflation failed" }.root
   }
 
   private val log = LoggerFactory.getLogger(AIModelsActivity::class.java)
@@ -65,8 +65,8 @@ class AIModelsActivity : EdgeToEdgeIDEActivity() {
 
     binding.apply {
       setSupportActionBar(toolbar)
-      supportActionBar!!.setDisplayHomeAsUpEnabled(true)
-      supportActionBar!!.setTitle(R.string.idepref_ai_models_title)
+      checkNotNull(supportActionBar) { "Action bar not available" }.setDisplayHomeAsUpEnabled(true)
+      checkNotNull(supportActionBar) { "Action bar not available" }.setTitle(R.string.idepref_ai_models_title)
       toolbar.setNavigationOnClickListener { onBackPressedDispatcher.onBackPressed() }
 
       setupProviderDropdown()
@@ -379,7 +379,7 @@ class AIModelsActivity : EdgeToEdgeIDEActivity() {
       if (_title == null) {
         _title = context.getString(titleRes)
       }
-      return _title!!
+      return _title ?: context.getString(titleRes)
     }
   }
 

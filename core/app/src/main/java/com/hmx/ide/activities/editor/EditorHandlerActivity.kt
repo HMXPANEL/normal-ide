@@ -324,7 +324,7 @@ open class EditorHandlerActivity : ProjectHandlerActivity(), IEditorHandler {
 
     log.info("Opening file at index {} file:{}", position, file)
 
-    val editor = CodeEditorView(this, file, selection!!)
+    val editor = CodeEditorView(this, file, selection)
     editor.layoutParams = LayoutParams(LayoutParams.MATCH_PARENT, LayoutParams.MATCH_PARENT)
 
     content.editorContainer.addView(editor)
@@ -455,8 +455,8 @@ open class EditorHandlerActivity : ProjectHandlerActivity(), IEditorHandler {
 
       // set tab as unmodified
       val tab = content.tabs.getTabAt(index) ?: return@withContext
-      if (tab.text!!.startsWith('*')) {
-        tab.text = tab.text!!.substring(startIndex = 1)
+      if (tab.text?.startsWith('*') == true) {
+        tab.text = tab.text?.substring(startIndex = 1) ?: tab.text
       }
     }
 
@@ -652,7 +652,8 @@ open class EditorHandlerActivity : ProjectHandlerActivity(), IEditorHandler {
       return
     }
 
-    val tab = content.tabs.getTabAt(index)!!
+    val tab = content.tabs.getTabAt(index)
+      if (tab == null) return
     if (tab.text?.startsWith('*') == true) {
       return
     }

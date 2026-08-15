@@ -69,17 +69,17 @@ class AIChatActivity : BaseIDEActivity() {
       scope.launch {
         adapter.add(ChatMessage("assistant", "Scanning project..."))
         val ctx = withContext(Dispatchers.IO) {
-          ContextCache.getOrAnalyze(projectDir!!.absolutePath) { msg ->
+          ContextCache.getOrAnalyze(projectDir.absolutePath) { msg ->
             scope.launch { adapter.setLastContent(msg) }
           }
         }
         val currentFileRel = currentFile?.let { f ->
-          runCatching { File(f).toRelativeString(projectDir!!) }.getOrDefault(f)
+          runCatching { File(f).toRelativeString(projectDir) }.getOrDefault(f)
         }
         systemPrompt = PromptBuilder.build(ctx, currentFileRel ?: currentFile)
         val fileCount = ctx.totalSourceFiles
         adapter.setLastContent(
-          "Hi! I can see the '${projectDir!!.name}' project. " +
+          "Hi! I can see the '${projectDir.name}' project. " +
           "Indexed $fileCount files." +
           (if (currentFileRel != null) "\n\nCurrent File:\n$currentFileRel" else "") +
           "\n\nAsk me to explain code, generate files, fix errors, or analyze the project.")
@@ -103,7 +103,7 @@ class AIChatActivity : BaseIDEActivity() {
         adapter.add(ChatMessage("assistant", "…"))
         binding.send.isEnabled = false
         val analysis = withContext(Dispatchers.IO) {
-          val idx = ContextCache.getOrAnalyze(projectDir!!.absolutePath)
+          val idx = ContextCache.getOrAnalyze(projectDir.absolutePath)
           PromptBuilder.buildAnalysis(idx)
         }
         adapter.setLastContent(analysis)
