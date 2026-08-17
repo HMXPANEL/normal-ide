@@ -61,6 +61,18 @@ jobs:
       - name: Make Gradle Wrapper executable
         run: chmod +x ./gradlew
 
+      - name: Pre-create Android debug keystore
+        run: |
+          mkdir -p "$HOME/.android"
+          if [ ! -f "$HOME/.android/debug.keystore" ]; then
+            keytool -genkeypair -v \
+              -keystore "$HOME/.android/debug.keystore" \
+              -alias androiddebugkey \
+              -keyalg RSA -keysize 2048 -validity 10000 \
+              -storepass android -keypass android \
+              -dname "CN=Android Debug,O=Android,C=US"
+          fi
+
       - name: Detect APK output path
         id: paths
         shell: bash
