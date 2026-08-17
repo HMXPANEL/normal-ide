@@ -324,7 +324,7 @@ open class EditorHandlerActivity : ProjectHandlerActivity(), IEditorHandler {
 
     log.info("Opening file at index {} file:{}", position, file)
 
-    val editor = CodeEditorView(this, file, selection)
+    val editor = CodeEditorView(this, file, selection ?: Range.NONE)
     editor.layoutParams = LayoutParams(LayoutParams.MATCH_PARENT, LayoutParams.MATCH_PARENT)
 
     content.editorContainer.addView(editor)
