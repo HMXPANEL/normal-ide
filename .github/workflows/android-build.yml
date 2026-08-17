@@ -82,6 +82,22 @@ jobs:
             echo "IDE_SIGNING_KEY_PASS=android"
           } >> "$GITHUB_ENV"
 
+      # Pre-create the default debug keystore with keytool so AGP does not
+      # generate it itself (its generation path hits a BouncyCastle classpath
+      # clash: NoSuchFieldError xmss_SHAKE128_512ph). Loading an existing
+      # keystore avoids that code path entirely.
+      - name: Create debug keystore if missing
+        run: |
+          mkdir -p ~/.android ~/.config/.android
+          for dir in ~/.android ~/.config/.android; do
+            if [ ! -f "$dir/debug.keystore" ]; then
+              keytool -genkey -v -keystore "$dir/debug.keystore" \
+                -storepass android -alias androiddebugkey -keypass android \
+                -keyalg RSA -keysize 2048 -validity 10000 \
+                -dname "CN=Android Debug,O=Android,C=US"
+            fi
+          done
+
       - name: Detect APK output path
         id: paths
         shell: bash
