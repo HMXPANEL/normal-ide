@@ -1,6 +1,9 @@
 name: android-build
 
 on:
+  push:
+    branches:
+      - dev
   workflow_dispatch:
     inputs:
       build_type:
@@ -67,18 +70,19 @@ jobs:
           REL="${REL//:/\/}"
           echo "apk_dir=${REL}/build/outputs/apk" >> "$GITHUB_OUTPUT"
 
-      - name: Build Debug APK
-        if: ${{ github.event.inputs.build_type == 'debug' }}
-        run: ./gradlew ${{ github.event.inputs.module }}:assembleDebug --no-daemon --stacktrace
-
-      - name: Build Release APK
-        if: ${{ github.event.inputs.build_type == 'release' }}
+      - name: Build APK
         run: |
-          if [ -z "${{ secrets.IDE_SIGNING_KEY_BIN }}" ]; then
-            echo "::warning::Release signing is not configured. Producing an UNSIGNED release APK."
-            ./gradlew ${{ github.event.inputs.module }}:assembleRelease --no-daemon --stacktrace
+          TYPE="${{ github.event.inputs.build_type }}"
+          [ -z "$TYPE" ] && TYPE="release"
+          MODULE="${{ github.event.inputs.module }}"
+          [ -z "$MODULE" ] && MODULE=":core:app"
+          if [ "$TYPE" = "debug" ]; then
+            ./gradlew "$MODULE:assembleDebug" --no-daemon --stacktrace
           else
-            ./gradlew ${{ github.event.inputs.module }}:assembleRelease --no-daemon --stacktrace
+            if [ -z "${{ secrets.IDE_SIGNING_KEY_BIN }}" ]; then
+              echo "::warning::Release signing is not configured. Producing an UNSIGNED release APK."
+            fi
+            ./gradlew "$MODULE:assembleRelease" --no-daemon --stacktrace
           fi
         env:
           IDE_SIGNING_ALIAS: ${{ secrets.IDE_SIGNING_ALIAS }}
