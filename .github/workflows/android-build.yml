@@ -92,39 +92,26 @@ jobs:
           REL="${REL//:/\/}"
           echo "apk_dir=${REL}/build/outputs/apk" >> "$GITHUB_OUTPUT"
 
-      - name: Build APK
+      - name: Build APKs (release + debug)
         run: |
-          TYPE="${{ github.event.inputs.build_type }}"
-          [ -z "$TYPE" ] && TYPE="release"
           MODULE="${{ github.event.inputs.module }}"
           [ -z "$MODULE" ] && MODULE=":core:app"
-          if [ "$TYPE" = "debug" ]; then
-            ./gradlew "$MODULE:assembleDebug" --no-daemon --stacktrace
-          else
-            ./gradlew "$MODULE:assembleRelease" --no-daemon --stacktrace
-          fi
+          ./gradlew "$MODULE:assembleRelease" "$MODULE:assembleDebug" --no-daemon --stacktrace
 
-      - name: Locate generated APK
-        id: apk
+      - name: Upload release APK (signed)
         if: ${{ success() }}
-        shell: bash
-        run: |
-          DIR="${{ steps.paths.outputs.apk_dir }}"
-          APK=$(find "$DIR" -name '*.apk' -type f | head -n1)
-          if [ -z "$APK" ]; then
-            echo "::error::No APK found under $DIR"
-            exit 1
-          fi
-          echo "path=$APK" >> "$GITHUB_OUTPUT"
-          echo "name=$(basename "$APK")" >> "$GITHUB_OUTPUT"
-          echo "size=$(stat -c%s "$APK")" >> "$GITHUB_OUTPUT"
-
-      - name: Upload APK artifact
-        if: ${{ success() && steps.apk.outputs.path != '' }}
         uses: actions/upload-artifact@v4
         with:
-          name: ${{ github.event.inputs.build_type }}-apk
-          path: ${{ steps.apk.outputs.path }}
+          name: release-apk
+          path: ${{ steps.paths.outputs.apk_dir }}/release/*.apk
+          if-no-files-found: error
+
+      - name: Upload debug APK (unsigned / debug-signed)
+        if: ${{ success() }}
+        uses: actions/upload-artifact@v4
+        with:
+          name: debug-apk
+          path: ${{ steps.paths.outputs.apk_dir }}/debug/*.apk
           if-no-files-found: error
 
       - name: Upload build logs
