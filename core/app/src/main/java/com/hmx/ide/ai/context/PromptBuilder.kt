@@ -61,6 +61,60 @@ object PromptBuilder {
     return sb.toString()
   }
 
+  /**
+   * Builds the chat startup message from an already-computed [ProjectContextSummary].
+   *
+   * Performs no IO. Fields that are unavailable are rendered as `Unknown` rather than guessed.
+   */
+  fun buildStartupMessage(
+    summary: ProjectContextSummary,
+    currentFile: String? = null,
+  ): String {
+    val sb = StringBuilder()
+
+    when (summary.state) {
+      IndexingState.READY, IndexingState.UPDATING -> sb.appendLine("Project Ready ✅")
+      IndexingState.INDEXING -> sb.appendLine("Scanning project…")
+      IndexingState.UNAVAILABLE -> sb.appendLine("Project context unavailable")
+    }
+    sb.appendLine()
+
+    sb.appendLine("Project: ${summary.projectName}")
+    sb.appendLine("Language: ${ProjectContextSummary.displayOrUnknown(summary.language)}")
+    summary.uiFramework?.let { sb.appendLine("UI: $it") }
+    summary.packageName?.let { sb.appendLine("Package: $it") }
+    summary.architecture?.let { sb.appendLine("Architecture: $it") }
+    summary.buildSystem?.let { sb.appendLine("Build: $it") }
+    if (summary.moduleCount > 0) sb.appendLine("Modules: ${summary.moduleCount}")
+    if (summary.totalFiles > 0) sb.appendLine("Files: ${summary.totalFiles}")
+    if (summary.lastIndexedAt > 0L) {
+      sb.appendLine("Last Indexed: ${formatRelativeTime(summary.lastIndexedAt)}")
+    }
+    currentFile?.let { sb.appendLine("Current File: $it") }
+
+    sb.appendLine()
+    sb.appendLine("Capabilities")
+    sb.appendLine("• Explain code • Generate code • Fix errors • Find bugs")
+    sb.appendLine("• Refactor • Search project • Analyze architecture • Explain APIs")
+
+    return sb.toString().trimEnd()
+  }
+
+  /** Formats a timestamp as a short relative string, e.g. `2 sec ago`. */
+  fun formatRelativeTime(timestampMs: Long): String {
+    if (timestampMs <= 0L) return "Unknown"
+    val deltaMs = System.currentTimeMillis() - timestampMs
+    if (deltaMs < 0L) return "just now"
+    val seconds = deltaMs / 1000L
+    return when {
+      seconds < 5L -> "just now"
+      seconds < 60L -> "$seconds sec ago"
+      seconds < 3_600L -> "${seconds / 60L} min ago"
+      seconds < 86_400L -> "${seconds / 3_600L} hr ago"
+      else -> "${seconds / 86_400L} day(s) ago"
+    }
+  }
+
   fun buildAnalysis(index: ProjectIndex): String {
     val ctx = index.context
     val sb = StringBuilder()

@@ -3,8 +3,11 @@ package com.hmx.ide.activities.aichat
 import android.os.Bundle
 import android.view.View
 import androidx.recyclerview.widget.LinearLayoutManager
+import com.google.android.material.chip.Chip
 import com.hmx.ide.ai.AiFactory
 import com.hmx.ide.ai.context.ContextCache
+import com.hmx.ide.ai.context.IndexingState
+import com.hmx.ide.ai.context.ProjectContextSummary
 import com.hmx.ide.ai.context.PromptBuilder
 import com.hmx.ide.ai.engine.ChatEngine
 import com.hmx.ide.ai.errors.ProviderConfigurationException
@@ -37,7 +40,18 @@ class AIChatActivity : BaseIDEActivity() {
   private var pendingEdits = linkedMapOf<String, String>()
 
   private val chatEngine by lazy { ChatEngine(AiFactory.engine()) }
+
+  /**
+   * System prompt derived from the project index. Only sent when [useProjectContext] is `true`;
+   * it is never discarded on toggle-off so the toggle stays free.
+   */
   private var systemPrompt: String? = null
+
+  /** Latest known summary. Never triggers a scan by itself. */
+  private var contextSummary: ProjectContextSummary? = null
+
+  /** Toggle state. `true` => the existing system prompt is attached to requests. */
+  private var useProjectContext: Boolean = true
 
   override fun bindLayout(): View {
     binding = ActivityAiChatBinding.inflate(layoutInflater)
@@ -65,28 +79,140 @@ class AIChatActivity : BaseIDEActivity() {
 
     binding.send.setOnClickListener { sendMessage() }
 
+    binding.contextToggle.setOnCheckedChangeListener { _, isChecked ->
+      useProjectContext = isChecked
+      renderContextIndicator()
+      renderSuggestions()
+    }
+
     if (projectDir != null) {
-      scope.launch {
-        adapter.add(ChatMessage("assistant", "Scanning project..."))
-        val ctx = withContext(Dispatchers.IO) {
-          ContextCache.getOrAnalyze(projectDir.absolutePath) { msg ->
-            scope.launch { adapter.setLastContent(msg) }
-          }
-        }
-        val currentFileRel = currentFile?.let { f ->
-          runCatching { File(f).toRelativeString(projectDir) }.getOrDefault(f)
-        }
-        systemPrompt = PromptBuilder.build(ctx, currentFileRel ?: currentFile)
-        val fileCount = ctx.totalSourceFiles
-        adapter.setLastContent(
-          "Hi! I can see the '${projectDir.name}' project. " +
-          "Indexed $fileCount files." +
-          (if (currentFileRel != null) "\n\nCurrent File:\n$currentFileRel" else "") +
-          "\n\nAsk me to explain code, generate files, fix errors, or analyze the project.")
-      }
+      startProjectContext(projectDir!!)
     } else {
+      contextSummary = null
+      renderContextIndicator()
+      renderSuggestions()
       adapter.add(ChatMessage("assistant",
         getString(string.msg_ai_chat_project_required)))
+    }
+  }
+
+  /**
+   * Renders the startup message using already-indexed data.
+   *
+   * A full scan is only started when neither [ContextCache] nor the knowledge engine hold an
+   * index; the cached path costs a single map lookup and never blocks the UI thread.
+   */
+  private fun startProjectContext(root: File) {
+    val path = root.absolutePath
+    val currentFileRel = currentFile?.let { f ->
+      runCatching { File(f).toRelativeString(root) }.getOrDefault(f)
+    }
+
+    val cached = ContextCache.getSummary(path)
+    if (cached.hasContext) {
+      contextSummary = cached
+      renderContextIndicator()
+      renderSuggestions()
+      adapter.add(ChatMessage("assistant",
+        PromptBuilder.buildStartupMessage(cached, currentFileRel)))
+      // The system prompt needs the full index; resolve it off the UI thread.
+      scope.launch {
+        val index = withContext(Dispatchers.IO) { ContextCache.getOrAnalyze(path) }
+        systemPrompt = PromptBuilder.build(index, currentFileRel ?: currentFile)
+      }
+      return
+    }
+
+    // No index available yet — show progress and scan once.
+    contextSummary = ProjectContextSummary.unavailable(path, IndexingState.INDEXING)
+    renderContextIndicator()
+    renderSuggestions()
+    adapter.add(ChatMessage("assistant", "Scanning project…"))
+
+    scope.launch {
+      val index = withContext(Dispatchers.IO) {
+        ContextCache.getOrAnalyze(path) { msg ->
+          scope.launch { adapter.setLastContent(msg) }
+        }
+      }
+      systemPrompt = PromptBuilder.build(index, currentFileRel ?: currentFile)
+      contextSummary = ProjectContextSummary.from(index, IndexingState.READY)
+      renderContextIndicator()
+      renderSuggestions()
+      adapter.setLastContent(
+        PromptBuilder.buildStartupMessage(contextSummary!!, currentFileRel))
+    }
+  }
+
+  /** Updates the indicator row. Cheap; safe to call on every state change. */
+  private fun renderContextIndicator() {
+    val summary = contextSummary
+    if (summary == null) {
+      binding.contextIndicator.visibility = View.GONE
+      return
+    }
+
+    binding.contextIndicator.visibility = View.VISIBLE
+
+    if (!useProjectContext) {
+      binding.contextStatus.text = getString(string.msg_ai_chat_context_off)
+      return
+    }
+
+    val statusLabel = when (summary.state) {
+      IndexingState.READY -> getString(string.msg_ai_chat_context_ready)
+      IndexingState.UPDATING -> getString(string.msg_ai_chat_context_updating)
+      IndexingState.INDEXING -> summary.progress
+        ?.let { "${getString(string.msg_ai_chat_context_indexing)} ${(it * 100).toInt()}%" }
+        ?: getString(string.msg_ai_chat_context_indexing)
+      IndexingState.UNAVAILABLE -> getString(string.msg_ai_chat_context_unavailable)
+    }
+
+    binding.contextStatus.text = buildString {
+      append(getString(string.msg_ai_chat_context_on))
+      if (summary.totalFiles > 0) {
+        append(" • ")
+        append(getString(string.msg_ai_chat_context_files, summary.totalFiles))
+      }
+      append(" • ")
+      append(statusLabel)
+    }
+  }
+
+  /** Rebuilds the chip row for the current context state. */
+  private fun renderSuggestions() {
+    val hasContext = useProjectContext && contextSummary?.hasContext == true
+    val suggestions = ChatSuggestion.forState(hasContext)
+
+    binding.suggestionChips.removeAllViews()
+    if (suggestions.isEmpty()) {
+      binding.suggestionsScroll.visibility = View.GONE
+      return
+    }
+
+    binding.suggestionsScroll.visibility = View.VISIBLE
+    suggestions.forEach { suggestion ->
+      val chip = Chip(this).apply {
+        text = suggestion.label
+        isCheckable = false
+        isClickable = true
+        setOnClickListener { applySuggestion(suggestion) }
+      }
+      binding.suggestionChips.addView(chip)
+    }
+  }
+
+  /**
+   * Fills the existing input with the chip prompt and reuses the normal send flow. Prompts that
+   * end with a space expect the user to complete them, so they are not auto-sent.
+   */
+  private fun applySuggestion(suggestion: ChatSuggestion) {
+    binding.messageInput.setText(suggestion.prompt)
+    binding.messageInput.setSelection(suggestion.prompt.length)
+    if (!suggestion.prompt.endsWith(" ")) {
+      sendMessage()
+    } else {
+      binding.messageInput.requestFocus()
     }
   }
 
@@ -95,7 +221,7 @@ class AIChatActivity : BaseIDEActivity() {
     if (text.isBlank()) return
     binding.messageInput.text?.clear()
 
-    val isAnalysis = text.lowercase().startsWith("analyze")
+    val isAnalysis = useProjectContext && text.lowercase().startsWith("analyze")
     adapter.add(ChatMessage("user", text))
 
     if (isAnalysis && projectDir != null) {
@@ -103,7 +229,7 @@ class AIChatActivity : BaseIDEActivity() {
         adapter.add(ChatMessage("assistant", "…"))
         binding.send.isEnabled = false
         val analysis = withContext(Dispatchers.IO) {
-          val idx = ContextCache.getOrAnalyze(projectDir.absolutePath)
+          val idx = ContextCache.getOrAnalyze(projectDir!!.absolutePath)
           PromptBuilder.buildAnalysis(idx)
         }
         adapter.setLastContent(analysis)
@@ -121,7 +247,10 @@ class AIChatActivity : BaseIDEActivity() {
           val engine = AiFactory.engine()
           val providerId = engine.activeProvider().providerId
           val model = AiFactory.storage().getModel(providerId)
-          val response = chatEngine.send(model, text, systemPrompt)
+          // Provider-agnostic: the same request shape is used for every provider; only the
+          // optional system prompt varies with the toggle.
+          val prompt = systemPrompt.takeIf { useProjectContext }
+          val response = chatEngine.send(model, text, prompt)
           response.message.content
         }
       }

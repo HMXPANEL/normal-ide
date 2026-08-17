@@ -32,6 +32,28 @@ object ContextCache {
 
   fun getContext(projectDir: String): ProjectContext? = get(projectDir)?.context
 
+  /**
+   * Returns a display summary built from **already available** index data, without triggering a
+   * scan.
+   *
+   * Lookup order (cheapest first):
+   * 1. this cache,
+   * 2. [KnowledgeEngineImpl.unifiedIndex] (populated when a project was opened in the IDE).
+   *
+   * Returns a summary with [IndexingState.UNAVAILABLE] when neither source has data, so callers
+   * can render "Unknown" instead of blocking on a scan.
+   */
+  @Synchronized
+  fun getSummary(projectDir: String): ProjectContextSummary {
+    get(projectDir)?.let { return ProjectContextSummary.from(it, IndexingState.READY) }
+
+    KnowledgeEngineImpl.unifiedIndex?.project?.let { unified ->
+      return ProjectContextSummary.from(unified, IndexingState.READY)
+    }
+
+    return ProjectContextSummary.unavailable(projectDir)
+  }
+
   @Synchronized
   fun set(projectDir: String, index: ProjectIndex) {
     val root = File(projectDir)
