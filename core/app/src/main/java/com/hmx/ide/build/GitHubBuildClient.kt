@@ -117,10 +117,6 @@ class GitHubBuildClient(private val token: String) {
       }
     }
   }
-      }
-      current
-    }.getOrNull()
-  }
 
   companion object {
     internal fun parseJobs(text: String): List<JSONObject> {
