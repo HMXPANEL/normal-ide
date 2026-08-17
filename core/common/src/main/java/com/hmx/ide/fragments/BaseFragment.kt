@@ -69,12 +69,13 @@ open class BaseFragment @JvmOverloads constructor(contentLayoutId: Int = 0) :
         return@registerForActivityResult
       }
 
-      val docUri = buildDocumentUriUsingTree(uri, getTreeDocumentId(uri)).also { if (it == null) return@registerForActivityResult }
-      val docId = DocumentsContractCompat.getDocumentId(docUri).also { if (it == null) return@registerForActivityResult }
+      val treeDocId = getTreeDocumentId(uri) ?: return@registerForActivityResult
+      val docUri = buildDocumentUriUsingTree(uri, treeDocId) ?: return@registerForActivityResult
+      val docId = DocumentsContractCompat.getDocumentId(docUri) ?: return@registerForActivityResult
       val authority = docUri.authority
 
-      if (!allowedAuthorities.contains(authority)) {
-        flashError(getString(string.err_authority_not_allowed, authority))
+      if (authority == null || !allowedAuthorities.contains(authority)) {
+        flashError(getString(string.err_authority_not_allowed, authority ?: ""))
         return@registerForActivityResult
       }
 
@@ -96,9 +97,7 @@ open class BaseFragment @JvmOverloads constructor(contentLayoutId: Int = 0) :
         return@registerForActivityResult
       }
 
-      if (callback != null) {
-        callback.onDirectoryPicked(dir)
-      }
+      callback?.onDirectoryPicked(dir)
     }
 
   protected fun pickDirectory(dirCallback: OnDirectoryPickedCallback?) {
