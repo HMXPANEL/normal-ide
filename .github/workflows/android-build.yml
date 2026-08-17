@@ -103,6 +103,7 @@ jobs:
         shell: bash
         run: |
           MODULE="${{ github.event.inputs.module }}"
+          [ -z "$MODULE" ] && MODULE=":core:app"
           # Strip leading ":" and convert ":core:app" -> "core/app"
           REL="${MODULE#:}"
           REL="${REL//:/\/}"
