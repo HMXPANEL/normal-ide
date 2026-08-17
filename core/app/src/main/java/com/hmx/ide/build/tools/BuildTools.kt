@@ -112,6 +112,6 @@ object BuildTools {
   data class ToolResult(
     val ok: Boolean,
     val message: String,
-    val data: Map<String, Any>,
+    val data: Map<String, Any> = emptyMap(),
   )
 }
