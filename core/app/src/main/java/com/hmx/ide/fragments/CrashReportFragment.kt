@@ -11,23 +11,20 @@
  *  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  *  GNU General Public License for more details.
  *
- *  You should have received a copy of the GNU General Public License
+ *   You should have received a copy of the GNU General Public License
  *   along with AndroidIDE.  If not, see <https://www.gnu.org/licenses/>.
  */
 package com.hmx.ide.fragments
 
-import android.content.Intent
-import android.net.Uri
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.Toast
 import androidx.fragment.app.Fragment
 import com.blankj.utilcode.util.ClipboardUtils
-import com.hmx.ide.buildinfo.BuildInfo
 import com.hmx.ide.databinding.LayoutCrashReportBinding
 import com.hmx.ide.resources.R
-import com.hmx.ide.utils.BuildInfoUtils
 
 class CrashReportFragment : Fragment() {
 
@@ -87,48 +84,32 @@ class CrashReportFragment : Fragment() {
       message = args.getString(KEY_MESSAGE)
     }
 
-    val trace: String = if (args.containsKey(KEY_TRACE)) {
-      buildReportText(args.getString(KEY_TRACE))
+    // The value passed via KEY_TRACE is the full, already-sanitized crash report built by
+    // CrashReport. It is held in memory only and is never persisted.
+    val report: String = if (args.containsKey(KEY_TRACE)) {
+      args.getString(KEY_TRACE)!!
     } else {
-      "No stack strace was provided for the report"
+      "No stack trace was provided for the report"
     }
 
     binding!!.apply {
       crashTitle.text = title
       crashSubtitle.text = message
-      logText.text = trace
+      logText.text = report
 
-      val report: String = trace
       closeButton.setOnClickListener {
-        if (closeAppOnClick) {
-          requireActivity().finishAffinity()
-        } else {
-          requireActivity().finish()
-        }
+        requireActivity().finishAffinity()
+        // This activity lives in the isolated ':crash' process; end it explicitly.
+        android.os.Process.killProcess(android.os.Process.myPid())
       }
 
-      reportButton.setOnClickListener { reportTrace(report) }
+      reportButton.setOnClickListener { copyReport(report) }
     }
   }
 
-  private fun reportTrace(report: String) {
+  private fun copyReport(report: String) {
     ClipboardUtils.copyText("HMX IDE CrashLog", report)
-    val url = BuildInfo.REPO_URL + "/issues"
-    val intent = Intent()
-    intent.action = Intent.ACTION_VIEW
-    intent.data = Uri.parse(url)
-    intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
-    startActivity(intent)
-  }
-
-  private fun buildReportText(trace: String?): String {
-    return """
-HMX IDE Crash Report
- ${BuildInfoUtils.getBuildInfoHeader()}
-
-Stacktrace:
-$trace
-    """
+    Toast.makeText(requireContext(), R.string.crash_copied, Toast.LENGTH_SHORT).show()
   }
 
   override fun onDestroyView() {

@@ -94,6 +94,14 @@
   <string name="msg_ai_chat_applied">Applied %1$d file change(s) to the project.</string>
   <string name="msg_ai_chat_no_endpoint">Set an AI Chat API endpoint in the menu first.</string>
   <string name="msg_ai_chat_error">AI request failed: %1$s</string>
+  <string name="action_ai_chat_use_project_context">Use project context</string>
+  <string name="msg_ai_chat_context_on">Project Context: ON</string>
+  <string name="msg_ai_chat_context_off">Project Context: OFF</string>
+  <string name="msg_ai_chat_context_files">%1$d files</string>
+  <string name="msg_ai_chat_context_ready">Ready</string>
+  <string name="msg_ai_chat_context_indexing">Indexing</string>
+  <string name="msg_ai_chat_context_updating">Updating</string>
+  <string name="msg_ai_chat_context_unavailable">No index</string>
   <string name="title_confirm_project_close">Close project</string>
 
   <!-- Templates -->
@@ -218,8 +226,11 @@
   <string name="msg_swipe_up">Swipe up or click for build output, logs and more.</string>
   <string name="msg_ide_crashed">HMX IDE crashed</string>
   <string name="msg_report_crash">Please open an issue on github with the following stacktrace :</string>
-  <string name="msg_crash_report_hint">Click on the button below to copy log and open issues page.</string>
-  <string name="msg_copy_report_action">Copy and report</string>
+  <string name="msg_crash_report_hint">Tap Copy error to copy the full report, then Close.</string>
+  <string name="msg_copy_report_action">Copy error</string>
+  <string name="crash_copied">Crash report copied to clipboard</string>
+  <string name="debug_crash_title">Trigger test crash (debug)</string>
+  <string name="debug_crash_summary">Verify the in-app crash reporter</string>
   <string name="title_translations">Translations</string>
   <string name="action_expand_selection">Expand selection</string>
   <string name="idepref_java_matchLower_title">Match completions in lower case</string>
@@ -633,4 +644,25 @@
   <string name="idepref_ai_error_refused">Connection refused — %1$s</string>
   <string name="idepref_ai_error_blocked">Network blocked — %1$s</string>
   <string name="idepref_ai_fetch_models_failed">Failed to fetch models</string>
+
+  <!-- Remote GitHub Actions build -->
+  <string name="title_remote_build">Remote Build (GitHub Actions)</string>
+  <string name="action_build_debug">Build Debug APK</string>
+  <string name="action_build_release">Build Release APK</string>
+  <string name="action_download_apk">Download APK</string>
+  <string name="title_retry_build">Retry Build</string>
+  <string name="action_configure_github_token">Configure GitHub Token</string>
+  <string name="build_status_preparing">Preparing project…</string>
+  <string name="build_status_uploading">Committing and pushing to GitHub…</string>
+  <string name="build_status_waiting">Waiting for GitHub Actions…</string>
+  <string name="build_status_queued">Build queued</string>
+  <string name="build_status_running">Build running</string>
+  <string name="build_status_succeeded">Build Successful</string>
+  <string name="build_status_failed">Build Failed</string>
+  <string name="build_status_cancelled">Build Cancelled</string>
+  <string name="build_status_unavailable">Remote build unavailable</string>
+  <string name="build_detail_succeeded">APK: %1$s\nBuild: #%2$d\nCommit: %3$s\nSize: %4$s</string>
+  <string name="build_detail_failed">Job: %1$s\n%2$s</string>
+  <string name="build_prompt_token">GitHub Personal Access Token</string>
+  <string name="build_prompt_token_msg">Enter a token with `repo` and `workflow` scopes. It is stored encrypted on-device and never shared with AI providers.</string>
 </resources>

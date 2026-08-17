@@ -30,7 +30,7 @@ import androidx.work.NetworkType
 import androidx.work.Operation
 import androidx.work.PeriodicWorkRequestBuilder
 import androidx.work.WorkManager
-import com.blankj.utilcode.util.ThrowableUtils.getFullStackTrace
+import com.hmx.ide.crash.CrashReport
 import com.google.android.material.color.DynamicColors
 import com.hmx.ide.BuildConfig
 import com.hmx.ide.activities.CrashHandlerActivity
@@ -80,7 +80,7 @@ class IDEApplication : BaseApplication() {
   private val applicationScope = MainScope()
 
   init {
-    if (!VMUtils.isJvm()) {
+    if (!VMUtils.isJvm() && !isCrashProcess()) {
       TreeSitter.loadLibrary()
     }
 
@@ -89,6 +89,12 @@ class IDEApplication : BaseApplication() {
 
   override fun onCreate() {
     instance = this
+    if (isCrashProcess()) {
+      // The crash reporter runs in the isolated ':crash' process. Keep it independent from the
+      // systems that may have caused the crash: skip all heavy IDE initialization here.
+      super.onCreate()
+      return
+    }
     uncaughtExceptionHandler = Thread.getDefaultUncaughtExceptionHandler()
     Thread.setDefaultUncaughtExceptionHandler { thread, th -> handleCrash(thread, th) }
 
@@ -126,6 +132,7 @@ class IDEApplication : BaseApplication() {
     }
 
     AiFactory.init(this)
+    com.hmx.ide.build.tools.BuildTools.init(this)
     MemoryService.init(this)
     ContextManager.init()
     KnowledgeEngineImpl.start()
@@ -217,23 +224,44 @@ class IDEApplication : BaseApplication() {
   }
 
   private fun handleCrash(thread: Thread, th: Throwable) {
-    writeException(th)
-
     try {
-
-      val intent = Intent()
-      intent.action = CrashHandlerActivity.REPORT_ACTION
-      intent.putExtra(CrashHandlerActivity.TRACE_KEY, getFullStackTrace(th))
-      intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
-      startActivity(intent)
-      if (uncaughtExceptionHandler != null) {
-        uncaughtExceptionHandler!!.uncaughtException(thread, th)
+      val report = CrashReport.build(thread, th)
+      val intent = Intent(this, CrashHandlerActivity::class.java).apply {
+        addFlags(Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TASK)
+        putExtra(CrashHandlerActivity.TRACE_KEY, report)
       }
-
-      exitProcess(1)
+      startActivity(intent)
     } catch (error: Throwable) {
       log.error("Unable to show crash handler activity", error)
+      th.printStackTrace()
     }
+
+    // The report is shown by CrashHandlerActivity, which runs in the isolated ':crash'
+    // process. Terminate this (broken) process so the crash UI survives and the app does
+    // not keep running in a broken state.
+    try {
+      uncaughtExceptionHandler?.uncaughtException(thread, th)
+    } finally {
+      exitProcess(1)
+    }
+  }
+
+  /**
+   * Whether the current process is the isolated crash reporter process (declared with
+   * `android:process=":crash"` in the manifest). Read from `/proc/self/cmdline` so it works on
+   * every Android version without relying on APIs introduced in newer releases.
+   */
+  private fun isCrashProcess(): Boolean {
+    val name = currentProcessName()
+    return name != null && name.endsWith(":crash")
+  }
+
+  private fun currentProcessName(): String? = try {
+    java.io.BufferedReader(java.io.FileReader("/proc/self/cmdline")).use { reader ->
+      reader.readText().replace('\u0000', ' ').trim().takeIf { it.isNotEmpty() }
+    }
+  } catch (_: Throwable) {
+    null
   }
 
   private fun cancelStatUploadWorker() {

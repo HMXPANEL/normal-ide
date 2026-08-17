@@ -8,7 +8,7 @@
     android:description="@string/permdesc_bind_logger_service"
     android:label="@string/permlab_bind_logger_service"
     android:name="com.hmx.ide.permission.BIND_LOG_SERVICE"
-    android:protectionLevel="normal"
+    android:protectionLevel="signature"
     tools:ignore="ManifestOrder" />
 
   <uses-permission android:name="com.hmx.ide.permission.BIND_LOG_SERVICE" />
@@ -39,14 +39,14 @@
     android:theme="@style/Theme.AndroidIDE"
     tools:ignore="DiscouragedApi,MediaCapabilities,UnusedAttribute">
     <activity
-      android:exported="true"
+      android:exported="false"
       android:name=".activities.CrashHandlerActivity"
-      android:windowSoftInputMode="stateAlwaysHidden">
-      <intent-filter>
-        <action android:name="com.hmx.ide.REPORT_CRASH" />
-        <category android:name="android.intent.category.DEFAULT" />
-      </intent-filter>
-    </activity>
+      android:process=":crash"
+      android:windowSoftInputMode="stateAlwaysHidden" />
+
+    <activity
+      android:exported="false"
+      android:name=".activities.DebugCrashActivity" />
 
     <activity
       android:exported="true"
@@ -77,6 +77,10 @@
     <activity
       android:exported="false"
       android:name=".activities.aichat.AIChatActivity"
+      android:theme="@style/Theme.AndroidIDE" />
+    <activity
+      android:exported="false"
+      android:name=".build.ui.RemoteBuildActivity"
       android:theme="@style/Theme.AndroidIDE" />
 
     <provider

@@ -66,6 +66,7 @@ class AboutActivity : EdgeToEdgeIDEActivity() {
     private val ACTION_TG_GROUP = id++
     private val ACTION_CONTRIBUTE = id++
     private val ACTION_CONTRIBUTORS = id++
+    private val ACTION_DEBUG_CRASH = id++
   }
 
   override fun onCreate(savedInstanceState: Bundle?) {
@@ -120,6 +121,7 @@ class AboutActivity : EdgeToEdgeIDEActivity() {
       ACTION_TG_CHANNEL -> app.openTelegramChannel()
       ACTION_CONTRIBUTE -> app.openUrl(BaseApplication.CONTRIBUTOR_GUIDE_URL)
       ACTION_CONTRIBUTORS -> startActivity(Intent(this, ContributorsActivity::class.java))
+      ACTION_DEBUG_CRASH -> startActivity(Intent(this, DebugCrashActivity::class.java))
     }
   }
 
@@ -184,6 +186,18 @@ class AboutActivity : EdgeToEdgeIDEActivity() {
           R.string.summary_contributors
         )
       )
+
+      if (BuildConfig.DEBUG) {
+        add(
+          SimpleIconTitleDescriptionItem.create(
+            this@AboutActivity,
+            ACTION_DEBUG_CRASH,
+            R.drawable.ic_bug,
+            R.string.debug_crash_title,
+            R.string.debug_crash_summary
+          )
+        )
+      }
     }
   }
 
