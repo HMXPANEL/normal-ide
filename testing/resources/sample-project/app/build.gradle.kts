@@ -5,11 +5,11 @@ plugins {
 }
 
 android {
-    namespace = "com.itsaky.androidide.template.Java.kts"
+    namespace = "com.hmx.ide.template.Java.kts"
     compileSdk = 33
     
     defaultConfig {
-        applicationId = "com.itsaky.androidide.template.Java.kts"
+        applicationId = "com.hmx.ide.template.Java.kts"
         minSdk = 21
         targetSdk = 33
         versionCode = 1

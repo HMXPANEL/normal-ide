@@ -58,8 +58,17 @@ dependencyResolutionManagement {
       this.name = build
       dependencySubstitution {
         for (module in modules) {
-          substitute(module("com.itsaky.androidide.build:${module}"))
+          substitute(module("com.hmx.ide.build:${module}"))
             .using(project(":${module}"))
+        }
+
+        // Substitute standard ch.qos.logback:logback-core with the
+        // Android-patched version (composite-builds/external/logback-android)
+        // to prevent NoSuchMethodError on Android ART:
+        // Class.getModule() is a Java 9+ API and not available on Android.
+        if (build == "build-deps") {
+          substitute(module("ch.qos.logback:logback-core"))
+            .using(project(":logback-core"))
         }
       }
     }
@@ -116,7 +125,7 @@ if (FDroidConfig.hasRead && FDroidConfig.isFDroidBuild) {
   }
 }
 
-rootProject.name = "AndroidIDE"
+rootProject.name = "hmx-ide"
 
 // keep this sorted alphabetically
 include(
@@ -127,7 +136,7 @@ include(
   ":core:app",
   ":core:common",
   ":core:indexing-api",
-  ":core:indexing-core",
+  ":core:knowledge-api",
   ":core:lsp-api",
   ":core:lsp-models",
   ":core:projects",

@@ -1,6 +1,6 @@
 # Contributing
 
-This document outlines how to propose a change to AndroidIDE. By contributing to this project, you
+This document outlines how to propose a change to HMX IDE. By contributing to this project, you
 agree to abide the terms specified in the [CODE OF CONDUCT](./CODE_OF_CONDUCT.md).
 
 ## Requirements
@@ -17,10 +17,10 @@ agree to abide the terms specified in the [CODE OF CONDUCT](./CODE_OF_CONDUCT.md
 
 Open the project in Android Studio. No extra steps are needed for this.
 
-It is possible to build AndroidIDE in AndroidIDE itself. But, as it might be a too heavy task for an
+It is possible to build HMX IDE in HMX IDE itself. But, as it might be a too heavy task for an
 Android device to be able to build the project, Android Studio is always recommended.
 
-You can refer the [AndroidIDE Developer Guide](https://docs.androidide.com/developer/index.html) to
+You can refer the [HMX IDE Developer Guide](https://docs.hmxide.com/developer/index.html) to
 get started with the development or to learn more about the various components in the IDE. 
 
 ## Source code format

@@ -1,0 +1,142 @@
+name: android-build
+
+on:
+  push:
+    branches:
+      - dev
+  workflow_dispatch:
+    inputs:
+      build_type:
+        description: "Build variant to produce"
+        required: true
+        default: "debug"
+        type: choice
+        options:
+          - debug
+          - release
+      module:
+        description: "Gradle module that produces the APK (defaults to the app module)"
+        required: false
+        default: ":core:app"
+        type: string
+
+concurrency:
+  group: android-build-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  build-apk:
+    name: Build Android APK
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+          submodules: true
+
+      - name: Set up JDK 17
+        uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: "17"
+
+      - name: Set up Android SDK
+        uses: android-actions/setup-android@v3
+
+      - name: Accept Android SDK licenses
+        run: yes | sdkmanager --licenses || true
+
+      - name: Cache Gradle
+        uses: actions/cache@v4
+        with:
+          path: |
+            ~/.gradle/caches
+            ~/.gradle/wrapper
+          key: ${{ runner.os }}-gradle-${{ hashFiles('**/*.gradle*', '**/*.toml') }}
+          restore-keys: ${{ runner.os }}-gradle-
+
+      - name: Make Gradle Wrapper executable
+        run: chmod +x ./gradlew
+
+      # Generate a real signing keystore at the path the build's signing plugin
+      # expects (rootProject.buildDir/signing/signing-key.jks). Providing an
+      # existing keystore lets the plugin apply a real signing config, avoiding
+      # AGP's default debug-keystore generation which crashes on a BouncyCastle
+      # classpath clash (NoSuchFieldError: xmss_SHAKE128_512ph).
+      - name: Generate signing keystore
+        run: |
+          KEYSTORE="$GITHUB_WORKSPACE/build/signing/signing-key.jks"
+          mkdir -p "$(dirname "$KEYSTORE")"
+          keytool -genkeypair -v \
+            -keystore "$KEYSTORE" \
+            -alias hmxide \
+            -keyalg RSA -keysize 2048 -validity 10000 \
+            -storepass android -keypass android \
+            -dname "CN=HMX IDE,O=HMX,C=US"
+          {
+            echo "IDE_SIGNING_ALIAS=hmxide"
+            echo "IDE_SIGNING_STORE_PASS=android"
+            echo "IDE_SIGNING_KEY_PASS=android"
+          } >> "$GITHUB_ENV"
+
+      # Pre-create the default debug keystore with keytool so AGP does not
+      # generate it itself (its generation path hits a BouncyCastle classpath
+      # clash: NoSuchFieldError xmss_SHAKE128_512ph). Loading an existing
+      # keystore avoids that code path entirely.
+      - name: Create debug keystore if missing
+        run: |
+          mkdir -p ~/.android ~/.config/.android
+          for dir in ~/.android ~/.config/.android; do
+            if [ ! -f "$dir/debug.keystore" ]; then
+              keytool -genkey -v -keystore "$dir/debug.keystore" \
+                -storepass android -alias androiddebugkey -keypass android \
+                -keyalg RSA -keysize 2048 -validity 10000 \
+                -dname "CN=Android Debug,O=Android,C=US"
+            fi
+          done
+
+      - name: Detect APK output path
+        id: paths
+        shell: bash
+        run: |
+          MODULE="${{ github.event.inputs.module }}"
+          [ -z "$MODULE" ] && MODULE=":core:app"
+          # Strip leading ":" and convert ":core:app" -> "core/app"
+          REL="${MODULE#:}"
+          REL="${REL//:/\/}"
+          echo "apk_dir=${REL}/build/outputs/apk" >> "$GITHUB_OUTPUT"
+
+      - name: Build APKs (release + debug)
+        run: |
+          MODULE="${{ github.event.inputs.module }}"
+          [ -z "$MODULE" ] && MODULE=":core:app"
+          ./gradlew "$MODULE:assembleRelease" "$MODULE:assembleDebug" --no-daemon --stacktrace
+
+      - name: Upload release APK (signed)
+        if: ${{ success() }}
+        uses: actions/upload-artifact@v4
+        with:
+          name: release-apk
+          path: ${{ steps.paths.outputs.apk_dir }}/release/*.apk
+          if-no-files-found: error
+
+      - name: Upload debug APK (unsigned / debug-signed)
+        if: ${{ success() }}
+        uses: actions/upload-artifact@v4
+        with:
+          name: debug-apk
+          path: ${{ steps.paths.outputs.apk_dir }}/debug/*.apk
+          if-no-files-found: error
+
+      - name: Upload build logs
+        if: ${{ always() }}
+        uses: actions/upload-artifact@v4
+        with:
+          name: build-logs
+          path: |
+            **/build/reports/
+            **/build/*.log
+          if-no-files-found: ignore

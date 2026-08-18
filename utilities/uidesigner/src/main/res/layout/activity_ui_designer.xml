@@ -1,21 +1,21 @@
 <?xml version="1.0" encoding="utf-8"?><!--
-  ~  This file is part of AndroidIDE.
+  ~  This file is part of HMX IDE.
   ~
-  ~  AndroidIDE is free software: you can redistribute it and/or modify
+  ~  HMX IDE is free software: you can redistribute it and/or modify
   ~  it under the terms of the GNU General Public License as published by
   ~  the Free Software Foundation, either version 3 of the License, or
   ~  (at your option) any later version.
   ~
-  ~  AndroidIDE is distributed in the hope that it will be useful,
+  ~  HMX IDE is distributed in the hope that it will be useful,
   ~  but WITHOUT ANY WARRANTY; without even the implied warranty of
   ~  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
   ~  GNU General Public License for more details.
   ~
   ~  You should have received a copy of the GNU General Public License
-  ~   along with AndroidIDE.  If not, see <https://www.gnu.org/licenses/>.
+  ~   along with HMX IDE.  If not, see <https://www.gnu.org/licenses/>.
   -->
 
-<com.itsaky.androidide.ui.ContentTranslatingDrawerLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<com.hmx.ide.ui.ContentTranslatingDrawerLayout xmlns:android="http://schemas.android.com/apk/res/android"
   xmlns:app="http://schemas.android.com/apk/res-auto"
   xmlns:tools="http://schemas.android.com/tools"
   android:layout_width="match_parent"
@@ -45,7 +45,7 @@
 
     <androidx.fragment.app.FragmentContainerView
       android:id="@+id/workspace"
-      android:name="com.itsaky.androidide.uidesigner.fragments.DesignerWorkspaceFragment"
+      android:name="com.hmx.ide.uidesigner.fragments.DesignerWorkspaceFragment"
       android:layout_width="match_parent"
       android:layout_height="match_parent"
       app:layout_behavior="com.google.android.material.appbar.AppBarLayout$ScrollingViewBehavior"
@@ -61,7 +61,7 @@
 
     <androidx.fragment.app.FragmentContainerView
       android:id="@+id/widgets_fragment"
-      android:name="com.itsaky.androidide.uidesigner.fragments.WidgetsListFragment"
+      android:name="com.hmx.ide.uidesigner.fragments.WidgetsListFragment"
       android:layout_width="match_parent"
       android:layout_height="match_parent"
       tools:layout="@layout/fragment_ui_widgets" />
@@ -84,7 +84,7 @@
         android:layout_height="match_parent"
         android:fillViewport="true">
 
-        <com.itsaky.androidide.uidesigner.views.LayoutHierarchyView
+        <com.hmx.ide.uidesigner.views.LayoutHierarchyView
           android:id="@+id/hierarchy"
           android:layout_width="wrap_content"
           android:layout_height="match_parent"
@@ -96,4 +96,4 @@
 
   </com.google.android.material.navigation.NavigationView>
 
-</com.itsaky.androidide.ui.ContentTranslatingDrawerLayout>
+</com.hmx.ide.ui.ContentTranslatingDrawerLayout>

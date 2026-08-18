@@ -21,22 +21,23 @@ logback = "1.5.3"
 realm = "10.18.0"
 benchmark = "1.2.4"
 benchmark-junit4 = "1.2.4"
+security-crypto = "1.1.0"
 
 [libraries]
 
 # Dependencies in composite build
-composite-appintro = { module = "com.itsaky.androidide.build:appintro" }
-composite-desugaringCore = { module = "com.itsaky.androidide.build:desugaring-core" }
-composite-fuzzysearch = { module = "com.itsaky.androidide.build:fuzzysearch" }
-composite-googleJavaFormat = { module = "com.itsaky.androidide.build:google-java-format" }
-composite-javaCompiler = { module = "com.itsaky.androidide.build:java-compiler" }
-composite-javac = { module = "com.itsaky.androidide.build:javac" }
-composite-jdkCompiler = { module = "com.itsaky.androidide.build:jdk-compiler" }
-composite-jdkJdeps = { module = "com.itsaky.androidide.build:jdk-jdeps" }
-composite-javapoet = { module = "com.itsaky.androidide.build:javapoet" }
-composite-jaxp = { module = "com.itsaky.androidide.build:jaxp" }
-composite-jdt = { module = "com.itsaky.androidide.build:jdt" }
-composite-layoutlibApi = { module = "com.itsaky.androidide.build:layoutlib-api" }
+composite-appintro = { module = "com.hmx.ide.build:appintro" }
+composite-desugaringCore = { module = "com.hmx.ide.build:desugaring-core" }
+composite-fuzzysearch = { module = "com.hmx.ide.build:fuzzysearch" }
+composite-googleJavaFormat = { module = "com.hmx.ide.build:google-java-format" }
+composite-javaCompiler = { module = "com.hmx.ide.build:java-compiler" }
+composite-javac = { module = "com.hmx.ide.build:javac" }
+composite-jdkCompiler = { module = "com.hmx.ide.build:jdk-compiler" }
+composite-jdkJdeps = { module = "com.hmx.ide.build:jdk-jdeps" }
+composite-javapoet = { module = "com.hmx.ide.build:javapoet" }
+composite-jaxp = { module = "com.hmx.ide.build:jaxp" }
+composite-jdt = { module = "com.hmx.ide.build:jdt" }
+composite-layoutlibApi = { module = "com.hmx.ide.build:layoutlib-api" }
 
 # AndroidIDE
 androidide-ts = { module = "com.itsaky.androidide.treesitter:android-tree-sitter", version.ref = "tree-sitter" }
@@ -103,6 +104,7 @@ androidx-viewpager2 = { module = "androidx.viewpager2:viewpager2", version = "1.
 androidx-window-v1alpha9 = { module = "androidx.window:window", version = "1.0.0-alpha09" }
 androidx-work = { module = "androidx.work:work-runtime", version.ref = "androidx-work" }
 androidx-work-ktx = { module = "androidx.work:work-runtime-ktx", version.ref = "androidx-work" }
+androidx-security-crypto = { module = "androidx.security:security-crypto", version.ref = "security-crypto" }
 
 # Google
 google-material = { module = "com.google.android.material:material", version = "1.11.0" }
@@ -122,9 +124,7 @@ aapt2-annotations = { module = "com.android.tools:annotations", version = "31.2.
 aapt2-jb-annotations = { module = "org.jetbrains:annotations", version = "24.1.0" }
 aapt2-proto = { module = "com.android.tools.build:aapt2-proto", version = "8.3.0-10880808" }
 
-# use logback-core from logback-android instead
-#logging-logback-core = { module = "ch.qos.logback:logback-core", version.ref = "logback" }
-logging-logback-core = { module = "com.itsaky.androidide.build:logback-core" }
+logging-logback-core = { module = "com.hmx.ide.build:logback-core" }
 logging-logback-classic = { module = "ch.qos.logback:logback-classic", version.ref = "logback" }
 
 # XML

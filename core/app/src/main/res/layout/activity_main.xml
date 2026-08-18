@@ -39,19 +39,19 @@
 
     <androidx.fragment.app.FragmentContainerView
       android:id="@+id/main"
-      android:name="com.itsaky.androidide.fragments.MainFragment"
+      android:name="com.hmx.ide.fragments.MainFragment"
       android:layout_width="match_parent"
       android:layout_height="match_parent" />
 
     <androidx.fragment.app.FragmentContainerView
       android:id="@+id/template_list"
-      android:name="com.itsaky.androidide.fragments.TemplateListFragment"
+      android:name="com.hmx.ide.fragments.TemplateListFragment"
       android:layout_width="match_parent"
       android:layout_height="match_parent" />
 
     <androidx.fragment.app.FragmentContainerView
       android:id="@+id/template_details"
-      android:name="com.itsaky.androidide.fragments.TemplateDetailsFragment"
+      android:name="com.hmx.ide.fragments.TemplateDetailsFragment"
       android:layout_width="match_parent"
       android:layout_height="match_parent" />
 

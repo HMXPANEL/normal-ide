@@ -17,18 +17,18 @@
 
 @file:Suppress("UnstableApiUsage")
 
-import com.itsaky.androidide.build.config.BuildConfig
-import com.itsaky.androidide.desugaring.utils.JavaIOReplacements.applyJavaIOReplacements
-import com.itsaky.androidide.plugins.AndroidIDEAssetsPlugin
+import com.hmx.ide.build.config.BuildConfig
+import com.hmx.ide.desugaring.utils.JavaIOReplacements.applyJavaIOReplacements
+import com.hmx.ide.plugins.AndroidIDEAssetsPlugin
 
 plugins {
-  id("com.itsaky.androidide.core-app")
+  id("com.hmx.ide.core-app")
   id("com.android.application")
   id("kotlin-android")
   id("kotlin-kapt")
   id("kotlin-parcelize")
   id("androidx.navigation.safeargs.kotlin")
-  id("com.itsaky.androidide.desugaring")
+  id("com.hmx.ide.desugaring")
 }
 
 apply {
@@ -122,11 +122,12 @@ dependencies {
   implementation(libs.androidx.preference)
   implementation(libs.androidx.recyclerview)
   implementation(libs.androidx.transition)
-  implementation(libs.androidx.vectors)
-  implementation(libs.androidx.animated.vectors)
-  implementation(libs.androidx.work)
-  implementation(libs.androidx.work.ktx)
-  implementation(libs.google.material)
+implementation(libs.androidx.vectors)
+   implementation(libs.androidx.animated.vectors)
+   implementation(libs.androidx.work)
+   implementation(libs.androidx.work.ktx)
+   implementation(libs.androidx.security.crypto)
+   implementation(libs.google.material)
   implementation(libs.google.flexbox)
 
   // Kotlin
@@ -142,7 +143,7 @@ dependencies {
   implementation(projects.core.actions)
   implementation(projects.core.common)
   implementation(projects.core.indexingApi)
-  implementation(projects.core.indexingCore)
+  implementation(projects.core.knowledgeApi)
   implementation(projects.core.lspApi)
   implementation(projects.core.projects)
   implementation(projects.core.resources)
