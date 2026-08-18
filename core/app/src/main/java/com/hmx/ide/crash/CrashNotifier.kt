@@ -39,6 +39,7 @@ object CrashNotifier {
   const val CHANNEL_ID = "crash_reports"
   const val NOTIFICATION_ID = 0x44E7A92
 
+  @JvmStatic
   fun show(context: Context, summary: String, report: String) {
     createChannel(context)
     if (Build.VERSION.SDK_INT >= 33 &&
@@ -74,6 +75,7 @@ object CrashNotifier {
     NotificationManagerCompat.from(context).notify(NOTIFICATION_ID, notification)
   }
 
+  @JvmStatic
   fun cancel(context: Context) {
     NotificationManagerCompat.from(context).cancel(NOTIFICATION_ID)
   }
