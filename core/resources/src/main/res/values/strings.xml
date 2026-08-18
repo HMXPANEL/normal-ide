@@ -229,6 +229,15 @@
   <string name="msg_crash_report_hint">Tap Copy error to copy the full report, then Close.</string>
   <string name="msg_copy_report_action">Copy error</string>
   <string name="crash_copied">Crash report copied to clipboard</string>
+  <string name="msg_crash_view_log">View Full Log</string>
+  <string name="msg_crash_close">Close</string>
+  <string name="title_crash_log">Crash log</string>
+  <string name="title_crash_reporting">Crash reporting</string>
+  <string name="idepref_crash_reporting_summary">How HMX IDE shows you a crash when it stops unexpectedly</string>
+  <string name="idepref_crash_overlay_title">Crash popup over other apps</string>
+  <string name="idepref_crash_overlay_summary">Lets the crash report appear over the home screen. Requires the \'Display over other apps\' system permission, which you grant in system settings. Optional — without it a notification is used instead.</string>
+  <string name="idepref_crash_notifications_title">Crash notification</string>
+  <string name="idepref_crash_notifications_summary">Shows a high-priority notification when Android blocks the crash screen from opening. Tap it to view the crash report. Requires notification permission.</string>
   <string name="debug_crash_title">Trigger test crash (debug)</string>
   <string name="debug_crash_summary">Verify the in-app crash reporter</string>
   <string name="title_translations">Translations</string>

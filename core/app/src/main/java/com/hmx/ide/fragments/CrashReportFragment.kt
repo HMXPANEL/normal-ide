@@ -6,11 +6,6 @@
  *  the Free Software Foundation, either version 3 of the License, or
  *  (at your option) any later version.
  *
- *  AndroidIDE is distributed in the hope that it will be useful,
- *  but WITHOUT ANY WARRANTY; without even the implied warranty of
- *  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- *  GNU General Public License for more details.
- *
  *   You should have received a copy of the GNU General Public License
  *   along with AndroidIDE.  If not, see <https://www.gnu.org/licenses/>.
  */
@@ -74,18 +69,11 @@ class CrashReportFragment : Fragment() {
     super.onViewCreated(view, savedInstanceState)
     val args = requireArguments()
     closeAppOnClick = args.getBoolean(KEY_CLOSE_APP_ON_CLICK)
-    var title: String? = getString(R.string.msg_ide_crashed)
-    var message: String? = getString(R.string.msg_report_crash)
-    if (args.containsKey(KEY_TITLE)) {
-      title = args.getString(KEY_TITLE)
-    }
+    val title: String = args.getString(KEY_TITLE) ?: getString(R.string.msg_ide_crashed)
 
-    if (args.containsKey(KEY_MESSAGE)) {
-      message = args.getString(KEY_MESSAGE)
-    }
-
-    // The value passed via KEY_TRACE is the full, already-sanitized crash report built by
-    // CrashReport. It is held in memory only and is never persisted.
+    // KEY_MESSAGE carries the compact, already-sanitized summary built by CrashReport.
+    // KEY_TRACE carries the full, already-sanitized report. Both are held in memory only.
+    val summary: String = args.getString(KEY_MESSAGE) ?: getString(R.string.msg_report_crash)
     val report: String = if (args.containsKey(KEY_TRACE)) {
       args.getString(KEY_TRACE)!!
     } else {
@@ -94,17 +82,25 @@ class CrashReportFragment : Fragment() {
 
     binding!!.apply {
       crashTitle.text = title
-      crashSubtitle.text = message
-      logText.text = report
+      crashSummary.text = summary
 
+      viewLogButton.setOnClickListener { openCrashLog(report) }
+      copyButton.setOnClickListener { copyReport(report) }
       closeButton.setOnClickListener {
         requireActivity().finishAffinity()
         // This activity lives in the isolated ':crash' process; end it explicitly.
         android.os.Process.killProcess(android.os.Process.myPid())
       }
-
-      reportButton.setOnClickListener { copyReport(report) }
     }
+  }
+
+  private fun openCrashLog(report: String) {
+    val container = (requireView().parent as? ViewGroup) ?: return
+    requireActivity().supportFragmentManager
+      .beginTransaction()
+      .replace(container.id, CrashLogFragment.newInstance(report))
+      .addToBackStack(null)
+      .commit()
   }
 
   private fun copyReport(report: String) {

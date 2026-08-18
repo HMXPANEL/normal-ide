@@ -21,6 +21,7 @@ import android.os.Bundle;
 import android.view.View;
 import androidx.annotation.NonNull;
 import com.hmx.ide.app.IDEActivity;
+import com.hmx.ide.crash.CrashNotifier;
 import com.hmx.ide.databinding.ActivityCrashHandlerBinding;
 import com.hmx.ide.fragments.CrashReportFragment;
 
@@ -28,6 +29,7 @@ public class CrashHandlerActivity extends IDEActivity {
 
   public static final String REPORT_ACTION = "com.hmx.ide.REPORT_CRASH";
   public static final String TRACE_KEY = "crash_trace";
+  public static final String SUMMARY_KEY = "crash_summary";
   private ActivityCrashHandlerBinding binding;
 
   @Override
@@ -41,13 +43,21 @@ public class CrashHandlerActivity extends IDEActivity {
     }
 
     final var report = extra.getString(TRACE_KEY, "Unable to get logs.");
-    final var fragment = CrashReportFragment.newInstance(report);
+    final var summary = extra.getString(SUMMARY_KEY);
+    final var fragment = CrashReportFragment.newInstance(null, summary, report, true);
 
     getSupportFragmentManager()
         .beginTransaction()
         .replace(binding.getRoot().getId(), fragment, "crash_report_fragment")
         .addToBackStack(null)
         .commit();
+  }
+
+  @Override
+  protected void onResume() {
+    super.onResume();
+    // The crash UI is actually visible now; the fallback notification is no longer needed.
+    CrashNotifier.cancel(this);
   }
 
   @Override

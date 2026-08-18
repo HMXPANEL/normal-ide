@@ -7,107 +7,81 @@
   ~  it under the terms of the GNU General Public License as published by
   ~  the Free Software Foundation, either version 3 of the License, or
   ~  (at your option) any later version.
-  ~
-  ~  HMX IDE is distributed in the hope that it will be useful,
-  ~  but WITHOUT ANY WARRANTY; without even the implied warranty of
-  ~  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-  ~  GNU General Public License for more details.
-  ~
-  ~  You should have received a copy of the GNU General Public License
-  ~   along with HMX IDE.  If not, see <https://www.gnu.org/licenses/>.
   -->
 
 <androidx.constraintlayout.widget.ConstraintLayout
   xmlns:android="http://schemas.android.com/apk/res/android"
   xmlns:app="http://schemas.android.com/apk/res-auto"
   xmlns:tools="http://schemas.android.com/tools"
+  android:id="@+id/root"
   android:layout_width="match_parent"
   android:layout_height="match_parent"
   tools:context=".activities.CrashHandlerActivity">
 
-  <ImageButton
-    android:id="@+id/close_button"
-    android:layout_width="48dp"
-    android:layout_height="48dp"
-    android:layout_margin="16dp"
-    android:background="?attr/selectableItemBackgroundBorderless"
-    app:layout_constraintEnd_toEndOf="parent"
-    app:layout_constraintTop_toTopOf="parent"
-    app:srcCompat="@drawable/ic_close"
-    app:tint="?attr/colorOnPrimaryContainer" />
-
   <TextView
     android:id="@+id/crash_title"
-    android:layout_width="wrap_content"
+    android:layout_width="0dp"
     android:layout_height="wrap_content"
     android:layout_marginStart="16dp"
     android:layout_marginTop="16dp"
+    android:layout_marginEnd="16dp"
     android:text="@string/msg_ide_crashed"
     android:textAppearance="@style/TextAppearance.Material3.TitleLarge"
+    app:layout_constraintEnd_toEndOf="parent"
     app:layout_constraintStart_toStartOf="parent"
     app:layout_constraintTop_toTopOf="parent" />
 
-  <TextView
-    android:id="@+id/crash_subtitle"
-    android:layout_width="0dp"
-    android:layout_height="wrap_content"
-    android:layout_marginStart="16dp"
-    android:layout_marginTop="4dp"
-    android:layout_marginEnd="16dp"
-    android:text="@string/msg_report_crash"
-    android:textAppearance="@style/TextAppearance.Material3.BodyMedium"
-    app:layout_constraintEnd_toStartOf="@+id/close_button"
-    app:layout_constraintStart_toStartOf="parent"
-    app:layout_constraintTop_toBottomOf="@+id/crash_title" />
-
   <androidx.core.widget.NestedScrollView
-    android:id="@+id/log_text_container"
+    android:id="@+id/crash_summary_container"
     android:layout_width="0dp"
     android:layout_height="0dp"
-    android:layout_margin="16dp"
+    android:layout_marginStart="16dp"
+    android:layout_marginTop="8dp"
+    android:layout_marginEnd="16dp"
     android:fillViewport="true"
-    app:layout_constraintBottom_toTopOf="@+id/textView4"
+    app:layout_constraintBottom_toTopOf="@+id/crash_actions"
     app:layout_constraintEnd_toEndOf="parent"
     app:layout_constraintStart_toStartOf="parent"
-    app:layout_constraintTop_toBottomOf="@id/crash_subtitle">
+    app:layout_constraintTop_toBottomOf="@id/crash_title">
 
-    <HorizontalScrollView
+    <TextView
+      android:id="@+id/crash_summary"
       android:layout_width="match_parent"
-      android:layout_height="match_parent"
-      android:fillViewport="true">
-
-      <TextView
-        android:id="@+id/log_text"
-        android:layout_width="wrap_content"
-        android:layout_height="match_parent"
-        android:textAppearance="@style/TextAppearance.Material3.BodyMedium"
-        tools:text="This is an error message." />
-
-    </HorizontalScrollView>
-
+      android:layout_height="wrap_content"
+      android:textAppearance="@style/TextAppearance.Material3.BodyMedium"
+      tools:text="Crash reason:\njava.lang.NullPointerException\n\nMessage:\n...\n\nLocation:\nMainActivity.kt:142\n\nThread:\nmain\n\nBuild:\nRelease\n\nVersion:\nv1.0 (1)" />
   </androidx.core.widget.NestedScrollView>
 
-  <TextView
-    android:id="@+id/textView4"
+  <LinearLayout
+    android:id="@+id/crash_actions"
     android:layout_width="0dp"
     android:layout_height="wrap_content"
     android:layout_margin="16dp"
-    android:text="@string/msg_crash_report_hint"
-    android:textAppearance="@style/TextAppearance.Material3.BodySmall"
-    android:textColor="?attr/colorOnBackground"
-    app:layout_constraintBottom_toTopOf="@+id/report_button"
-    app:layout_constraintEnd_toEndOf="parent"
-    app:layout_constraintStart_toStartOf="parent" />
-
-  <Button
-    android:id="@+id/report_button"
-    style="@style/Widget.Material3.Button.ElevatedButton"
-    android:layout_width="wrap_content"
-    android:layout_height="wrap_content"
-    android:layout_margin="16dp"
-    android:text="@string/msg_copy_report_action"
+    android:gravity="end"
+    android:orientation="horizontal"
     app:layout_constraintBottom_toBottomOf="parent"
     app:layout_constraintEnd_toEndOf="parent"
-    app:layout_constraintStart_toStartOf="parent" />
+    app:layout_constraintStart_toStartOf="parent">
 
+    <Button
+      android:id="@+id/view_log_button"
+      style="@style/Widget.Material3.Button.ElevatedButton"
+      android:layout_width="wrap_content"
+      android:layout_height="wrap_content"
+      android:text="@string/msg_crash_view_log" />
+
+    <Button
+      android:id="@+id/copy_button"
+      style="@style/Widget.Material3.Button.OutlinedButton"
+      android:layout_width="wrap_content"
+      android:layout_height="wrap_content"
+      android:text="@string/msg_copy_report_action" />
+
+    <Button
+      android:id="@+id/close_button"
+      style="@style/Widget.Material3.Button.TextButton"
+      android:layout_width="wrap_content"
+      android:layout_height="wrap_content"
+      android:text="@string/msg_crash_close" />
+  </LinearLayout>
 </androidx.constraintlayout.widget.ConstraintLayout>

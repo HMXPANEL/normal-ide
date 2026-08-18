@@ -22,6 +22,7 @@ import kotlinx.parcelize.Parcelize
 
 internal fun IDEPreferences.addRootPreferences() {
   addPreference(ConfigurationPreferences())
+  addPreference(CrashReportingPreferences())
   addPreference(DeveloperOptionsPreferences())
   addPreference(AboutPreferences())
 }

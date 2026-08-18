@@ -104,6 +104,12 @@
 # Stat uploader
 -keep class com.hmx.ide.stats.** { *; }
 
+# Crash reporting (shown in both debug and release; never shrink these away)
+-keep class com.hmx.ide.crash.** { *; }
+-keep class com.hmx.ide.activities.CrashHandlerActivity { *; }
+-keep class com.hmx.ide.fragments.CrashReportFragment { *; }
+-keep class com.hmx.ide.fragments.CrashLogFragment { *; }
+
 # Gson
 -keep class * extends com.google.gson.TypeAdapter
 -keep class * implements com.google.gson.TypeAdapterFactory

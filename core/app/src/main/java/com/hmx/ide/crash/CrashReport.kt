@@ -57,6 +57,9 @@ object CrashReport {
       appendLine("Time        : $timestamp")
       appendLine("App Version : v${BuildConfig.VERSION_NAME} (${BuildConfig.VERSION_CODE})")
       appendLine("Build Type  : ${BuildConfig.BUILD_TYPE}")
+      appendLine("Package     : ${BuildConfig.APPLICATION_ID}")
+      appendLine("Process     : ${currentProcessName()}")
+      appendLine("ABIs        : ${Build.SUPPORTED_ABIS.joinToString(", ")}")
       appendLine("CI Build    : ${BuildInfo.CI_BUILD}")
       appendLine("Branch      : ${BuildInfo.CI_GIT_BRANCH}")
       appendLine("Commit      : ${BuildInfo.CI_GIT_COMMIT_HASH}")
@@ -69,6 +72,37 @@ object CrashReport {
       appendLine(ThrowableUtils.getFullStackTrace(throwable))
     }
     return sanitize(raw)
+  }
+
+  /**
+   * Compact summary shown on the crash card. Structured so the card can show reason,
+   * message, best-effort source location, thread, build type and version.
+   */
+  fun summary(thread: Thread, throwable: Throwable): String {
+    val frame = throwable.stackTrace.firstOrNull()
+    val location = frame?.let { "${it.fileName}:${it.lineNumber}" } ?: "unknown"
+    return buildString {
+      appendLine("Crash reason:")
+      appendLine(throwable.javaClass.name)
+      appendLine("Message:")
+      appendLine(throwable.message ?: "")
+      appendLine("Location:")
+      appendLine(location)
+      appendLine("Thread:")
+      appendLine(thread.name)
+      appendLine("Build:")
+      appendLine(BuildConfig.BUILD_TYPE.replaceFirstChar { it.uppercase() })
+      appendLine("Version:")
+      appendLine("v${BuildConfig.VERSION_NAME} (${BuildConfig.VERSION_CODE})")
+    }
+  }
+
+  private fun currentProcessName(): String = try {
+    java.io.BufferedReader(java.io.FileReader("/proc/self/cmdline")).use { reader ->
+      reader.readText().replace('\u0000', ' ').trim()
+    }
+  } catch (_: Throwable) {
+    "unknown"
   }
 
   private fun sanitize(text: String): String {

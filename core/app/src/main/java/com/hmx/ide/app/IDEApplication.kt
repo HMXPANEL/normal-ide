@@ -20,7 +20,9 @@ package com.hmx.ide.app
 
 import android.content.Intent
 import android.net.Uri
+import android.os.Build
 import android.os.StrictMode
+import android.provider.Settings
 import androidx.appcompat.app.AppCompatDelegate
 import androidx.core.os.LocaleListCompat
 import androidx.lifecycle.Observer
@@ -31,6 +33,8 @@ import androidx.work.Operation
 import androidx.work.PeriodicWorkRequestBuilder
 import androidx.work.WorkManager
 import com.hmx.ide.crash.CrashReport
+import com.hmx.ide.crash.CrashNotifier
+import com.hmx.ide.crash.CrashOverlay
 import com.google.android.material.color.DynamicColors
 import com.hmx.ide.BuildConfig
 import com.hmx.ide.activities.CrashHandlerActivity
@@ -226,24 +230,65 @@ class IDEApplication : BaseApplication() {
   private fun handleCrash(thread: Thread, th: Throwable) {
     try {
       val report = CrashReport.build(thread, th)
-      val intent = Intent(this, CrashHandlerActivity::class.java).apply {
-        addFlags(Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TASK)
-        putExtra(CrashHandlerActivity.TRACE_KEY, report)
-      }
-      startActivity(intent)
-    } catch (error: Throwable) {
-      log.error("Unable to show crash handler activity", error)
-      th.printStackTrace()
-    }
+      val summary = CrashReport.summary(thread, th)
 
-    // The report is shown by CrashHandlerActivity, which runs in the isolated ':crash'
-    // process. Terminate this (broken) process so the crash UI survives and the app does
-    // not keep running in a broken state.
-    try {
-      uncaughtExceptionHandler?.uncaughtException(thread, th)
-    } finally {
-      exitProcess(1)
+      // SECONDARY: if the user granted the overlay permission, draw the crash card over the
+      // home screen. The overlay window is owned by this process, so it persists only while
+      // this process survives — which is exactly the background-thread-crash case where a
+      // direct Activity launch is most likely blocked. We therefore do NOT terminate the
+      // process here; CrashOverlay kills it when the popup is dismissed. For a main-thread
+      // crash the process dies anyway and the fallback notification below still covers it.
+      val overlayShown = canDrawOverlays() && runCatching {
+        CrashOverlay.show(this, summary, report)
+      }.getOrDefault(false)
+
+      if (overlayShown) {
+        // Safety net: the notification survives process death, so it is posted even though
+        // the popup is visible. It is cancelled when the crash UI is opened or dismissed.
+        runCatching { CrashNotifier.show(this, summary, report) }
+        return
+      }
+
+      // PRIMARY: attempt the crash UI directly in the isolated ':crash' process.
+      try {
+        startActivity(Intent(this, CrashHandlerActivity::class.java).apply {
+          addFlags(Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TASK)
+          putExtra(CrashHandlerActivity.TRACE_KEY, report)
+          putExtra(CrashHandlerActivity.SUMMARY_KEY, summary)
+        })
+      } catch (error: Throwable) {
+        log.error("Unable to show crash handler activity", error)
+      }
+
+      // FALLBACK: modern Android may block that launch; post a high-priority notification
+      // that opens the report. It self-cancels when the activity actually appears.
+      try {
+        CrashNotifier.show(this, summary, report)
+      } catch (_: Throwable) {
+        // Best-effort only; the process still terminates below.
+      }
+
+      // The report is shown by CrashHandlerActivity, which runs in the isolated ':crash'
+      // process. Terminate this (broken) process so the crash UI survives and the app does
+      // not keep running in a broken state.
+      try {
+        uncaughtExceptionHandler?.uncaughtException(thread, th)
+      } finally {
+        exitProcess(1)
+      }
+    } catch (error: Throwable) {
+      log.error("Unable to show crash handler", error)
+      th.printStackTrace()
+      try {
+        uncaughtExceptionHandler?.uncaughtException(thread, th)
+      } finally {
+        exitProcess(1)
+      }
     }
+  }
+
+  private fun canDrawOverlays(): Boolean {
+    return Build.VERSION.SDK_INT >= Build.VERSION_CODES.M && Settings.canDrawOverlays(this)
   }
 
   /**
