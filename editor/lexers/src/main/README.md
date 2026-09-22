@@ -1,4 +1,4 @@
-## ANTLR4 Lexers for AndroidIDE
+## ANTLR4 Lexers for HMX IDE
 
 The grammar files are located in the `antlr` directory. The `LexerGeneratorPlugin` (defined in
 the `:build-logic:ide` module) is applied to this module (`:lexers`) which generates the Java lexers

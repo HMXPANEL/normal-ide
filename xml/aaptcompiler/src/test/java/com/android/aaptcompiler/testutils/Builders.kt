@@ -13,7 +13,7 @@ import com.android.aaptcompiler.Source
 import com.android.aaptcompiler.Value
 import com.android.aaptcompiler.Visibility
 import com.android.aaptcompiler.parseResourceName
-import com.itsaky.androidide.layoutlib.resources.ResourceVisibility
+import com.hmx.ide.layoutlib.resources.ResourceVisibility
 import com.google.common.truth.Truth
 import java.io.File
 

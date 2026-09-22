@@ -1,4 +1,4 @@
-package com.itsaky.androidide.test;
+package com.hmx.ide.test;
 
 public class AddImportAction_template {
     public static void main(String[] args) {

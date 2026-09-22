@@ -1,4 +1,4 @@
-package com.itsaky.androidide.test;
+package com.hmx.ide.test;
 
 import java.util.function.Consumer;
 

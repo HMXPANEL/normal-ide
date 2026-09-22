@@ -1,28 +1,28 @@
 <?xml version="1.0" encoding="utf-8"?><!--
-  ~  This file is part of AndroidIDE.
+  ~  This file is part of HMX IDE.
   ~
-  ~  AndroidIDE is free software: you can redistribute it and/or modify
+  ~  HMX IDE is free software: you can redistribute it and/or modify
   ~  it under the terms of the GNU General Public License as published by
   ~  the Free Software Foundation, either version 3 of the License, or
   ~  (at your option) any later version.
   ~
-  ~  AndroidIDE is distributed in the hope that it will be useful,
+  ~  HMX IDE is distributed in the hope that it will be useful,
   ~  but WITHOUT ANY WARRANTY; without even the implied warranty of
   ~  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
   ~  GNU General Public License for more details.
   ~
   ~  You should have received a copy of the GNU General Public License
-  ~   along with AndroidIDE.  If not, see <https://www.gnu.org/licenses/>.
+  ~   along with HMX IDE.  If not, see <https://www.gnu.org/licenses/>.
   -->
 
 <manifest xmlns:android="http://schemas.android.com/apk/res/android">
 
   <queries>
-    <package android:name="com.itsaky.androidide" />
+    <package android:name="com.hmx.ide" />
   </queries>
 
   <uses-permission android:name="android.permission.INTERNET" />
-  <uses-permission android:name="com.itsaky.androidide.permission.BIND_LOG_SERVICE" />
+  <uses-permission android:name="com.hmx.ide.permission.BIND_LOG_SERVICE" />
   <uses-permission android:name="android.permission.FOREGROUND_SERVICE"/>
 
   <application>

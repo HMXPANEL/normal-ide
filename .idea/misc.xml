@@ -3,9 +3,9 @@
     <option name="perGrammarGenerationSettings">
       <list>
         <PerGrammarGenerationSettings>
-          <option name="fileName" value="$PROJECT_DIR$/lexers/src/main/java/com/itsaky/androidide/lexers/xml/XMLParser.g4" />
+          <option name="fileName" value="$PROJECT_DIR$/lexers/src/main/java/com/hmx/ide/lexers/xml/XMLParser.g4" />
           <option name="autoGen" value="true" />
-          <option name="outputDir" value="D:\Projects\AndroidStudioProjects\AndroidIDE\lexers\src\main\java" />
+          <option name="outputDir" value="D:\Projects\AndroidStudioProjects\HMX IDE\lexers\src\main\java" />
           <option name="libDir" value="" />
           <option name="encoding" value="" />
           <option name="pkg" value="" />
@@ -13,7 +13,7 @@
           <option name="generateVisitor" value="true" />
         </PerGrammarGenerationSettings>
         <PerGrammarGenerationSettings>
-          <option name="fileName" value="$PROJECT_DIR$/lexers/src/main/java/com/itsaky/androidide/lexers/java/JavaLexer.g4" />
+          <option name="fileName" value="$PROJECT_DIR$/lexers/src/main/java/com/hmx/ide/lexers/java/JavaLexer.g4" />
           <option name="autoGen" value="true" />
           <option name="outputDir" value="" />
           <option name="libDir" value="" />
@@ -28,82 +28,82 @@
   <component name="DesignSurface">
     <option name="filePathToZoomLevelMap">
       <map>
-        <entry key="..\:/Projects/AndroidStudioProjects/AndroidIDE/app/src/main/res/drawable-hdpi/ic_expand_selection.xml" value="0.20833333333333334" />
-        <entry key="..\:/Projects/AndroidStudioProjects/AndroidIDE/app/src/main/res/drawable-xhdpi/ic_font_ligatures.xml" value="0.147" />
-        <entry key="..\:/Projects/AndroidStudioProjects/AndroidIDE/app/src/main/res/drawable-xxxhdpi/ic_text_actions.xml" value="0.147" />
-        <entry key="..\:/Projects/AndroidStudioProjects/AndroidIDE/app/src/main/res/drawable/bg_design_container_background.xml" value="0.1" />
-        <entry key="..\:/Projects/AndroidStudioProjects/AndroidIDE/app/src/main/res/drawable/bg_ui_view_pressed.xml" value="0.1" />
-        <entry key="..\:/Projects/AndroidStudioProjects/AndroidIDE/app/src/main/res/drawable/ic_code.xml" value="0.19907407407407407" />
-        <entry key="..\:/Projects/AndroidStudioProjects/AndroidIDE/app/src/main/res/drawable/ic_code_actions.xml" value="0.19907407407407407" />
-        <entry key="..\:/Projects/AndroidStudioProjects/AndroidIDE/app/src/main/res/drawable/ic_completions.xml" value="0.19907407407407407" />
-        <entry key="..\:/Projects/AndroidStudioProjects/AndroidIDE/app/src/main/res/drawable/ic_copy.xml" value="0.188" />
-        <entry key="..\:/Projects/AndroidStudioProjects/AndroidIDE/app/src/main/res/drawable/ic_github.xml" value="0.21837606837606838" />
-        <entry key="..\:/Projects/AndroidStudioProjects/AndroidIDE/app/src/main/res/drawable/ic_linear_layout.xml" value="0.175" />
-        <entry key="..\:/Projects/AndroidStudioProjects/AndroidIDE/app/src/main/res/drawable/ic_lint.xml" value="0.151" />
-        <entry key="..\:/Projects/AndroidStudioProjects/AndroidIDE/app/src/main/res/drawable/ic_min_sdk.xml" value="0.147" />
-        <entry key="..\:/Projects/AndroidStudioProjects/AndroidIDE/app/src/main/res/drawable/ic_password_input.xml" value="0.147" />
-        <entry key="..\:/Projects/AndroidStudioProjects/AndroidIDE/app/src/main/res/drawable/ic_pick_color.xml" value="0.147" />
-        <entry key="..\:/Projects/AndroidStudioProjects/AndroidIDE/app/src/main/res/drawable/ic_quickfix.xml" value="0.14" />
-        <entry key="..\:/Projects/AndroidStudioProjects/AndroidIDE/app/src/main/res/drawable/ic_rebuild.xml" value="0.1425" />
-        <entry key="..\:/Projects/AndroidStudioProjects/AndroidIDE/app/src/main/res/drawable/ic_relative_layout.xml" value="0.175" />
-        <entry key="..\:/Projects/AndroidStudioProjects/AndroidIDE/app/src/main/res/drawable/ic_run.xml" value="0.151" />
-        <entry key="..\:/Projects/AndroidStudioProjects/AndroidIDE/app/src/main/res/drawable/ic_run_debug.xml" value="0.151" />
-        <entry key="..\:/Projects/AndroidStudioProjects/AndroidIDE/app/src/main/res/drawable/ic_save.xml" value="0.26205128205128203" />
-        <entry key="..\:/Projects/AndroidStudioProjects/AndroidIDE/app/src/main/res/drawable/ic_search_next.xml" value="0.147" />
-        <entry key="..\:/Projects/AndroidStudioProjects/AndroidIDE/app/src/main/res/drawable/ic_search_previous.xml" value="0.147" />
-        <entry key="..\:/Projects/AndroidStudioProjects/AndroidIDE/app/src/main/res/drawable/ic_signature_help.xml" value="0.19907407407407407" />
-        <entry key="..\:/Projects/AndroidStudioProjects/AndroidIDE/app/src/main/res/drawable/ic_submenu_arrow.xml" value="0.1305" />
-        <entry key="..\:/Projects/AndroidStudioProjects/AndroidIDE/app/src/main/res/drawable/ic_sync.xml" value="0.1425" />
-        <entry key="..\:/Projects/AndroidStudioProjects/AndroidIDE/app/src/main/res/drawable/ic_text_actions.xml" value="0.147" />
-        <entry key="..\:/Projects/AndroidStudioProjects/AndroidIDE/app/src/main/res/drawable/ic_text_actions_horizontal.xml" value="0.147" />
-        <entry key="..\:/Projects/AndroidStudioProjects/AndroidIDE/app/src/main/res/drawable/ic_text_lower.xml" value="0.19907407407407407" />
-        <entry key="..\:/Projects/AndroidStudioProjects/AndroidIDE/app/src/main/res/layout/activity_about.xml" value="0.264" />
-        <entry key="..\:/Projects/AndroidStudioProjects/AndroidIDE/app/src/main/res/layout/activity_crash_handler.xml" value="0.25" />
-        <entry key="..\:/Projects/AndroidStudioProjects/AndroidIDE/app/src/main/res/layout/activity_designer.xml" value="0.264" />
-        <entry key="..\:/Projects/AndroidStudioProjects/AndroidIDE/app/src/main/res/layout/activity_download.xml" value="0.1188034188034188" />
-        <entry key="..\:/Projects/AndroidStudioProjects/AndroidIDE/app/src/main/res/layout/activity_editor.xml" value="0.264" />
-        <entry key="..\:/Projects/AndroidStudioProjects/AndroidIDE/app/src/main/res/layout/activity_terminal.xml" value="0.21851851851851853" />
-        <entry key="..\:/Projects/AndroidStudioProjects/AndroidIDE/app/src/main/res/layout/fragment_editor.xml" value="0.20512820512820512" />
-        <entry key="..\:/Projects/AndroidStudioProjects/AndroidIDE/app/src/main/res/layout/fragment_non_editable_editor.xml" value="0.20512820512820512" />
-        <entry key="..\:/Projects/AndroidStudioProjects/AndroidIDE/app/src/main/res/layout/layout_about_items.xml" value="0.20512820512820512" />
-        <entry key="..\:/Projects/AndroidStudioProjects/AndroidIDE/app/src/main/res/layout/layout_add_attr_sheet.xml" value="0.25" />
-        <entry key="..\:/Projects/AndroidStudioProjects/AndroidIDE/app/src/main/res/layout/layout_attr_editor_sheet.xml" value="0.25" />
-        <entry key="..\:/Projects/AndroidStudioProjects/AndroidIDE/app/src/main/res/layout/layout_attr_editor_sheet_item.xml" value="0.25" />
-        <entry key="..\:/Projects/AndroidStudioProjects/AndroidIDE/app/src/main/res/layout/layout_attr_value_editor.xml" value="0.25" />
-        <entry key="..\:/Projects/AndroidStudioProjects/AndroidIDE/app/src/main/res/layout/layout_attr_value_editor_enum.xml" value="0.25" />
-        <entry key="..\:/Projects/AndroidStudioProjects/AndroidIDE/app/src/main/res/layout/layout_boolean_attr_editor.xml" value="0.25" />
-        <entry key="..\:/Projects/AndroidStudioProjects/AndroidIDE/app/src/main/res/layout/layout_code_action_item.xml" value="0.25" />
-        <entry key="..\:/Projects/AndroidStudioProjects/AndroidIDE/app/src/main/res/layout/layout_code_editor.xml" value="0.20185185185185187" />
-        <entry key="..\:/Projects/AndroidStudioProjects/AndroidIDE/app/src/main/res/layout/layout_color_attr_editor.xml" value="0.25" />
-        <entry key="..\:/Projects/AndroidStudioProjects/AndroidIDE/app/src/main/res/layout/layout_completion_item.xml" value="0.23854166666666668" />
-        <entry key="..\:/Projects/AndroidStudioProjects/AndroidIDE/app/src/main/res/layout/layout_crash_report.xml" value="0.25" />
-        <entry key="..\:/Projects/AndroidStudioProjects/AndroidIDE/app/src/main/res/layout/layout_diagnostic_info.xml" value="0.20512820512820512" />
-        <entry key="..\:/Projects/AndroidStudioProjects/AndroidIDE/app/src/main/res/layout/layout_diagnostic_window.xml" value="0.25" />
-        <entry key="..\:/Projects/AndroidStudioProjects/AndroidIDE/app/src/main/res/layout/layout_dialog_text_input.xml" value="0.23854166666666668" />
-        <entry key="..\:/Projects/AndroidStudioProjects/AndroidIDE/app/src/main/res/layout/layout_dimension_attr_editor.xml" value="0.25" />
-        <entry key="..\:/Projects/AndroidStudioProjects/AndroidIDE/app/src/main/res/layout/layout_divider.xml" value="0.25" />
-        <entry key="..\:/Projects/AndroidStudioProjects/AndroidIDE/app/src/main/res/layout/layout_editor_actions.xml" value="0.25" />
-        <entry key="..\:/Projects/AndroidStudioProjects/AndroidIDE/app/src/main/res/layout/layout_editor_bottom_sheet.xml" value="0.19572649572649573" />
-        <entry key="..\:/Projects/AndroidStudioProjects/AndroidIDE/app/src/main/res/layout/layout_editor_code_actions.xml" value="0.25" />
-        <entry key="..\:/Projects/AndroidStudioProjects/AndroidIDE/app/src/main/res/layout/layout_editor_find_replace.xml" value="0.23854166666666668" />
-        <entry key="..\:/Projects/AndroidStudioProjects/AndroidIDE/app/src/main/res/layout/layout_editor_text_actions.xml" value="0.25" />
-        <entry key="..\:/Projects/AndroidStudioProjects/AndroidIDE/app/src/main/res/layout/layout_filetree_item.xml" value="0.25" />
-        <entry key="..\:/Projects/AndroidStudioProjects/AndroidIDE/app/src/main/res/layout/layout_popup_menu_item.xml" value="0.264" />
-        <entry key="..\:/Projects/AndroidStudioProjects/AndroidIDE/app/src/main/res/layout/layout_reference_attr_editor.xml" value="0.25" />
-        <entry key="..\:/Projects/AndroidStudioProjects/AndroidIDE/app/src/main/res/layout/layout_resource_input_field.xml" value="0.25" />
-        <entry key="..\:/Projects/AndroidStudioProjects/AndroidIDE/app/src/main/res/layout/layout_string_attr_editor.xml" value="0.25" />
-        <entry key="..\:/Projects/AndroidStudioProjects/AndroidIDE/app/src/main/res/layout/layout_symbol_item.xml" value="0.20512820512820512" />
-        <entry key="..\:/Projects/AndroidStudioProjects/AndroidIDE/app/src/main/res/layout/layout_text_action_item.xml" value="0.42168674698795183" />
-        <entry key="..\:/Projects/AndroidStudioProjects/AndroidIDE/app/src/main/res/layout/test.xml" value="0.20512820512820512" />
-        <entry key="..\:/Projects/AndroidStudioProjects/AndroidIDE/app/src/main/res/menu/menu_editor.xml" value="0.20512820512820512" />
-        <entry key="..\:/Projects/AndroidStudioProjects/AndroidIDE/app/src/main/res/menu/menu_editor_nav.xml" value="0.20512820512820512" />
-        <entry key="..\:/Projects/AndroidStudioProjects/AndroidIDE/app/src/main/res/mipmap-anydpi-v26/ic_launcher.xml" value="0.1445" />
-        <entry key="..\:/Projects/AndroidStudioProjects/AndroidIDE/app/src/main/res/mipmap-anydpi-v26/ic_launcher_round.xml" value="0.1445" />
-        <entry key="..\:/Projects/AndroidStudioProjects/AndroidIDE/common/src/main/res/layout/layout_color_picker.xml" value="0.264" />
-        <entry key="..\:/Projects/AndroidStudioProjects/AndroidIDE/xml-inflater/src/main/res/drawable/empy_drawable.xml" value="0.147" />
-        <entry key="..\:/Projects/AndroidStudioProjects/AndroidIDE/xml-inflater/src/main/res/drawable/states.xml" value="0.147" />
-        <entry key="..\:/Projects/AndroidStudioProjects/AndroidIDE/xml-inflater/src/main/res/drawable/test.xml" value="0.1675925925925926" />
-        <entry key="..\:/Projects/AndroidStudioProjects/AndroidIDE/xml-inflater/src/main/res/layout/test.xml" value="0.25" />
+        <entry key="..\:/Projects/AndroidStudioProjects/HMX IDE/app/src/main/res/drawable-hdpi/ic_expand_selection.xml" value="0.20833333333333334" />
+        <entry key="..\:/Projects/AndroidStudioProjects/HMX IDE/app/src/main/res/drawable-xhdpi/ic_font_ligatures.xml" value="0.147" />
+        <entry key="..\:/Projects/AndroidStudioProjects/HMX IDE/app/src/main/res/drawable-xxxhdpi/ic_text_actions.xml" value="0.147" />
+        <entry key="..\:/Projects/AndroidStudioProjects/HMX IDE/app/src/main/res/drawable/bg_design_container_background.xml" value="0.1" />
+        <entry key="..\:/Projects/AndroidStudioProjects/HMX IDE/app/src/main/res/drawable/bg_ui_view_pressed.xml" value="0.1" />
+        <entry key="..\:/Projects/AndroidStudioProjects/HMX IDE/app/src/main/res/drawable/ic_code.xml" value="0.19907407407407407" />
+        <entry key="..\:/Projects/AndroidStudioProjects/HMX IDE/app/src/main/res/drawable/ic_code_actions.xml" value="0.19907407407407407" />
+        <entry key="..\:/Projects/AndroidStudioProjects/HMX IDE/app/src/main/res/drawable/ic_completions.xml" value="0.19907407407407407" />
+        <entry key="..\:/Projects/AndroidStudioProjects/HMX IDE/app/src/main/res/drawable/ic_copy.xml" value="0.188" />
+        <entry key="..\:/Projects/AndroidStudioProjects/HMX IDE/app/src/main/res/drawable/ic_github.xml" value="0.21837606837606838" />
+        <entry key="..\:/Projects/AndroidStudioProjects/HMX IDE/app/src/main/res/drawable/ic_linear_layout.xml" value="0.175" />
+        <entry key="..\:/Projects/AndroidStudioProjects/HMX IDE/app/src/main/res/drawable/ic_lint.xml" value="0.151" />
+        <entry key="..\:/Projects/AndroidStudioProjects/HMX IDE/app/src/main/res/drawable/ic_min_sdk.xml" value="0.147" />
+        <entry key="..\:/Projects/AndroidStudioProjects/HMX IDE/app/src/main/res/drawable/ic_password_input.xml" value="0.147" />
+        <entry key="..\:/Projects/AndroidStudioProjects/HMX IDE/app/src/main/res/drawable/ic_pick_color.xml" value="0.147" />
+        <entry key="..\:/Projects/AndroidStudioProjects/HMX IDE/app/src/main/res/drawable/ic_quickfix.xml" value="0.14" />
+        <entry key="..\:/Projects/AndroidStudioProjects/HMX IDE/app/src/main/res/drawable/ic_rebuild.xml" value="0.1425" />
+        <entry key="..\:/Projects/AndroidStudioProjects/HMX IDE/app/src/main/res/drawable/ic_relative_layout.xml" value="0.175" />
+        <entry key="..\:/Projects/AndroidStudioProjects/HMX IDE/app/src/main/res/drawable/ic_run.xml" value="0.151" />
+        <entry key="..\:/Projects/AndroidStudioProjects/HMX IDE/app/src/main/res/drawable/ic_run_debug.xml" value="0.151" />
+        <entry key="..\:/Projects/AndroidStudioProjects/HMX IDE/app/src/main/res/drawable/ic_save.xml" value="0.26205128205128203" />
+        <entry key="..\:/Projects/AndroidStudioProjects/HMX IDE/app/src/main/res/drawable/ic_search_next.xml" value="0.147" />
+        <entry key="..\:/Projects/AndroidStudioProjects/HMX IDE/app/src/main/res/drawable/ic_search_previous.xml" value="0.147" />
+        <entry key="..\:/Projects/AndroidStudioProjects/HMX IDE/app/src/main/res/drawable/ic_signature_help.xml" value="0.19907407407407407" />
+        <entry key="..\:/Projects/AndroidStudioProjects/HMX IDE/app/src/main/res/drawable/ic_submenu_arrow.xml" value="0.1305" />
+        <entry key="..\:/Projects/AndroidStudioProjects/HMX IDE/app/src/main/res/drawable/ic_sync.xml" value="0.1425" />
+        <entry key="..\:/Projects/AndroidStudioProjects/HMX IDE/app/src/main/res/drawable/ic_text_actions.xml" value="0.147" />
+        <entry key="..\:/Projects/AndroidStudioProjects/HMX IDE/app/src/main/res/drawable/ic_text_actions_horizontal.xml" value="0.147" />
+        <entry key="..\:/Projects/AndroidStudioProjects/HMX IDE/app/src/main/res/drawable/ic_text_lower.xml" value="0.19907407407407407" />
+        <entry key="..\:/Projects/AndroidStudioProjects/HMX IDE/app/src/main/res/layout/activity_about.xml" value="0.264" />
+        <entry key="..\:/Projects/AndroidStudioProjects/HMX IDE/app/src/main/res/layout/activity_crash_handler.xml" value="0.25" />
+        <entry key="..\:/Projects/AndroidStudioProjects/HMX IDE/app/src/main/res/layout/activity_designer.xml" value="0.264" />
+        <entry key="..\:/Projects/AndroidStudioProjects/HMX IDE/app/src/main/res/layout/activity_download.xml" value="0.1188034188034188" />
+        <entry key="..\:/Projects/AndroidStudioProjects/HMX IDE/app/src/main/res/layout/activity_editor.xml" value="0.264" />
+        <entry key="..\:/Projects/AndroidStudioProjects/HMX IDE/app/src/main/res/layout/activity_terminal.xml" value="0.21851851851851853" />
+        <entry key="..\:/Projects/AndroidStudioProjects/HMX IDE/app/src/main/res/layout/fragment_editor.xml" value="0.20512820512820512" />
+        <entry key="..\:/Projects/AndroidStudioProjects/HMX IDE/app/src/main/res/layout/fragment_non_editable_editor.xml" value="0.20512820512820512" />
+        <entry key="..\:/Projects/AndroidStudioProjects/HMX IDE/app/src/main/res/layout/layout_about_items.xml" value="0.20512820512820512" />
+        <entry key="..\:/Projects/AndroidStudioProjects/HMX IDE/app/src/main/res/layout/layout_add_attr_sheet.xml" value="0.25" />
+        <entry key="..\:/Projects/AndroidStudioProjects/HMX IDE/app/src/main/res/layout/layout_attr_editor_sheet.xml" value="0.25" />
+        <entry key="..\:/Projects/AndroidStudioProjects/HMX IDE/app/src/main/res/layout/layout_attr_editor_sheet_item.xml" value="0.25" />
+        <entry key="..\:/Projects/AndroidStudioProjects/HMX IDE/app/src/main/res/layout/layout_attr_value_editor.xml" value="0.25" />
+        <entry key="..\:/Projects/AndroidStudioProjects/HMX IDE/app/src/main/res/layout/layout_attr_value_editor_enum.xml" value="0.25" />
+        <entry key="..\:/Projects/AndroidStudioProjects/HMX IDE/app/src/main/res/layout/layout_boolean_attr_editor.xml" value="0.25" />
+        <entry key="..\:/Projects/AndroidStudioProjects/HMX IDE/app/src/main/res/layout/layout_code_action_item.xml" value="0.25" />
+        <entry key="..\:/Projects/AndroidStudioProjects/HMX IDE/app/src/main/res/layout/layout_code_editor.xml" value="0.20185185185185187" />
+        <entry key="..\:/Projects/AndroidStudioProjects/HMX IDE/app/src/main/res/layout/layout_color_attr_editor.xml" value="0.25" />
+        <entry key="..\:/Projects/AndroidStudioProjects/HMX IDE/app/src/main/res/layout/layout_completion_item.xml" value="0.23854166666666668" />
+        <entry key="..\:/Projects/AndroidStudioProjects/HMX IDE/app/src/main/res/layout/layout_crash_report.xml" value="0.25" />
+        <entry key="..\:/Projects/AndroidStudioProjects/HMX IDE/app/src/main/res/layout/layout_diagnostic_info.xml" value="0.20512820512820512" />
+        <entry key="..\:/Projects/AndroidStudioProjects/HMX IDE/app/src/main/res/layout/layout_diagnostic_window.xml" value="0.25" />
+        <entry key="..\:/Projects/AndroidStudioProjects/HMX IDE/app/src/main/res/layout/layout_dialog_text_input.xml" value="0.23854166666666668" />
+        <entry key="..\:/Projects/AndroidStudioProjects/HMX IDE/app/src/main/res/layout/layout_dimension_attr_editor.xml" value="0.25" />
+        <entry key="..\:/Projects/AndroidStudioProjects/HMX IDE/app/src/main/res/layout/layout_divider.xml" value="0.25" />
+        <entry key="..\:/Projects/AndroidStudioProjects/HMX IDE/app/src/main/res/layout/layout_editor_actions.xml" value="0.25" />
+        <entry key="..\:/Projects/AndroidStudioProjects/HMX IDE/app/src/main/res/layout/layout_editor_bottom_sheet.xml" value="0.19572649572649573" />
+        <entry key="..\:/Projects/AndroidStudioProjects/HMX IDE/app/src/main/res/layout/layout_editor_code_actions.xml" value="0.25" />
+        <entry key="..\:/Projects/AndroidStudioProjects/HMX IDE/app/src/main/res/layout/layout_editor_find_replace.xml" value="0.23854166666666668" />
+        <entry key="..\:/Projects/AndroidStudioProjects/HMX IDE/app/src/main/res/layout/layout_editor_text_actions.xml" value="0.25" />
+        <entry key="..\:/Projects/AndroidStudioProjects/HMX IDE/app/src/main/res/layout/layout_filetree_item.xml" value="0.25" />
+        <entry key="..\:/Projects/AndroidStudioProjects/HMX IDE/app/src/main/res/layout/layout_popup_menu_item.xml" value="0.264" />
+        <entry key="..\:/Projects/AndroidStudioProjects/HMX IDE/app/src/main/res/layout/layout_reference_attr_editor.xml" value="0.25" />
+        <entry key="..\:/Projects/AndroidStudioProjects/HMX IDE/app/src/main/res/layout/layout_resource_input_field.xml" value="0.25" />
+        <entry key="..\:/Projects/AndroidStudioProjects/HMX IDE/app/src/main/res/layout/layout_string_attr_editor.xml" value="0.25" />
+        <entry key="..\:/Projects/AndroidStudioProjects/HMX IDE/app/src/main/res/layout/layout_symbol_item.xml" value="0.20512820512820512" />
+        <entry key="..\:/Projects/AndroidStudioProjects/HMX IDE/app/src/main/res/layout/layout_text_action_item.xml" value="0.42168674698795183" />
+        <entry key="..\:/Projects/AndroidStudioProjects/HMX IDE/app/src/main/res/layout/test.xml" value="0.20512820512820512" />
+        <entry key="..\:/Projects/AndroidStudioProjects/HMX IDE/app/src/main/res/menu/menu_editor.xml" value="0.20512820512820512" />
+        <entry key="..\:/Projects/AndroidStudioProjects/HMX IDE/app/src/main/res/menu/menu_editor_nav.xml" value="0.20512820512820512" />
+        <entry key="..\:/Projects/AndroidStudioProjects/HMX IDE/app/src/main/res/mipmap-anydpi-v26/ic_launcher.xml" value="0.1445" />
+        <entry key="..\:/Projects/AndroidStudioProjects/HMX IDE/app/src/main/res/mipmap-anydpi-v26/ic_launcher_round.xml" value="0.1445" />
+        <entry key="..\:/Projects/AndroidStudioProjects/HMX IDE/common/src/main/res/layout/layout_color_picker.xml" value="0.264" />
+        <entry key="..\:/Projects/AndroidStudioProjects/HMX IDE/xml-inflater/src/main/res/drawable/empy_drawable.xml" value="0.147" />
+        <entry key="..\:/Projects/AndroidStudioProjects/HMX IDE/xml-inflater/src/main/res/drawable/states.xml" value="0.147" />
+        <entry key="..\:/Projects/AndroidStudioProjects/HMX IDE/xml-inflater/src/main/res/drawable/test.xml" value="0.1675925925925926" />
+        <entry key="..\:/Projects/AndroidStudioProjects/HMX IDE/xml-inflater/src/main/res/layout/test.xml" value="0.25" />
         <entry key="..\:/Projects/AndroidStudioProjects/android-ide/app/src/main/res/drawable-mdpi/bg_widgets_list.xml" value="0.3105485232067511" />
         <entry key="..\:/Projects/AndroidStudioProjects/android-ide/app/src/main/res/drawable-mdpi/ic_widget_progress.xml" value="0.3071729957805907" />
         <entry key="..\:/Projects/AndroidStudioProjects/android-ide/app/src/main/res/drawable/bg_design_container_background.xml" value="0.3105485232067511" />

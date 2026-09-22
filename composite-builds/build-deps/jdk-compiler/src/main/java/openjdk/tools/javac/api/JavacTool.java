@@ -40,7 +40,7 @@ import java.util.Set;
 import jdkx.lang.model.SourceVersion;
 import jdkx.tools.*;
 
-import com.itsaky.androidide.javac.config.JavacConfigProvider;
+import com.hmx.ide.javac.config.JavacConfigProvider;
 import openjdk.source.util.JavacTask;
 import openjdk.tools.javac.file.JavacFileManager;
 import openjdk.tools.javac.main.Arguments;

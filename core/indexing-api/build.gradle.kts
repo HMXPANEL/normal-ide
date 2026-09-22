@@ -16,7 +16,7 @@
  */
 
 
-import com.itsaky.androidide.build.config.BuildConfig
+import com.hmx.ide.build.config.BuildConfig
 
 plugins {
   id("com.android.library")
@@ -29,9 +29,6 @@ android {
 }
 
 dependencies {
-  kapt(libs.google.auto.service)
-  implementation(libs.google.auto.service.annotations)
-
   api(projects.core.common)
   api(projects.core.projects)
   api(projects.logging.logger)

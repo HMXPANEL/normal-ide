@@ -1,0 +1,138 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<!--
+  ~  This file is part of HMX IDE.
+  ~
+  ~  HMX IDE is free software: you can redistribute it and/or modify
+  ~  it under the terms of the GNU General Public License as
+  ~  the Free Software Foundation, either version 3 of the License, or
+  ~  (at your option) any later version.
+  ~
+  ~  HMX IDE is distributed in the hope that it will be useful,
+  ~  but WITHOUT ANY WARRANTY; without even the implied warranty of
+  ~  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+  ~  GNU General Public License for more details.
+  ~
+  ~  You should have received a copy of the GNU General Public License
+  ~   along with HMX IDE.  If not, see <https://www.gnu.org/licenses/>.
+  -->
+
+<LinearLayout
+  xmlns:android="http://schemas.android.com/apk/res/android"
+  xmlns:app="http://schemas.android.com/apk/res-auto"
+  xmlns:tools="http://schemas.android.com/tools"
+  android:layout_width="match_parent"
+  android:layout_height="match_parent"
+  android:orientation="vertical"
+  android:background="?attr/colorSurface">
+
+  <com.google.android.material.appbar.MaterialToolbar
+    android:id="@+id/toolbar"
+    android:layout_width="match_parent"
+    android:layout_height="?attr/actionBarSize"
+    android:background="?attr/colorSurface"
+    app:title="@string/title_ai_chat"
+    app:menu="@menu/ai_chat_menu"
+    app:navigationIcon="@drawable/ic_arrow_back" />
+
+  <androidx.recyclerview.widget.RecyclerView
+    android:id="@+id/messages"
+    android:layout_width="match_parent"
+    android:layout_height="0dp"
+    android:layout_weight="1"
+    android:padding="8dp"
+    android:clipToPadding="false"
+    android:scrollbars="vertical"
+    app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
+    tools:listitem="@layout/layout_chat_message" />
+
+  <com.google.android.material.button.MaterialButton
+    android:id="@+id/applyChanges"
+    style="@style/Widget.Material3.Button.TonalButton"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:layout_marginStart="16dp"
+    android:layout_marginEnd="16dp"
+    android:layout_marginBottom="4dp"
+    android:text="@string/action_apply_changes"
+    android:visibility="gone" />
+
+  <HorizontalScrollView
+    android:id="@+id/suggestionsScroll"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:paddingStart="8dp"
+    android:paddingEnd="8dp"
+    android:paddingBottom="4dp"
+    android:clipToPadding="false"
+    android:scrollbars="none"
+    android:visibility="gone">
+
+    <com.google.android.material.chip.ChipGroup
+      android:id="@+id/suggestionChips"
+      android:layout_width="wrap_content"
+      android:layout_height="wrap_content"
+      app:singleLine="true"
+      app:singleSelection="false" />
+
+  </HorizontalScrollView>
+
+  <LinearLayout
+    android:id="@+id/contextIndicator"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:orientation="horizontal"
+    android:gravity="center_vertical"
+    android:paddingStart="16dp"
+    android:paddingEnd="8dp"
+    android:paddingTop="2dp"
+    android:paddingBottom="2dp">
+
+    <TextView
+      android:id="@+id/contextStatus"
+      android:layout_width="0dp"
+      android:layout_height="wrap_content"
+      android:layout_weight="1"
+      android:textAppearance="?attr/textAppearanceBodySmall"
+      android:textColor="?attr/colorOnSurfaceVariant"
+      android:maxLines="1"
+      android:ellipsize="end"
+      tools:text="Project Context: ON • 245 files • Ready" />
+
+    <com.google.android.material.materialswitch.MaterialSwitch
+      android:id="@+id/contextToggle"
+      android:layout_width="wrap_content"
+      android:layout_height="wrap_content"
+      android:checked="true"
+      android:contentDescription="@string/action_ai_chat_use_project_context" />
+
+  </LinearLayout>
+
+  <LinearLayout
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:orientation="horizontal"
+    android:padding="8dp"
+    android:gravity="center_vertical">
+
+    <com.google.android.material.textfield.TextInputEditText
+      android:id="@+id/messageInput"
+      android:layout_width="0dp"
+      android:layout_height="wrap_content"
+      android:layout_weight="1"
+      android:hint="@string/hint_ai_chat_message"
+      android:inputType="textMultiLine"
+      android:maxLines="4"
+      android:importantForAutofill="no" />
+
+    <com.google.android.material.button.MaterialButton
+      android:id="@+id/send"
+      style="@style/Widget.Material3.Button.IconButton"
+      android:layout_width="wrap_content"
+      android:layout_height="wrap_content"
+      android:contentDescription="@string/title_ai_chat_send"
+      app:icon="@drawable/ic_send" />
+
+  </LinearLayout>
+
+</LinearLayout>

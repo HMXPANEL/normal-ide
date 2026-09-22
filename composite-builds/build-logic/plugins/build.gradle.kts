@@ -47,21 +47,21 @@ dependencies {
 
 gradlePlugin {
   plugins {
-    create("com.itsaky.androidide.build") {
-      id = "com.itsaky.androidide.build"
-      implementationClass = "com.itsaky.androidide.plugins.AndroidIDEPlugin"
+    create("com.hmx.ide.build") {
+      id = "com.hmx.ide.build"
+      implementationClass = "com.hmx.ide.plugins.AndroidIDEPlugin"
     }
-    create("com.itsaky.androidide.core-app") {
-      id = "com.itsaky.androidide.core-app"
-      implementationClass = "com.itsaky.androidide.plugins.AndroidIDECoreAppPlugin"
+    create("com.hmx.ide.core-app") {
+      id = "com.hmx.ide.core-app"
+      implementationClass = "com.hmx.ide.plugins.AndroidIDECoreAppPlugin"
     }
-    create("com.itsaky.androidide.build.propsparser") {
-      id = "com.itsaky.androidide.build.propsparser"
-      implementationClass = "com.itsaky.androidide.plugins.PropertiesParserPlugin"
+    create("com.hmx.ide.build.propsparser") {
+      id = "com.hmx.ide.build.propsparser"
+      implementationClass = "com.hmx.ide.plugins.PropertiesParserPlugin"
     }
-    create("com.itsaky.androidide.build.lexergenerator") {
-      id = "com.itsaky.androidide.build.lexergenerator"
-      implementationClass = "com.itsaky.androidide.plugins.LexerGeneratorPlugin"
+    create("com.hmx.ide.build.lexergenerator") {
+      id = "com.hmx.ide.build.lexergenerator"
+      implementationClass = "com.hmx.ide.plugins.LexerGeneratorPlugin"
     }
   }
 }

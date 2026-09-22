@@ -42,7 +42,7 @@ import com.android.aaptcompiler.tryParseColor
 import com.android.aaptcompiler.tryParseFloat
 import com.android.aaptcompiler.tryParseInt
 import com.android.aaptcompiler.tryParseNullOrEmpty
-import com.itsaky.androidide.layoutlib.resources.ResourceVisibility
+import com.hmx.ide.layoutlib.resources.ResourceVisibility
 import com.google.common.truth.Truth
 import org.junit.Test
 import java.nio.ByteBuffer

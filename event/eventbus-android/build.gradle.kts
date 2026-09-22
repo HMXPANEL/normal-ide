@@ -16,7 +16,7 @@
  */
 
 
-import com.itsaky.androidide.build.config.BuildConfig
+import com.hmx.ide.build.config.BuildConfig
 
 plugins {
     id("com.android.library")

@@ -95,3 +95,9 @@ lint/generated/
 lint/outputs/
 lint/tmp/
 # lint/reports/
+
+# Crash logs
+crash.txt
+
+# HMX IDE project memory (per-project .hmx folders)
+.hmx/

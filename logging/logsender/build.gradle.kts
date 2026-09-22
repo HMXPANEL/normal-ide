@@ -16,8 +16,8 @@
  */
 
 
-import com.itsaky.androidide.plugins.NoDesugarPlugin
-import com.itsaky.androidide.build.config.BuildConfig
+import com.hmx.ide.plugins.NoDesugarPlugin
+import com.hmx.ide.build.config.BuildConfig
 
 plugins {
   id("com.android.library")

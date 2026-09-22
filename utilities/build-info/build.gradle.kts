@@ -17,16 +17,16 @@
 
 
 import com.android.SdkConstants
-import com.itsaky.androidide.build.config.AGP_VERSION_MINIMUM
-import com.itsaky.androidide.build.config.BuildConfig
-import com.itsaky.androidide.build.config.CI
-import com.itsaky.androidide.build.config.FDroidConfig
-import com.itsaky.androidide.build.config.ProjectConfig
-import com.itsaky.androidide.build.config.VersionUtils
-import com.itsaky.androidide.build.config.downloadVersion
-import com.itsaky.androidide.build.config.publishingVersion
-import com.itsaky.androidide.build.config.replaceContents
-import com.itsaky.androidide.build.config.simpleVersionName
+import com.hmx.ide.build.config.AGP_VERSION_MINIMUM
+import com.hmx.ide.build.config.BuildConfig
+import com.hmx.ide.build.config.CI
+import com.hmx.ide.build.config.FDroidConfig
+import com.hmx.ide.build.config.ProjectConfig
+import com.hmx.ide.build.config.VersionUtils
+import com.hmx.ide.build.config.downloadVersion
+import com.hmx.ide.build.config.publishingVersion
+import com.hmx.ide.build.config.replaceContents
+import com.hmx.ide.build.config.simpleVersionName
 import org.jetbrains.kotlin.incremental.createDirectory
 
 plugins {
@@ -43,7 +43,7 @@ val buildInfoGenDir: Provider<Directory> = project.layout.buildDirectory.dir("ge
 sourceSets { getByName("main").java.srcDir(buildInfoGenDir) }
 
 tasks.create("generateBuildInfo") {
-  val buildInfoPath = "com/itsaky/androidide/buildinfo/BuildInfo.java"
+  val buildInfoPath = "com/hmx/ide/buildinfo/BuildInfo.java"
   val buildInfo = buildInfoGenDir.get().file(buildInfoPath)
   val buildInfoIn = project.file("src/main/java/${buildInfoPath}.in")
 

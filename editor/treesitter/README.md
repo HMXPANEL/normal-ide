@@ -1,4 +1,4 @@
-# Tree Sitter support for AndroidIDE
+# Tree Sitter support for HMX IDE
 
 This module has been adapted from the [sora-editor](https://github.com/Rosemoe/sora-editor)'
 s `language-treesitter` module.
