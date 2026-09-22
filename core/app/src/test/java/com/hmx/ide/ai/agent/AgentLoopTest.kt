@@ -36,7 +36,7 @@ class ScriptModel(
     tools: List<ToolDescriptor>,
   ): ModelDecision {
     seenHistories.add(history.size)
-    val next = script.removeFirstOrNull() ?: ModelDecision.Finish("script exhausted")
+    val next = script.removeFirstOrNull() ?: return ModelDecision.Finish("script exhausted")
     return next(history)
   }
 }

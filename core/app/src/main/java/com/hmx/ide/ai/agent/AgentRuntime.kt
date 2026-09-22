@@ -43,12 +43,12 @@ object AgentRuntime {
     return AgentLoop(
       model = model,
       registry = registry,
-      executorFactory = { trace, sessionId ->
+      executorFactory = { loopTrace, sessionId ->
         val effective = config.validated()
         ToolExecutor(
           registry = registry,
           permissions = PermissionManager(effective.permissionPolicy),
-          trace = if (effective.traceEnabled) trace else null,
+          trace = if (effective.traceEnabled) loopTrace else null,
           sessionId = sessionId,
         )
       },

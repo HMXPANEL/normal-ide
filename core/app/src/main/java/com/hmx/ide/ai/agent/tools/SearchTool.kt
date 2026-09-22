@@ -109,14 +109,12 @@ class SearchTool(
   private fun collectMatches(file: File, needle: String, out: MutableList<SearchMatch>) {
     try {
       file.bufferedReader().useLines { lines ->
-        var lineNo = 0
-        for (line in lines) {
-          lineNo++
+        for ((index, line) in lines.withIndex()) {
           if (out.size >= maxMatches) return
           if (line.lowercase().contains(needle)) {
             val rel = runCatching { file.relativeTo(projectRoot.canonicalFile).path }
               .getOrDefault(file.path)
-            out.add(SearchMatch(path = rel, line = lineNo, snippet = line.trim().take(240)))
+            out.add(SearchMatch(path = rel, line = index + 1, snippet = line.trim().take(240)))
           }
         }
       }

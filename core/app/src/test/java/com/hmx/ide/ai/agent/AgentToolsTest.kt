@@ -57,7 +57,7 @@ class FakeKnowledgeEngine(
 class EchoTool(
   override val name: String = "echo",
   override val permission: PermissionLevel = PermissionLevel.READ,
-  private val reply: (ToolInput) -> ToolOutput = { FileReadOutput("x", "ok", false, 2) },
+  private val reply: suspend (ToolInput) -> ToolOutput = { FileReadOutput("x", "ok", false, 2) },
 ) : AgentTool {
   override val description = "test echo tool"
   override suspend fun execute(input: ToolInput): ToolOutput = reply(input)

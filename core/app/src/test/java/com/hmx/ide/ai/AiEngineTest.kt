@@ -1,6 +1,8 @@
 package com.hmx.ide.ai
 
 import com.google.common.truth.Truth.assertThat
+import com.hmx.ide.ai.capabilities.supports
+import com.hmx.ide.ai.engine.AiEngine
 import com.hmx.ide.ai.engine.ChatEngine
 import com.hmx.ide.ai.engine.ModelManager
 import com.hmx.ide.ai.models.AiModel
