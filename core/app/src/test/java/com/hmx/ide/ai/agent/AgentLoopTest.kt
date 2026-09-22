@@ -79,7 +79,8 @@ class AgentLoopTest {
   )
 
   @Test
-  fun `loop completes after one tool call`() = runBlocking {
+  fun `loop completes after one tool call`() {
+    runBlocking {
     val model = scriptModel(callTool("read_file", ReadFileInput("Main.kt")), finish("done"))
     val trace = AgentTrace()
     val result = loopOf(model, registryWithFiles(), trace = trace).run("read main", tmp.root)
@@ -94,9 +95,11 @@ class AgentLoopTest {
     assertThat(sessionId).isNotEmpty()
     assertThat(trace.events().map { it.sessionId }.toSet()).containsExactly(sessionId)
   }
+  }
 
   @Test
-  fun `observation content reaches the model next turn`() = runBlocking {
+  fun `observation content reaches the model next turn`() {
+    runBlocking {
     var observed: String? = null
     val model = scriptModel(
       callTool("read_file", ReadFileInput("Main.kt")),
@@ -109,9 +112,11 @@ class AgentLoopTest {
     assertThat(result).isInstanceOf(AgentResult.Completed::class.java)
     assertThat(observed).contains("fun main()")
   }
+  }
 
   @Test
-  fun `loop runs multiple iterations then finishes`() = runBlocking {
+  fun `loop runs multiple iterations then finishes`() {
+    runBlocking {
     val model = scriptModel(
       callTool("echo", ReadFileInput("a")),
       callTool("echo", ReadFileInput("b")),
@@ -123,9 +128,11 @@ class AgentLoopTest {
     assertThat(completed.toolCalls).isEqualTo(3)
     assertThat(model.seenHistories).containsExactly(0, 1, 2, 3)
   }
+  }
 
   @Test
-  fun `max iterations stops the loop with limit result`() = runBlocking {
+  fun `max iterations stops the loop with limit result`() {
+    runBlocking {
     val model = scriptModel(
       callTool("echo", ReadFileInput("a")),
       callTool("echo", ReadFileInput("b")),
@@ -138,9 +145,11 @@ class AgentLoopTest {
     assertThat(limited.iterations).isEqualTo(3)
     assertThat(limited.toolCalls).isEqualTo(3)
   }
+  }
 
   @Test
-  fun `max tool calls is enforced separately from iterations`() = runBlocking {
+  fun `max tool calls is enforced separately from iterations`() {
+    runBlocking {
     val model = scriptModel(
       callTool("echo", ReadFileInput("a")),
       callTool("echo", ReadFileInput("b")),
@@ -154,9 +163,11 @@ class AgentLoopTest {
     val limited = result as AgentResult.CompletedWithLimit
     assertThat(limited.toolCalls).isEqualTo(2)
   }
+  }
 
   @Test
-  fun `recoverable tool failure is fed back and loop continues`() = runBlocking {
+  fun `recoverable tool failure is fed back and loop continues`() {
+    runBlocking {
     var sawFailure = false
     val model = scriptModel(
       callTool("read_file", ReadFileInput("DoesNotExist.kt")),
@@ -169,18 +180,22 @@ class AgentLoopTest {
     assertThat(result).isInstanceOf(AgentResult.Completed::class.java)
     assertThat(sawFailure).isTrue()
   }
+  }
 
   @Test
-  fun `permission denial fails the run without retry`() = runBlocking {
+  fun `permission denial fails the run without retry`() {
+    runBlocking {
     val registry = ToolRegistry().apply { register(WriteLevelTool()) }
     val model = scriptModel(callTool("write_file", ReadFileInput("a.kt")))
     val result = loopOf(model, registry).run("t", tmp.root)
     val failed = result as AgentResult.Failed
     assertThat(failed.reason).contains("Permission denied")
   }
+  }
 
   @Test
-  fun `unknown tool surfaces as failure observation then model finishes`() = runBlocking {
+  fun `unknown tool surfaces as failure observation then model finishes`() {
+    runBlocking {
     var sawUnknown = false
     val model = scriptModel(
       callTool("ghost_tool", ReadFileInput("a.kt")),
@@ -194,9 +209,11 @@ class AgentLoopTest {
     assertThat(result).isInstanceOf(AgentResult.Completed::class.java)
     assertThat(sawUnknown).isTrue()
   }
+  }
 
   @Test
-  fun `model throwing fails the run`() = runBlocking {
+  fun `model throwing fails the run`() {
+    runBlocking {
     val model = object : AgentModel {
       override suspend fun decide(
         history: List<AgentTurn>,
@@ -207,9 +224,11 @@ class AgentLoopTest {
     val failed = result as AgentResult.Failed
     assertThat(failed.reason).contains("Model decision failed")
   }
+  }
 
   @Test
-  fun `cancellation during decide yields Cancelled result`() = runBlocking {
+  fun `cancellation during decide yields Cancelled result`() {
+    runBlocking {
     val model = object : AgentModel {
       override suspend fun decide(
         history: List<AgentTurn>,
@@ -226,14 +245,17 @@ class AgentLoopTest {
     job.cancelAndJoin()
     assertThat(result).isInstanceOf(AgentResult.Cancelled::class.java)
   }
+  }
 
   @Test
-  fun `denied observation type is PermissionDenied`() = runBlocking {
+  fun `denied observation type is PermissionDenied`() {
+    runBlocking {
     val registry = ToolRegistry().apply { register(WriteLevelTool()) }
     val executor = ToolExecutor(registry, PermissionManager())
     val observation = executor.run(
       com.hmx.ide.ai.agent.events.Action(toolName = "write_file", input = ReadFileInput("a")),
     )
     assertThat(observation.output).isInstanceOf(PermissionDenied::class.java)
+    }
   }
 }

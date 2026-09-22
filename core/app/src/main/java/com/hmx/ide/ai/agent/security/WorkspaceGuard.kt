@@ -12,8 +12,18 @@ import java.io.File
  */
 object WorkspaceGuard {
 
+  /**
+   * Resolves a workspace-relative path. Absolute paths are rejected outright:
+   * on Unix `File(parent, "/abs")` nests instead of escaping, which would
+   * silently rewrite the target — fail closed instead.
+   */
   fun resolve(root: File, requested: String): File {
     require(requested.isNotBlank()) { "Path must not be blank" }
+    if (File(requested).isAbsolute) {
+      throw SecurityException(
+        "Absolute paths are not allowed; use a workspace-relative path: '$requested'",
+      )
+    }
     val canonicalRoot = root.canonicalFile
     val candidate = File(root, requested).canonicalFile
     if (candidate != canonicalRoot &&
