@@ -45,6 +45,11 @@ jobs:
 
       - name: Set up Android SDK
         uses: android-actions/setup-android@v3
+        with:
+          # NOTE: do NOT add the obsolete `tools` package here — sdkmanager
+          # no longer ships it ("Failed to find package 'tools'") and the
+          # step fails. platform-tools is all this workflow needs.
+          packages: platform-tools
 
       - name: Accept Android SDK licenses
         run: yes | sdkmanager --licenses || true
