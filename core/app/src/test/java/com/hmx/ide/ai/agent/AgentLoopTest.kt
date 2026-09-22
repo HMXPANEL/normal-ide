@@ -71,8 +71,8 @@ class AgentLoopTest {
   ): AgentLoop = AgentLoop(
     model = model,
     registry = registry,
-    executorFactory = { trace, _ ->
-      ToolExecutor(registry, PermissionManager(config.validated().permissionPolicy), trace, "")
+    executorFactory = { trace, sessionId ->
+      ToolExecutor(registry, PermissionManager(config.validated().permissionPolicy), trace, sessionId)
     },
     config = config,
     trace = trace,
