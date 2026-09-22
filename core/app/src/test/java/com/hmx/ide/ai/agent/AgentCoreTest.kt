@@ -34,8 +34,15 @@ class AgentCoreTest {
   }
 
   @Test
-  fun `failure path RUNNING to FAILED`() {
-    val state = AgentStateMachine.transition(AgentState.RUNNING, AgentState.FAILED)
+  fun `permission to tool to running follows loop lifecycle`() {
+    var state = AgentStateMachine.transition(AgentState.RUNNING, AgentState.WAITING_FOR_PERMISSION)
+    state = AgentStateMachine.transition(state, AgentState.WAITING_FOR_TOOL)
+    state = AgentStateMachine.transition(state, AgentState.RUNNING)
+    assertThat(state).isEqualTo(AgentState.RUNNING)
+  }
+
+  @Test
+  fun `failure path RUNNING to FAILED`() {    val state = AgentStateMachine.transition(AgentState.RUNNING, AgentState.FAILED)
     assertThat(state).isEqualTo(AgentState.FAILED)
   }
 

@@ -34,6 +34,7 @@ object AgentStateMachine {
       AgentState.CANCELLED,
     ),
     AgentState.WAITING_FOR_PERMISSION to setOf(
+      AgentState.WAITING_FOR_TOOL,
       AgentState.RUNNING,
       AgentState.FAILED,
       AgentState.CANCELLED,
